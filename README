@@ -1,2 +1,7 @@
 EOL Translation Tool
 Developed by Bibliotheca Alexandrina (http://www.bibalex.org)
+
+Installation:
+- rename config/database_sample.yml to config/database.yml and add db connection variables
+- rename config/constants_sample.php to config/constants.php and edit variables in this constants file
+
