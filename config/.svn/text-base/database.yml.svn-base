@@ -1,0 +1,12 @@
+production:
+  host:            172.16.0.16
+  username:        root
+  password:        k@m@lko
+  database:        aeol_production
+  encoding:        utf8
+  master_host:     172.16.0.23
+  master_username: root
+  master_password: k@m@lko
+  master_database: eol_data_production
+  master_encoding: utf8
+  

@@ -1,0 +1,111 @@
+K 26
+svn:wc:ra_dav:activity-url
+V 14
+/EOL/!svn/act/
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/EOL/!svn/ver/394/EOL_Translation/classes/BLL
+END
+BLL_users.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/EOL/!svn/ver/393/EOL_Translation/classes/BLL/BLL_users.php
+END
+BLL_a_names.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/EOL/!svn/ver/186/EOL_Translation/classes/BLL/BLL_a_names.php
+END
+BLL_names.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/EOL/!svn/ver/186/EOL_Translation/classes/BLL/BLL_names.php
+END
+BLL_hierarchy_entries.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/EOL/!svn/ver/383/EOL_Translation/classes/BLL/BLL_hierarchy_entries.php
+END
+BLL_taxon_concept_assign_log.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/EOL/!svn/ver/295/EOL_Translation/classes/BLL/BLL_taxon_concept_assign_log.php
+END
+BLL_countries.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/EOL/!svn/ver/87/EOL_Translation/classes/BLL/BLL_countries.php
+END
+BLL_selection_batches.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/EOL/!svn/ver/375/EOL_Translation/classes/BLL/BLL_selection_batches.php
+END
+BLL_a_data_objects.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/EOL/!svn/ver/388/EOL_Translation/classes/BLL/BLL_a_data_objects.php
+END
+BLL_data_objects.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/EOL/!svn/ver/197/EOL_Translation/classes/BLL/BLL_data_objects.php
+END
+BLL_status.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/EOL/!svn/ver/294/EOL_Translation/classes/BLL/BLL_status.php
+END
+BLL_hierarchies.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/EOL/!svn/ver/54/EOL_Translation/classes/BLL/BLL_hierarchies.php
+END
+BLL_archived_a_data_objects.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/EOL/!svn/ver/388/EOL_Translation/classes/BLL/BLL_archived_a_data_objects.php
+END
+BLL_taxon_concepts.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/EOL/!svn/ver/394/EOL_Translation/classes/BLL/BLL_taxon_concepts.php
+END
+BLL_taxon_concept_names.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/EOL/!svn/ver/186/EOL_Translation/classes/BLL/BLL_taxon_concept_names.php
+END
+BLL_data_objects_taxon_concepts.php
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/EOL/!svn/ver/193/EOL_Translation/classes/BLL/BLL_data_objects_taxon_concepts.php
+END
+BLL_data_objects_table_of_contents.php
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/EOL/!svn/ver/165/EOL_Translation/classes/BLL/BLL_data_objects_table_of_contents.php
+END
+BLL_templates.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/EOL/!svn/ver/228/EOL_Translation/classes/BLL/BLL_templates.php
+END

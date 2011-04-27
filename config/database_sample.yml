@@ -1,0 +1,12 @@
+production:
+  host:            #host for translation database
+  username:        #user
+  password:        #pass
+  database:        #database
+  encoding:        utf8
+  master_host:     #host for eol database
+  master_username: #user
+  master_password: #pass
+  master_database: #;eol_data_production
+  master_encoding: utf8
+  

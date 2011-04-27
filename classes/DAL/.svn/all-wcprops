@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/EOL/!svn/ver/388/EOL_Translation/classes/DAL
+END
+DAL_taxon_concept_assign_log.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/EOL/!svn/ver/295/EOL_Translation/classes/DAL/DAL_taxon_concept_assign_log.php
+END
+DAL_countries.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/EOL/!svn/ver/78/EOL_Translation/classes/DAL/DAL_countries.php
+END
+DAL_selection_batches.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/EOL/!svn/ver/119/EOL_Translation/classes/DAL/DAL_selection_batches.php
+END
+DAL_a_data_objects.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/EOL/!svn/ver/388/EOL_Translation/classes/DAL/DAL_a_data_objects.php
+END
+DAL_data_objects.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/EOL/!svn/ver/388/EOL_Translation/classes/DAL/DAL_data_objects.php
+END
+DAL_status.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/EOL/!svn/ver/98/EOL_Translation/classes/DAL/DAL_status.php
+END
+DAL_hierarchies.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/EOL/!svn/ver/54/EOL_Translation/classes/DAL/DAL_hierarchies.php
+END
+DAL_taxon_concept_names.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/EOL/!svn/ver/186/EOL_Translation/classes/DAL/DAL_taxon_concept_names.php
+END
+DAL_archived_a_data_objects.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/EOL/!svn/ver/388/EOL_Translation/classes/DAL/DAL_archived_a_data_objects.php
+END
+DAL_taxon_concepts.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/EOL/!svn/ver/371/EOL_Translation/classes/DAL/DAL_taxon_concepts.php
+END
+DAL_table_of_contents.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/EOL/!svn/ver/73/EOL_Translation/classes/DAL/DAL_table_of_contents.php
+END
+DAL_data_objects_taxon_concepts.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/EOL/!svn/ver/42/EOL_Translation/classes/DAL/DAL_data_objects_taxon_concepts.php
+END
+DAL_data_objects_table_of_contents.php
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/EOL/!svn/ver/73/EOL_Translation/classes/DAL/DAL_data_objects_table_of_contents.php
+END
+DAL_templates.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/EOL/!svn/ver/230/EOL_Translation/classes/DAL/DAL_templates.php
+END
+DAL_users.php
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/EOL/!svn/ver/76/EOL_Translation/classes/DAL/DAL_users.php
+END
+DAL_names.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/EOL/!svn/ver/187/EOL_Translation/classes/DAL/DAL_names.php
+END
+DAL_a_names.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/EOL/!svn/ver/295/EOL_Translation/classes/DAL/DAL_a_names.php
+END
+DAL_hierarchy_entries.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/EOL/!svn/ver/54/EOL_Translation/classes/DAL/DAL_hierarchy_entries.php
+END
