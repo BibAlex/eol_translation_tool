@@ -19,8 +19,8 @@ class PDO_Connection {
     public $connection; 
      
     
-     function  __construct() {
-        $environments = Horde_Yaml::loadFile("../../../config/database.yml");
+     function  __construct($database_yml_file="../../../config/database.yml") {
+        $environments = Horde_Yaml::loadFile($database_yml_file);
         $environment = 'production';
 
         $this->MYSQL_SERVER           = $environments[$environment]['host'];
@@ -32,6 +32,7 @@ class PDO_Connection {
         $this->MASTER_MYSQL_PASSWORD  = @$environments[$environment]['master_password'];
         $this->MASTER_MYSQL_DATABASE  = @$environments[$environment]['master_database'];
     }
+
     
     
      function Open($type)
