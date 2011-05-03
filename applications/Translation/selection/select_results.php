@@ -29,6 +29,8 @@ if ($have_images != 0)
 else
 	$images_curated = -1;
 
+$select_hotlists = intval($_POST['select_hotlists']);
+
 // getting vetted text checkboxes in one string
 $vetted_text='-1';
 if ($have_text != 0) { 
@@ -122,6 +124,7 @@ if ($have_text != 0) {
 			        <input type="hidden" name="have_images" value="<?echo ($have_images)?>"/>
 			        <input type="hidden" name="images_curated" value="<?echo ($images_curated)?>"/>
 			        <input type="hidden" name="vetted_images" value="<?echo ($vetted_images)?>"/>		
+				<input type="hidden" name="select_hotlists" value="<?echo ($select_hotlists)?>"
 					<table border="0" style="border-collapse:collapse" cellspacing="0" cellpadding="3" width="100%">	
 
 					    <tr>
@@ -140,6 +143,11 @@ if ($have_text != 0) {
 					    		<?=BLL_hierarchy_entries::get_name($hierarchy_entry_id)?>
 					    	</td>
 					    </tr>
+					<?if ($select_hotlists == 1) {?>
+					    <tr>
+						<td class="odd" colspan="2"><b>Only load hotlists</b></td>
+					    </tr>
+					<?}?>
 					    <tr>
 					    	<td class="odd">
 					    		<b>- Have Text:</b>  
@@ -252,7 +260,7 @@ if ($have_text != 0) {
 			
 		        <?$hierarchy_entries = BLL_hierarchy_entries::search($hierarchy_id, $hierarchy_entry_id,
 		                                     $have_text, trim($text_curated), preg_split("/,/",$vetted_text),
-		                                     $have_images, trim($images_curated), preg_split("/,/",$vetted_images), $select_sub)?>
+		                                     $have_images, trim($images_curated), preg_split("/,/",$vetted_images), $select_sub, $select_hotlists)?>
 				<div style="clear:both;"><br/><br/></div>
         
        			 <h2>Search Results</h2>

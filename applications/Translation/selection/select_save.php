@@ -22,6 +22,7 @@ $have_images = intval($_POST['have_images']);
 $images_curated = intval($_POST['images_curated']);
 $vetted_text = $_POST['vetted_text'];
 $vetted_images = $_POST['vetted_images'];
+$select_hotlists = $_POST['select_hotlists'];
 
 $taxon_concept_Array = $_POST['taxon_concept'];
 
@@ -68,6 +69,7 @@ $taxon_concept_Array = $_POST['taxon_concept'];
 		        <input type="hidden" name="have_images" value="<?echo ($have_images)?>"/>
 		        <input type="hidden" name="images_curated" value="<?echo ($images_curated)?>"/>
 		        <input type="hidden" name="vetted_images" value="<?echo ($vetted_images)?>"/>
+			<input type="hidden" name="select_hotlists" value="<?echo ($select_hotlists)?>" />
 		
 		        <?for ($i=0; $i<count($taxon_concept_Array); $i++) { ?>
 		        <input type="hidden" name="taxon_concept[]" value="<?echo ($taxon_concept_Array[$i])?>"/>
@@ -92,6 +94,11 @@ $taxon_concept_Array = $_POST['taxon_concept'];
 				    		<?=BLL_hierarchy_entries::get_name($hierarchy_entry_id)?>
 				    	</td>
 				    </tr>
+				<?if ($select_hotlists == 1) {?>
+                                    <tr>
+                                        <td class="odd" colspan="2"><b>Only load hotlists</b></td>
+                                    </tr>
+                                <?}?>
 				    <tr>
 				    	<td class="odd">
 				    		<b>- Have Text:</b>  

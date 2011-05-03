@@ -41,7 +41,7 @@ class BLL_hierarchy_entries {
 	 
 	static function search($hierarchy_id, $hierarchy_entry_id,
 	$have_text, $text_curated, $vetted_text_array,
-	$have_images, $images_curated, $vetted_images_array, $select_sub) {
+	$have_images, $images_curated, $vetted_images_array, $select_sub, $select_hotlist) {
 
 		$rgt=0;
 		$lft=0;
@@ -81,8 +81,14 @@ class BLL_hierarchy_entries {
 	                                ON data_objects.id=data_object_id
 	                            where data_objects_taxon_concepts.taxon_concept_id=hierarchy_entries.taxon_concept_id
 	                                and (data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8) and published=1 and visibility_id=1) as total_other_objects
-	                    from hierarchy_entries
-	                    left outer join names on names.id=name_id where hierarchy_id='.strval($hierarchy_id);
+	                    from hierarchy_entries';
+
+		$query_str .= ' left outer join names on names.id=name_id ';
+
+		if ($select_hotlist == 1)
+                      $query_str .= ' inner join hotlists_hierarchy_entries on hotlists_hierarchy_entries.hierarchy_entry_id=hierarchy_entries.id ';
+
+		$query_str .= ' where hierarchy_id='.strval($hierarchy_id);
 		
 		if ($select_sub == 1)
 			$query_str .= ' and (hierarchy_entries.id='.strval($hierarchy_entry_id).' or (hierarchy_entries.lft>='.strval($lft).' and hierarchy_entries.rgt<='.strval($rgt).'))';
@@ -174,9 +180,8 @@ class BLL_hierarchy_entries {
 
 		$query_str .= ' order by string';
 		 
-		
-		
-		//echo($query_str);	
+				
+		//echo($query_str);
 		$query = $con->connection->prepare($query_str);
 		$query->execute();
 		$results = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_hierarchy_entries');

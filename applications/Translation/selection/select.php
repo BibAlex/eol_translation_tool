@@ -97,6 +97,13 @@ validate_session('selection');
 	    	</td>
 	    </tr>
 	    <tr>
+                <td class="odd" colspan="2" style="text-align: center" >
+			<input type="radio" name="select_hotlists" value="0" checked/> All species
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="select_hotlists" value="1"/> Only hotlist species
+                </td>
+            </tr>
+	    <tr>
 	    	<td class="table_head">Text data objects</td>
 	    	<td class="table_head">Image data objects</td>
 	    </tr>
