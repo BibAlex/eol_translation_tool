@@ -145,7 +145,7 @@ if ($have_text != 0) {
 					    </tr>
 					<?if ($select_hotlists == 1) {?>
 					    <tr>
-						<td class="odd" colspan="2"><b>Only load hotlists</b></td>
+						<td class="odd" colspan="2"><b>Only load hotlist species</b></td>
 					    </tr>
 					<?}?>
 					    <tr>

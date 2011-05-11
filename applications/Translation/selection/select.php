@@ -101,6 +101,8 @@ validate_session('selection');
 			<input type="radio" name="select_hotlists" value="0" checked/> All species
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <input type="radio" name="select_hotlists" value="1"/> Only hotlist species
+			<br>
+			<i>hotlist: species in which people are interested. These species may have no data objects to translate.</i>
                 </td>
             </tr>
 	    <tr>
