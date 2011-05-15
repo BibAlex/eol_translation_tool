@@ -39,7 +39,16 @@ include_once '../../../classes/Pagination.php';
 		BLL_taxon_concepts::Update_taxon_concepts_TranslationStatus($pickedID,$userID,0);
 		//To set the assign log
 		BLL_taxon_concepts::taxon_concept_assign_log($pickedID, $userID, $process, $userID);		
+	} else {
+		if (isset($_GET['id']) && is_int($_GET['id'])) {
+			$pickedID = $_GET['id'];		
+			BLL_taxon_concepts::Update_taxon_concepts_TranslationStatus($pickedID,$userID,0);
+			//To set the assign log
+			BLL_taxon_concepts::taxon_concept_assign_log($pickedID, $userID, $process, $userID);				
+		} 
+		
 	}
+	
 	
 	//Pagination
 	$total_items =  BLL_taxon_concepts::Count_taxon_concepts_ForTranslation_FromPool('slave',$spid,$spname);

@@ -3,7 +3,7 @@
 class Notifications {	
 	
 	static function notify_task_distributor($selection_id, $user_id, $taxon_count, $criteria, $comments) {
-		$message = "Selector: ".BLL_users::get_user_name($user_id)."<br />";
+		$message = "Selector: ".BLL_users::get_user_name($user_id)." (<a href=\"mailto:".$_SESSION["email"]."\">".$_SESSION["email"]."</a>)<br />";
 		$message .= "Species Count: ".strval($taxon_count)."<br />";
 		$message .= "Date: ".date("F j, Y, g:i a")."<br />";
 		$message .= "<br><b><u>Comments</u></b><br>".$comments;

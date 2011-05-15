@@ -24,6 +24,7 @@ if(isset($_POST['username']))
     } else {    	    	
     	$_SESSION['user_id'] = $user->id;
     	$_SESSION['name'] = $user->name;
+	$_SESSION['email'] = $user->email;
     	$_SESSION['super_admin'] = $user->super_admin;
     	$_SESSION['selector'] = $user->selector;
     	$_SESSION['task_distributor'] = $user->task_distributor;
