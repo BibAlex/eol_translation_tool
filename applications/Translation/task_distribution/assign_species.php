@@ -78,7 +78,7 @@ if (isset($_POST["id"])) {
 		foreach ($users as $user) {
 			if ($user->active == 1 && $user->translator==1 && $user->email != '') {
 				$message = 'Hi '.$user->name.',<br><br>New species ready for translation ('.$taxon_concept->scientificName.')<br><br>'.
-								'<a target="_blank" href="'.$AEOL_url.'/translation/list/poollist.php?process=2&id='.$id.'">Click here</a> to pick this species';
+								'<a target="_blank" href="'.$AEOL_url.'/eol_translation/applications/translation/list/poollist.php?process=2&id='.$id.'">Click here</a> to pick this species';
 				SendMail::send_email($user->email, 'AEOL: New species ready for translation', $message);
 			}		
 		}		
@@ -86,7 +86,7 @@ if (isset($_POST["id"])) {
 		$user = BLL_users::load_by_id(intval($_POST["translator"]));
 		if ($user[0]->active == 1 && $user[0]->email != '') {
 			$message = 'Hi '.$user->name.',<br><br>New species ready for translation ('.$taxon_concept->scientificName.')<br><br>'.
-								'<a target="_blank" href="'.$AEOL_url.'/translation/details/species.php?tid='.$id.'&trstatus=2&process=2">Click here</a> to translate this species';
+								'<a target="_blank" href="'.$AEOL_url.'/eol_translation/applications/translation/details/species.php?tid='.$id.'&trstatus=2&process=2">Click here</a> to translate this species';
 			SendMail::send_email($user[0]->email, 'AEOL: New species has been assigned', $message);
 		}
 	}
