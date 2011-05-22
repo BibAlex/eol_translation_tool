@@ -1,4 +1,8 @@
 <?php
+/*
+ * Rake task to harvest hotlist species from wiki.eol.org
+ */
+
 include_once "config/database.yml";
 include_once "config/constants.php";
 include_once "classes/PDO_Connection.php";
