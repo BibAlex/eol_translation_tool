@@ -1,6 +1,7 @@
 <?php
 /*
  * Rake task to harvest hotlist species from wiki.eol.org
+ * URL: http://wiki.eol.org/download/attachments/5276955/Hotlist+Nov+2010
  */
 
 include_once "config/database.yml";
