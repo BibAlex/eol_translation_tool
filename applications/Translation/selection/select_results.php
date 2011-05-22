@@ -124,7 +124,7 @@ if ($have_text != 0) {
 			        <input type="hidden" name="have_images" value="<?echo ($have_images)?>"/>
 			        <input type="hidden" name="images_curated" value="<?echo ($images_curated)?>"/>
 			        <input type="hidden" name="vetted_images" value="<?echo ($vetted_images)?>"/>		
-				<input type="hidden" name="select_hotlists" value="<?echo ($select_hotlists)?>"
+				<input type="hidden" name="select_hotlists" value="<?echo ($select_hotlists)?>" />
 					<table border="0" style="border-collapse:collapse" cellspacing="0" cellpadding="3" width="100%">	
 
 					    <tr>
