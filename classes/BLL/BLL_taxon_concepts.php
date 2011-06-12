@@ -801,7 +801,7 @@ class BLL_taxon_concepts {
 				{
 					BLL_taxon_concepts::Update_taxon_concepts_Status($curtax->id,$process,$userID);
 					//Send email for the next step assigned person
-					BLL_taxon_concepts::SendMailNotification($curtax,$process);
+					BLL_taxon_concepts::SendMailNotification($curtax,$process,$userID);
 					//If this is taxon of hte current page
 					if($GLOBALS['taxonID']==$updated_taxon->taxon_concept_id)				
 					 	$GLOBALS['UpdateTaxonStatus']=1;//update the global variable defined	 	
@@ -810,19 +810,19 @@ class BLL_taxon_concepts {
 		}
 	}
 	
-	static function SendMailNotification($taxon,$process)
+	static function SendMailNotification($taxon,$process,$userID)
 	{
 		switch ($process) {
 			case 3://if finished translation and want to go to linguistic review
-				Notifications::notify_linguistic_review($taxon);
+				Notifications::notify_linguistic_review($taxon,$userID);
 				break;
 			
 			case 4: //if finished linguisitic review and want to go to scientific review
-				Notifications::notify_scientific_review($taxon);
+				Notifications::notify_scientific_review($taxon,$userID);
 				break;
 			
 			case 5: //if finished scientific review and want to go to final editing
-				Notifications::notify_final_editors($taxon);				
+				Notifications::notify_final_editors($taxon,$userID);				
 				break;
 		}
 	}

@@ -79,6 +79,21 @@
 			else
 				return '';			 	
 	    }
+            
+            static function get_user_email($id) {	    	
+	    	$con = new PDO_Connection();
+		  	$con->Open('slave');		  	
+		  	$query = $con->connection->prepare("SELECT email FROM users WHERE id=?;");
+		  	
+		  	$query->bindParam(1, $id);	 	
+		    $query->execute();		
+			$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_users');
+			$con->Close();			
+			if (count($records)>0)
+				return $records[0]->email;
+			else
+				return '';			 	
+	    }
 	    
 	    static function validate_user($username, $password) {
 	    	
