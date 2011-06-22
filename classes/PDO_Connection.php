@@ -39,12 +39,12 @@ class PDO_Connection {
      {     	
      	if($type == 'master')
      	{
-     		$con = 'mysql:host='.$this->MASTER_MYSQL_SERVER.';dbname='.$this->MASTER_MYSQL_DATABASE.';charset=UTF-8';
+     		$con = 'mysql:host='.$this->MASTER_MYSQL_SERVER.';dbname='.$this->MASTER_MYSQL_DATABASE.';charset=UTF8';
      		$this->connection = new PDO($con, $this->MASTER_MYSQL_USER, $this->MASTER_MYSQL_PASSWORD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
      	}
      	else if($type == 'slave')
      	{
-     		$con = 'mysql:host='.$this->MYSQL_SERVER.';dbname='.$this->MYSQL_DATABASE.';charset=UTF-8';
+     		$con = 'mysql:host='.$this->MYSQL_SERVER.';dbname='.$this->MYSQL_DATABASE.';charset=UTF8';
      		$this->connection = new PDO($con, $this->MYSQL_USER, $this->MYSQL_PASSWORD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
      	}     	
      	$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Set Errorhandling to Exception
