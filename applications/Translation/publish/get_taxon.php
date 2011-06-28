@@ -2,9 +2,13 @@
 include_once '../../../classes/PDO_Connection.php';
 include_once '../../../config/constants.php';
 include_once '../../../classes/BLL/BLL_taxon_concepts.php';
+include_once '../../../classes/BLL/BLL_users.php';
+include_once '../../../classes/BLL/BLL_data_objects_info_items.php';
 include_once '../../../classes/DAL/DAL_taxon_concepts.php';
+include_once '../../../classes/DAL/DAL_info_items.php';
 include_once '../../../classes/DAL/DAL_data_objects.php';
 include_once '../../../classes/DAL/DAL_names.php';
+include_once '../../../classes/DAL/DAL_users.php';
 
 
 if (!$_GET['id'])
@@ -38,7 +42,7 @@ echo ("<response xmlns:dc=\"http://purl.org/dc/elements/1.1/\"
 				 xmlns:geo=\"http://www.w3.org/2003/01/geo/wgs84_pos#\">");
 
 echo("<taxon>");
-echo("<dc:identifier>".$taxon->id."</dc:identifier>");
+echo("<dc:identifier>batr:tid:".$taxon->id."</dc:identifier>");
 echo("<dwc:ScientificName>".htmlspecialchars($taxon->scientificName)."</dwc:ScientificName>");
 
 // Get Common Names
@@ -50,21 +54,24 @@ foreach ($names as $name) {
 
 // Get rejected Common Names
 //<rejectedCommonName name_id="15"/>
-$rejected_names = BLL_taxon_concepts::get_rejected_common_names($id);
-foreach ($rejected_names as $rejected_name) {
-	echo('<rejectedCommonName name_id="'.$rejected_name->id.'" />');
-}
+//$rejected_names = BLL_taxon_concepts::get_rejected_common_names($id);
+//foreach ($rejected_names as $rejected_name) {
+//	echo('<rejectedCommonName name_id="'.$rejected_name->id.'" />');
+//}
 
 // Get data objects
 //Note: If Arabic text is empty display by default the english text
 $data_objects = BLL_taxon_concepts::get_translated_data_objects($id);
+
 foreach ($data_objects as $data_object) {
+	
 	echo ("<dataObject>");
 	
-	echo ("<dc:identifier>".$data_object->guid."</dc:identifier>");
+	echo ("<dc:identifier>batr:doid:".$data_object->id."</dc:identifier>");
 	echo ("<dataType>".$data_object->data_type."</dataType>");
 	
 	echo ("<mimeType>".$data_object->mime_type."</mimeType>");
+	echo ('<agent role="creator">'.htmlspecialchars(BLL_users::get_user_name($taxon->translator_id)).'</agent>');
 	if ($data_object->object_title != '')
 		echo ("<dc:title>".htmlspecialchars($data_object->object_title, ENT_NOQUOTES, "UTF-8")."</dc:title>");
 	else
@@ -93,17 +100,28 @@ foreach ($data_objects as $data_object) {
 	
 	echo ("<dc:source>".htmlspecialchars($data_object->source_url, ENT_NOQUOTES, "UTF-8")."</dc:source>");
 	
-	if ($data_object->object_title != '')
-		echo ("<subject>".htmlspecialchars($data_object->object_title, ENT_NOQUOTES, "UTF-8")."</subject>");
-	else
-		echo ("<subject>".htmlspecialchars($data_object->object_title_source, ENT_NOQUOTES, "UTF-8")."</subject>");
-	
+
+	$info_item = BLL_data_objects_info_items::Select_info_items_ByDataObjectId('master', $data_object->id);
+	if ($info_item != null)
+		echo ("<subject>".htmlspecialchars($info_item->schema_value, ENT_NOQUOTES, "UTF-8")."</subject>");	
+
 	if ($data_object->description != '')
 		echo ("<dc:description>".htmlspecialchars($data_object->description, ENT_NOQUOTES, "UTF-8")."</dc:description>");
 	else
 		echo ("<dc:description>".htmlspecialchars($data_object->description_source, ENT_NOQUOTES, "UTF-8")."</dc:description>");	
+			
 	
-		
+	echo ("<additionalInformation>");
+	echo ("<translation>");	
+	echo ("<EOLDataObjectID>".htmlspecialchars($data_object->id, ENT_NOQUOTES, "UTF-8")."</EOLDataObjectID>");
+	if($taxon->translator_id >0)
+		echo ("<translator>".htmlspecialchars(BLL_users::get_user_name($taxon->translator_id), ENT_NOQUOTES, "UTF-8")."</translator>");
+	if($taxon->scientific_reviewer_id >0)
+		echo ("<scientificReviewer>".htmlspecialchars(BLL_users::get_user_name($taxon->scientific_reviewer_id), ENT_NOQUOTES, "UTF-8")."</scientificReviewer>");
+	if($taxon->linguistic_reviewer_id >0)
+		echo ("<linguisticReviewer>".htmlspecialchars(BLL_users::get_user_name($taxon->linguistic_reviewer_id), ENT_NOQUOTES, "UTF-8")."</linguisticReviewer>");
+	echo ("</translation>");
+	echo ("</additionalInformation>");
 	
 	echo ("</dataObject>");
 }

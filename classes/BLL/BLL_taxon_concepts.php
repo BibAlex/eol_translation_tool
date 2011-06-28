@@ -863,7 +863,8 @@ class BLL_taxon_concepts {
 				    guid,
 					d1.source_url,
 					d1.object_url,
-					d1.object_cache_url
+					d1.object_cache_url,
+					d1.id
  				FROM data_objects d1
 					inner join a_data_objects d2 on d1.id=d2.id
 					inner join data_types on d1.data_type_id=data_types.id

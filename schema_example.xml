@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<response xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dwc="http://rs.tdwg.org/dwc/dwcore/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dwct="http://rs.tdwg.org/dwc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.eol.org/transfer/content/0.3" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xsi:schemaLocation="http://www.eol.org/transfer/content/0.3 http://services.eol.org/schema/content_0_3.xsd">
+    <taxon>
+        <dc:identifier>990960</dc:identifier>
+        <dwc:ScientificName>Abies cephalonica Loudon</dwc:ScientificName>
+        <commonName xml:lang="ar">&#x627;&#x644;&#x62A;&#x646;&#x648;&#x628; &#x627;&#x644;&#x64A;&#x648;&#x646;&#x627;&#x646;&#x64A;</commonName>
+        <dataObject>
+            <dc:identifier>ef46baa80db93add750db13d86b6cc2f</dc:identifier>
+            <dataType>http://purl.org/dc/dcmitype/StillImage</dataType>
+            <mimeType>image/jpeg</mimeType>
+            <agent role="creator">Name of Translation creator</agent>
+            <dc:title>&#x627;&#x644;&#x62A;&#x646;&#x648;&#x628; &#x627;&#x644;&#x64A;&#x648;&#x646;&#x627;&#x646;&#x64A;, &#x627;&#x644;&#x635;&#x646;&#x648;&#x628;&#x631;</dc:title>
+            <dc:language>ar</dc:language>
+            <license>http://creativecommons.org/licenses/by-nc-sa/2.0/</license>
+            <dc:source>http://www.flickr.com/photos/46679531@N02/4877001336/</dc:source>
+            <subject>http://rs.tdwg.org/ontology/voc/SPMInfoItems#Uses</subject>
+            <dc:description>&#x627;&#x644;&#x645;&#x643;&#x627;&#x646; - &#x62C;&#x628;&#x644; &#x623;&#x64A;&#x646;&#x648;&#x633;&#x60C; &#x643;&#x64A;&#x641;&#x627;&#x644;&#x648;&#x646;&#x64A;&#x627;&#x60C;&amp;nbsp;&#x627;&#x644;&#x64A;&#x648;&#x646;&#x627;&#x646;&#x60C; &#x627;&#x644;&#x627;&#x631;&#x62A;&#x641;&#x627;&#x639; &#x639;&#x646; &#x645;&#x633;&#x62A;&#x648;&#x649; &#x633;&#x637;&#x62D; &#x627;&#x644;&#x628;&#x62D;&#x631;&amp;nbsp;&#x62D;&#x648;&#x627;&#x644;&#x64A; 1400&#x645;&#x60C; &#x64A;&#x648;&#x644;&#x64A;&#x648; 2010&lt;span style="display: none"&gt;&amp;nbsp;&lt;/span&gt;</dc:description>
+            <additionalInformation>
+                <translation>
+                    <EOLDataObjectID>12345</EOLDataObjectID>
+                    <translator></translator>
+                    <scientificReviewer></scientificReviewer>
+                    <linguisticReviewer></linguisticReviewer>
+                </translation>
+            </additionalInformation>
+        </dataObject>
+    </taxon>
+</response>
