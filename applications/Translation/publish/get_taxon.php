@@ -65,6 +65,10 @@ foreach ($data_objects as $data_object) {
 	echo ("<dataType>".$data_object->data_type."</dataType>");
 	
 	echo ("<mimeType>".$data_object->mime_type."</mimeType>");
+	if ($data_object->object_title != '')
+		echo ("<dc:title>".htmlspecialchars($data_object->object_title, ENT_NOQUOTES, "UTF-8")."</dc:title>");
+	else
+		echo ("<dc:title>".htmlspecialchars($data_object->object_title_source, ENT_NOQUOTES, "UTF-8")."</dc:title>");
 	echo ("<dc:language>ar</dc:language>");
 	echo ("<license>".htmlspecialchars($data_object->license, ENT_NOQUOTES, "UTF-8")."</license>");
 	if ($data_object->rights_statement != '') {
@@ -87,17 +91,12 @@ foreach ($data_objects as $data_object) {
 		echo ("<location>".htmlspecialchars($data_object->location_source, ENT_NOQUOTES, "UTF-8")."</location>");
 	}
 	
-	echo ("<source>".htmlspecialchars($data_object->source_url, ENT_NOQUOTES, "UTF-8")."</source>");
+	echo ("<dc:source>".htmlspecialchars($data_object->source_url, ENT_NOQUOTES, "UTF-8")."</dc:source>");
 	
 	if ($data_object->object_title != '')
 		echo ("<subject>".htmlspecialchars($data_object->object_title, ENT_NOQUOTES, "UTF-8")."</subject>");
 	else
 		echo ("<subject>".htmlspecialchars($data_object->object_title_source, ENT_NOQUOTES, "UTF-8")."</subject>");
-	
-	if ($data_object->object_title != '')
-		echo ("<dc:title>".htmlspecialchars($data_object->object_title, ENT_NOQUOTES, "UTF-8")."</dc:title>");
-	else
-		echo ("<dc:title>".htmlspecialchars($data_object->object_title_source, ENT_NOQUOTES, "UTF-8")."</dc:title>");
 	
 	if ($data_object->description != '')
 		echo ("<dc:description>".htmlspecialchars($data_object->description, ENT_NOQUOTES, "UTF-8")."</dc:description>");
