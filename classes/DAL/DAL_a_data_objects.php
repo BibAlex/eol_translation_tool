@@ -13,6 +13,10 @@
    		public $locked;
    		public $location;	
    		public $taxon_concept_id;/*this field help to know the common object is locked by wich taxon page*/
+   		public $translator_id;
+   		public $scientific_reviewer_id;
+   		public $linguisitic_reviewer_id;
+   		public $final_editor_id;
    		
 	}
 ?>

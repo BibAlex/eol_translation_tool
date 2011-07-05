@@ -216,6 +216,17 @@ class BLL_data_objects {
 	    return $records[0];    
 	}
 	
+	static function Select_all_data_objects($DB) 
+	{
+		$con = new PDO_Connection();
+	  	$con->Open($DB);		  	
+	  	$query = $con->connection->prepare("SELECT * FROM data_objects;");
+	  	$query->execute();
+	  	$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;
+	}
+
 	static function Exist_DataObjects_ByID($DB, $ObjID) 
 	{
 	 	 $con = new PDO_Connection();
