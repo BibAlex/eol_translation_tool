@@ -74,7 +74,7 @@ foreach ($data_objects as $data_object) {
 	//2.Agent(s)	
 	//echo ('<agent role="creator">'.htmlspecialchars(BLL_users::get_user_name($taxon->translator_id)).'</agent>');
 	echo ('<agent role="provider">Bibliotheca Alexandrina</agent>');
-	Bibliotheca Alexandrina
+	
 	//3.Title
 	if ($data_object->object_title != '')
 		echo ("<dc:title>".htmlspecialchars($data_object->object_title, ENT_NOQUOTES, "UTF-8")."</dc:title>");
