@@ -216,11 +216,12 @@ class BLL_data_objects {
 	    return $records[0];    
 	}
 	
-	static function Select_all_data_objects($DB) 
+	static function Select_all_text_data_objects_id($DB,$startID) 
 	{
 		$con = new PDO_Connection();
 	  	$con->Open($DB);		  	
-	  	$query = $con->connection->prepare("SELECT * FROM data_objects;");
+	  	$query = $con->connection->prepare("SELECT id FROM data_objects WHERE data_type_id=3  AND id>=? ORDER BY id");
+	  	$query->bindParam(1, $startID);
 	  	$query->execute();
 	  	$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
 	    $con->Close();    

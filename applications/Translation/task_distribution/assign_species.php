@@ -10,6 +10,8 @@ include_once '../../../classes/BLL/BLL_data_objects_taxon_concepts.php';
 include_once '../../../classes/DAL/DAL_data_objects_taxon_concepts.php';
 include_once '../../../classes/BLL/BLL_data_objects_table_of_contents.php';
 include_once '../../../classes/DAL/DAL_data_objects_table_of_contents.php';
+include_once '../../../classes/BLL/BLL_data_objects_info_items.php';
+include_once '../../../classes/DAL/DAL_data_objects_info_items.php';
 include_once '../../../classes/BLL/BLL_data_objects.php';
 include_once '../../../classes/DAL/DAL_data_objects.php';
 include_once '../../../classes/DAL/DAL_names.php';
@@ -85,7 +87,7 @@ if (isset($_POST["id"])) {
 	} else {
 		$user = BLL_users::load_by_id(intval($_POST["translator"]));
 		if ($user[0]->active == 1 && $user[0]->email != '') {
-			$message = 'Hi '.$user->name.',<br><br>New species ready for translation ('.$taxon_concept->scientificName.')<br><br>'.
+			$message = 'Hi '.$user[0]->name.',<br><br>New species ready for translation ('.$taxon_concept->scientificName.')<br><br>'.
 								'<a target="_blank" href="'.$AEOL_url.'/eol_translation/applications/translation/details/species.php?tid='.$id.'&trstatus=2&process=2">Click here</a> to translate this species';
 			SendMail::send_email($user[0]->email, 'AEOL: New species has been assigned', $message);
 		}

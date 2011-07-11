@@ -9,8 +9,13 @@ include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/DAL/DAL_users.php';
 include_once '../../../classes/BLL/BLL_data_objects_taxon_concepts.php';
 include_once '../../../classes/DAL/DAL_data_objects_taxon_concepts.php';
+
 include_once '../../../classes/BLL/BLL_data_objects_table_of_contents.php';
 include_once '../../../classes/DAL/DAL_data_objects_table_of_contents.php';
+
+include_once '../../../classes/BLL/BLL_data_objects_info_items.php';
+include_once '../../../classes/DAL/DAL_data_objects_info_items.php';
+
 include_once '../../../classes/BLL/BLL_data_objects.php';
 include_once '../../../classes/DAL/DAL_data_objects.php';
 include_once '../../../classes/DAL/DAL_names.php';
@@ -87,7 +92,8 @@ for ($i=0; $i<$taxon_count; $i++) {
 	$dataobjects = BLL_data_objects::Select_DataObjects_ByTaxonConceptID('master',$_POST['taxon_concept_id'.strval($i)]);
 	  	
 	foreach ($dataobjects as $dataobject)	
-  	{ 	  		
+  	{ 	
+  		echo $dataobject->id."  --  ";
   		//Fill data_object table
   		if(BLL_data_objects::Exist_DataObjects_ByID('slave',$dataobject->id)==0)
   		{		
@@ -106,6 +112,15 @@ for ($i=0; $i<$taxon_count; $i++) {
 		{		
 			if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
 				BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);
+		}		
+		
+		//Select the InfoItem of the current data_object from master
+		$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
+		//Fill the data_objects_info_items table 
+		foreach ($dobj_infos as $dobj_info)		
+		{		
+			if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
+				BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
 		}		
   	}
   	
@@ -132,6 +147,15 @@ for ($i=0; $i<$taxon_count; $i++) {
 		{		
 			if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
 				BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);
+		}		
+		
+		//Select the InfoItem of the current data_object from master
+		$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
+		//Fill the data_objects_info_items_contents table 
+		foreach ($dobj_infos as $dobj_info)		
+		{		
+			if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
+				BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
 		}		
   	}
   	  	

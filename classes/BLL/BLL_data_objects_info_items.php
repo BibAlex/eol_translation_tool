@@ -37,7 +37,7 @@
 		  	$con->Open($DB);		  	
 		  	$query = $con->connection->prepare("SELECT count(*) FROM data_objects_info_items WHERE  data_object_id=? AND info_item_id=?;");
 		  	$query->bindParam(1, $data_object_id);
-		  	$query->bindParam(2, info_item_id);				  		 	
+		  	$query->bindParam(2, $info_item_id);				  		 	
 		    $query->execute();		
 			$results = $query->fetchColumn();
 			$con->Close();
