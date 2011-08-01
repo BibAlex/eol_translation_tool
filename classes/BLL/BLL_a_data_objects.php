@@ -110,7 +110,10 @@
 			//echo $location;
 			$con = new PDO_Connection();
 		  	$con->Open('slave');
-		  	$query = $con->connection->prepare("INSERT INTO a_data_objects VALUES(?,?,?,?,?,?,?,Now(),?,?,?);");
+		  	$query = $con->connection->prepare("INSERT INTO a_data_objects (id, user_id, process_id, object_title
+		  																	, rights_statement, rights_holder, description
+		  																	, modified_at, locked, taxon_concept_id, location) 
+		  										VALUES(?,?,?,?,?,?,?,Now(),?,?,?);");
 		  	$query->bindParam(1, $id);		
 		  	$query->bindParam(2, $user_id);
 		  	$query->bindParam(3, $process_id);	
@@ -204,6 +207,7 @@
 		
 		static function SubmitAction($objectID,$userID,$process, $actionType, $SP_title, $SP_location, $RS_editor, $RH_editor, $D_editor, $taxon_concept_id)
 		{
+			$cur_process = $process;
 			if($actionType==1)//finish
 			{
 				$locked=0;
@@ -218,6 +222,7 @@
 				BLL_a_data_objects::Update_a_data_objects($objectID, $userID, $process, $SP_title, $SP_location, $RS_editor, $RH_editor, $D_editor, $taxon_concept_id, $locked);
 			else //insert new
 				BLL_a_data_objects::Insert_a_data_objects($objectID, $userID, $process, $SP_title, $SP_location, $RS_editor, $RH_editor, $D_editor, $taxon_concept_id, $locked);
+			BLL_a_data_objects::Update_User_of_a_data_objects($objectID, $userID, $cur_process);
 
 			if($actionType==1)//if finish
 			{
@@ -237,11 +242,41 @@
 				{
 					//echo $arObj>id.'-'.$userID.'-'.($process+1).'-'.$tid.'-'.$locked;
 					BLL_a_data_objects::Update_a_data_objects($arObj->id,$userID,$process+1,  $arObj->object_title,$arObj->location, $arObj->rights_statement , $arObj->rights_holder, $arObj->description, $tid, $locked);
+					BLL_a_data_objects::Update_User_of_a_data_objects($arObj->id, $userID, $process);
 				}
 			}
 			//Update status of all taxon concetps related to this taxon object
 			$updated_taxons = BLL_data_objects_taxon_concepts::Select_taxons_incommon_ByTaxon_ID('slave',$tid);
 			BLL_taxon_concepts::Update_Status($updated_taxons,$process+1,$userID);
 		}
+		
+		static function Update_User_of_a_data_objects($objectID, $userID, $process)
+		{
+			$con = new PDO_Connection();
+		  	$con->Open('slave');		
+		  	 
+		  	switch ($process)
+		  	{
+		  		case 2:
+		  			$stmt = "UPDATE a_data_objects SET  translator_id=? WHERE id=?";
+		  			break;
+		  		case 3:
+		  			$stmt = "UPDATE a_data_objects SET  linguistic_reviewer_id=? WHERE id=?";		  			
+		  			break;
+		  		case 4:
+		  			$stmt = "UPDATE a_data_objects SET  scientific_reviewer_id=? WHERE id=?";		  			
+		  			break;
+		  		case 5:
+		  			$stmt = "UPDATE a_data_objects SET  final_editor_id=? WHERE id=?";		  			
+		  			break;		  			
+		  	}		  	
+		  	$query = $con->connection->prepare($stmt);		  	
+		  	$query->bindParam(1, $userID);		  	
+		  	$query->bindParam(2, $objectID);
+		    $query->execute();
+			$con->Close();
+		}
+		
+		
 	}
 ?>
