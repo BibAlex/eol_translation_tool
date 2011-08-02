@@ -800,7 +800,7 @@ class BLL_taxon_concepts {
 	}
 	
 	static function get_finished_taxons() {
-		$query_str = 'select * from taxon_concepts where taxon_status_id=6';
+		$query_str = 'select * from taxon_concepts where taxon_status_id>=6';
 		
 		$con = new PDO_Connection();
 		$con->Open('slave');
@@ -888,7 +888,11 @@ class BLL_taxon_concepts {
 					d1.source_url,
 					d1.object_url,
 					d1.object_cache_url,
-					d1.id
+					d1.id,
+					d2.translator_id,
+					d2.linguistic_reviewer_id,
+					d2.scientific_reviewer_id,
+					d2.final_editor_id
  				FROM data_objects d1
 					inner join a_data_objects d2 on d1.id=d2.id
 					inner join data_types on d1.data_type_id=data_types.id
@@ -897,7 +901,7 @@ class BLL_taxon_concepts {
 					inner join data_objects_taxon_concepts ON data_objects_taxon_concepts.data_object_id=d1.id and data_objects_taxon_concepts.taxon_concept_id=?;");
 		$query->bindParam(1, $id);
 		$query->execute();
-		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');
+		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_a_data_objects');
 		$con->Close();
 
 		return $records;
