@@ -6,6 +6,9 @@ include_once '../../../classes/BLL/BLL_selection_batches.php';
 include_once '../../../classes/DAL/DAL_selection_batches.php';
 include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/DAL/DAL_users.php';
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
+
 
 validate_session('selector');
 
@@ -71,6 +74,7 @@ $selections = BLL_selection_batches::load_all_by_user($current_page, $items_per_
 		<td class="table_head" style="border-bottom:1px solid #C6C6C6;">ID</td>
 		<td class="table_head" style="border-bottom:1px solid #C6C6C6;">Selection Date</td>
 		<td class="table_head" style="border-bottom:1px solid #C6C6C6;">Selected by</td>		
+		<td class="table_head" style="border-bottom:1px solid #C6C6C6;">Priority</td>
 		<td class="table_head" style="border-bottom:1px solid #C6C6C6;"></td>
 		<td class="table_head" style="border-bottom:1px solid #C6C6C6;"></td>
 	</tr>	
@@ -84,14 +88,7 @@ $selections = BLL_selection_batches::load_all_by_user($current_page, $items_per_
 			<td class="<?=$td_class?>"><center><?=$selection->id?></center></td>
 			<td class="<?=$td_class?>"><center><?=date("d M Y H:i", strtotime($selection->date_selected))?></center></td>
 			<td class="<?=$td_class?>"><center><?=BLL_users::get_user_name($selection->user_id)?></center></td>
-			<!-- 
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_translation_assigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_translation_unassigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_linguistic_reviewer_assigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_linguistic_reviewer_unassigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_scientific_reviewer_assigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_scientific_reviewer_unassigned($id)?></center></td>
-			 -->
+			<td class="<?=$td_class?>"><center><?=BLL_priorities::find_label($selection->priority_id)?></center></td>			
 			<td class="<?=$td_class?>">
 				<center><a href="show_taxons.php?id=<?=$id?>">Show taxons</a></center>
 			</td>			

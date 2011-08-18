@@ -38,6 +38,37 @@ class BLL_taxon_concepts {
 		return  $result;
 	}
 	
+	static function All_words_count($id)
+	{
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$stmt="Select SUM(words_count) as DOWC from data_objects DO inner join data_objects_taxon_concepts DOTC on DO.id=DOTC.data_object_id 
+					where taxon_concept_id=$id group by taxon_concept_id";
+		$query = $con->connection->prepare($stmt);
+		$query->execute();
+		$result = $query->fetchColumn();
+		$con->Close();
+		return  $result;
+	}
+	
+	static function Unique_words_count($id)
+	{
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$stmt="Select SUM(words_count) as DOWC from 
+						data_objects DO 
+					inner join data_objects_taxon_concepts DOTC on DO.id=DOTC.data_object_id
+					inner join taxon_concepts TC on TC.id=DOTC.taxon_concept_id
+					inner join a_data_objects ADO on ADO.translator_id=TC.translator_id and ADO.id=DO.ID					
+					where TC.id=$id group by DOTC.taxon_concept_id
+					and DO.id in (select data_object_id from Unique_DO where Unique_DO.data_object_id=DO.id)";
+		$query = $con->connection->prepare($stmt);
+		$query->execute();
+		$result = $query->fetchColumn();
+		$con->Close();
+		return  $result;
+	}
+	
 	static function Count_taxon_concepts_ForTranslation_ByTranslator($DB, $translator,$speciesID,$speciesName,$translationStatus)
 	{
 		$con = new PDO_Connection();

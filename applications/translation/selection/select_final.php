@@ -39,14 +39,14 @@ $have_images = intval($_POST['have_images']);
 $images_curated = intval($_POST['images_curated']);
 $vetted_text = $_POST['vetted_text'];
 $vetted_images = $_POST['vetted_images'];
+$priority_id = intval($_POST['priority_id']);
 
 $taxon_concept_Array = $_POST['taxon_concept'];
 $comments = $_POST['comments'];
-
 $comments = nl2br($comments);
 
 BLL_selection_batches::save($hierarchy_id, $hierarchy_entry_id, $have_text, $text_curated,
-                             $have_images, $images_curated, $vetted_text, $vetted_images, $taxon_concept_Array, $comments);
+                             $have_images, $images_curated, $vetted_text, $vetted_images, $taxon_concept_Array, $comments, $priority_id);
 
 ?>
 <script>

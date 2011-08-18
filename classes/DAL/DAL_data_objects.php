@@ -35,7 +35,8 @@
 		  public $vetted_id;
 		  public $visibility_id;
 		  public $published;
-		  public $curated;		
+		  public $curated;
+		  public $words_count;		
 		  
 		  // added for harvesting
 		  public $object_title_source;
@@ -43,6 +44,7 @@
 		  public $rights_holder_source;
 		  public $description_source;
 		  public $location_source;
+		  
 	 
 	}
 ?>

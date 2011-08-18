@@ -279,6 +279,8 @@ function DisplayHistory($cur_taxon) {
 	                <td class="oddc"  style="padding:7px; text-align:left;" >Scientific Name</td>
 	                <td class="oddc"  style="padding:7px; " >Phase</td>
 	                <td class="oddc"  style="padding:7px;">Done</td>
+	                <td class="oddc"  style="padding:7px;">Words count</td>
+	                <td class="oddc"  style="padding:7px;">Distinct Words Count</td>
 	                <td class="oddc"  style="padding:7px;"></td>
 	                <td class="oddc"  style="padding:7px"></td> 
 	                <td class="oddc"  style="padding:7px"></td> 
@@ -323,6 +325,18 @@ function DisplayHistory($cur_taxon) {
 	            		<?php 
 	            			if($taxon->taxon_status_id>=2)
 	            				echo $taxon->total_ArabicObjects.'/'.$taxon->total_EnglishObjects;
+	            		?>
+	            	</td>
+	            	<td class="evenc">
+	            		<?php 
+	            			if($taxon->taxon_status_id>2)
+	            				echo BLL_taxon_concepts::All_words_count($taxon->id);
+	            		?>
+	            	</td>
+	            	<td class="evenc">
+	            		<?php 
+	            			if($taxon->taxon_status_id>2)
+	            				echo BLL_taxon_concepts::Unique_words_count($taxon->id);
 	            		?>
 	            	</td>
 	            	<td class="evenc">

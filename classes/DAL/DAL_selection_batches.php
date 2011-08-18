@@ -10,5 +10,6 @@
 		public $hierarchy_id;
 		public $pending_taxon_count;
 		public $total_taxon_count;
+		public $priority_id;
 	}
 ?>

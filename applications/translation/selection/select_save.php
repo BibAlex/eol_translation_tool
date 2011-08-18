@@ -6,6 +6,8 @@ include_once '../../../classes/BLL/BLL_hierarchies.php';
 include_once '../../../classes/DAL/DAL_hierarchies.php';
 include_once '../../../classes/BLL/BLL_taxon_concepts.php';
 include_once '../../../classes/DAL/DAL_taxon_concepts.php';
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
 
 
 validate_session('selection');
@@ -223,6 +225,22 @@ $taxon_concept_Array = $_POST['taxon_concept'];
 			            	</ul>
 			        	</td>
 		            </tr>
+		        	<tr>
+		            	<td class="table_head" style="padding-left: 20px;">Priority</td>
+		           </tr>
+		           <tr>
+		            	<td style="padding-left: 20px;">
+		            		<select name="priority_id">
+		            			<?
+		            				$priorities = BLL_priorities::load_all();
+									foreach ($priorities as $priority) {?>
+										<option value="<?=$priority->id?>" <?if ($priority->is_default!=0) echo ' selected '; ?>><?=$priority->label?></option>
+									<?}
+		            			?>		            			
+		            		</select>		            		
+		            	</td>
+		            </tr>
+		            
 		        	<tr>
 		            	<td class="table_head" style="padding-left: 20px;">Comments</td>
 		            </tr>
