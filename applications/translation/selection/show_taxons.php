@@ -11,6 +11,8 @@ include_once '../../../classes/BLL/BLL_status.php';
 include_once '../../../classes/DAL/DAL_status.php';
 include_once '../../../classes/BLL/BLL_taxon_concepts.php';
 include_once '../../../classes/DAL/DAL_taxon_concepts.php';
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
 
 validate_session('selector');
 
@@ -102,6 +104,10 @@ if (!isset($selection[0]->id)) {
 		<tr>
 			<td class="odd"><b>Selected By:</b></td>
 			<td class="even"><?=BLL_users::get_user_name($selection[0]->user_id)?></td>
+		</tr>
+		<tr>
+			<td class="odd"><b>Priority:</b></td>
+			<td class="even"><?=BLL_priorities::find_label($selection[0]->priority_id)?></td>
 		</tr>
 		<tr>
 			<td class="odd"><b>Comments:</b></td>

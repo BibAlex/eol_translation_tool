@@ -93,14 +93,13 @@
 	        $con = new PDO_Connection();
 		  	$con->Open('slave');		  	
 		  	$query = $con->connection->prepare("insert into selection_batches(criteria, comments, date_selected, user_id, hierarchy_id, priority_id) values (?, ?, NOW(), ?, ?, ?);");		  		 	
-		    echo $priority_id;
 		    $query->bindParam(1, $criteria);
 		    $query->bindParam(2, $comments);
 		    $query->bindParam(3, BLL_users::get_user_id());
 		    $query->bindParam(4, $hierarchy_id);
 			$query->bindParam(5, $priority_id);
-		  	//$query->execute();	
-		  	//$id = $con->connection->lastInsertId();					  	
+		  	$query->execute();	
+		  	$id = $con->connection->lastInsertId();					  	
 		  	$con->Close();
 		  	
 		  	$total_selected_species = 0;
