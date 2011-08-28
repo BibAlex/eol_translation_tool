@@ -14,8 +14,8 @@
 		public $linguistic_reviewer=0;
 		public $scientific_reviewer=0;
 		public $final_editor=0;
-		public $active=0;
-		
+		public $active=0; 
+		public $it_admin=0;
 		
 	}
 

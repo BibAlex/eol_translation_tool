@@ -24,14 +24,15 @@ if(isset($_POST['username']))
     } else {    	    	
     	$_SESSION['user_id'] = $user->id;
     	$_SESSION['name'] = $user->name;
-	$_SESSION['email'] = $user->email;
+		$_SESSION['email'] = $user->email;
     	$_SESSION['super_admin'] = $user->super_admin;
     	$_SESSION['selector'] = $user->selector;
     	$_SESSION['task_distributor'] = $user->task_distributor;
     	$_SESSION['translator'] = $user->translator;
     	$_SESSION['linguistic_reviewer'] = $user->linguistic_reviewer;
     	$_SESSION['scientific_reviewer'] = $user->scientific_reviewer;
-    	$_SESSION['final_editor'] = $user->final_editor;    	
+    	$_SESSION['final_editor'] = $user->final_editor;
+		$_SESSION['it_admin'] = $user->it_admin;    	
     	header('Location: home.php');
     }
 }
