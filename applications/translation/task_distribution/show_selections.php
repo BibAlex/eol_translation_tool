@@ -6,6 +6,9 @@ include_once '../../../classes/BLL/BLL_selection_batches.php';
 include_once '../../../classes/DAL/DAL_selection_batches.php';
 include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/DAL/DAL_users.php';
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
+
 validate_session('task_distribution');
 
 ?>
@@ -67,6 +70,7 @@ $selections = BLL_selection_batches::load_all($current_page, $items_per_page, 0)
 	 <tr>
 		<td class="table_head" align="center">ID</td>
 		<td class="table_head" align="center">Selection Date</td>
+		<td class="table_head" align="center">Priority</td>
 		<td class="table_head" align="center">Selected by</td>
 		<td class="table_head" align="center">Species Count</td>
 		<td class="table_head" align="center"></td>
@@ -80,14 +84,9 @@ $selections = BLL_selection_batches::load_all($current_page, $items_per_page, 0)
 		<tr>
 			<td style="text-align:center;" class="<?=$td_class?>"><?=$selection->id?></td>
 			<td style="text-align:center;" class="<?=$td_class?>"><?=date("d M Y H:i", strtotime($selection->date_selected))?></td>
-			<!-- 
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_translation_assigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_translation_unassigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_linguistic_reviewer_assigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_linguistic_reviewer_unassigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_scientific_reviewer_assigned($id)?></center></td>
-			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_scientific_reviewer_unassigned($id)?></center></td>
-			 -->
+			<td style="text-align:center;" class="<?=$td_class?>">
+				<?=BLL_priorities::find_label($selection->priority_id)?>
+			</td>
 			<td class="<?=$td_class?>"><center><?=BLL_users::get_user_name($selection->user_id)?></center></td>
 			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_species_count($id)?></center></td>
 			<td class="<?=$td_class?>"><center><a href="show_taxons.php?id=<?=$id?>">Show Species</a></center></td>

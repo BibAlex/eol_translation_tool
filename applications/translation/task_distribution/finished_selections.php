@@ -6,6 +6,9 @@ include_once '../../../classes/BLL/BLL_selection_batches.php';
 include_once '../../../classes/DAL/DAL_selection_batches.php';
 include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/DAL/DAL_users.php';
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
+
 
 validate_session('task_distribution');
 
@@ -66,6 +69,7 @@ $selections = BLL_selection_batches::load_all($current_page, $items_per_page, 1)
 	<tr>
 		<td rowspan="2" class="table_head"><center>ID</center></td>
 		<td rowspan="2" class="table_head"><center>Selection Date</center></td>
+		<td rowspan="2" class="table_head"><center>Priority</center></td>
 		<td rowspan="2" class="table_head"><center>Selected by</center></td>
 		<td rowspan="2" class="table_head"><center>Species Count</center></td>
 		<td colspan="2" class="table_head"><center>Translator</center></td>
@@ -84,6 +88,9 @@ $selections = BLL_selection_batches::load_all($current_page, $items_per_page, 1)
 		<tr>
 			<td class="<?=$td_class?>"><center><?=$selection->id?></center></td>
 			<td class="<?=$td_class?>"><center><?=date("d M Y H:i", strtotime($selection->date_selected))?></center></td>
+			<td style="text-align:center;" class="<?=$td_class?>">
+				<?=BLL_priorities::find_label($selection->priority_id)?>
+			</td>
 			<td class="<?=$td_class?>"><center><?=BLL_users::get_user_name($selection->user_id)?></center></td>
 			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_species_count($id)?></center></td>
 			<td class="<?=$td_class?>"><center><?=BLL_selection_batches::get_translation_assigned($id)?></center></td>

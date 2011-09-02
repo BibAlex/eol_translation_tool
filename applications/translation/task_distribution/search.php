@@ -10,7 +10,8 @@ include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/DAL/DAL_users.php';
 include_once '../../../classes/BLL/BLL_selection_batches.php';
 include_once '../../../classes/DAL/DAL_selection_batches.php';
-
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
 
 validate_session('task_distribution');
 
@@ -85,11 +86,12 @@ if (isset($_POST['keyword'])) {
 	 			<br/>
 	 			<table border="0" style="border-collapse:collapse; text-align:center;" cellspacing="0" cellpadding="3">	
 					<tr>
-						<td colspan="8" class="table_head"><center><?=count($taxon_concepts)?> result(s) found</center></td>
+						<td colspan="9" class="table_head"><center><?=count($taxon_concepts)?> result(s) found</center></td>
 					</tr>
 					<tr>
 						<td class="table_head"><center>ID</center></td>
 						<td class="table_head" width="300"><center>Species Name</center></td>			
+						<td class="table_head"><center>Priority</center></td>			
 						<td class="table_head"><center>Status</center></td>
 						<td class="table_head" colspan="2"><center>Translator</center></td>
 						<td class="table_head"><center>Linguistic Reviewer</center></td>
@@ -112,6 +114,9 @@ if (isset($_POST['keyword'])) {
 							<a href="<?=$eol_site_url?>/pages/<?=$taxon_concepts[$i]->id?>" target="_blank">
 								<?=$taxon_concepts[$i]->scientificName?>
 							</a>
+						</td>
+						<td class="<?=$td_class?>">
+							<?=BLL_priorities::find_label($selection->priority_id)?>
 						</td>
 						<td class="<?=$td_class?>">
 							<?=$taxon_concepts[$i]->taxon_status?>

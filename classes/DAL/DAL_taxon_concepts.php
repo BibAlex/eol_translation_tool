@@ -30,6 +30,7 @@
 		  public $total_EnglishObjects;
 		  public $total_ArabicObjects;
 		  public $selected_by;
+		  public $priority; /* Priorities -> label "virtual denormalized field "*/
 		  
 		  public function Dates($date)
 		  {

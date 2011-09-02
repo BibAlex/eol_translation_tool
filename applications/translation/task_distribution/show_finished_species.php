@@ -48,6 +48,7 @@ $taxon_concepts = BLL_taxon_concepts::get_finished_distribution($keyword, $curre
 			<tr>
 				<td class="table_head"><center>ID</center></td>
 				<td class="table_head" width="300"><center>Species Name</center></td>			
+				<td class="table_head"><center>Priority</center></td>
 				<td class="table_head"><center>Status</center></td>
 				<td class="table_head" colspan="2"><center>Translator</center></td>
 				<td class="table_head"><center>Linguistic Reviewer</center></td>
@@ -71,6 +72,9 @@ $taxon_concepts = BLL_taxon_concepts::get_finished_distribution($keyword, $curre
 							<?=$taxon_concepts[$i]->scientificName?>
 						</a>
 					</td>
+					<td class="<?=$td_class?>">
+						<?=$taxon_concepts[$i]->priority?>
+					</td>				
 					<td class="<?=$td_class?>">
 						<?=$taxon_concepts[$i]->taxon_status?>
 					</td>				

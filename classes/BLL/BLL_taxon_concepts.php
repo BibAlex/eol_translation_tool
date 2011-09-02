@@ -133,13 +133,15 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority FROM taxon_concepts
+			inner join selection_batches on selection_batches.id=selection_id
+			inner join priorities on priorities.id=priority_id
 	  	 	WHERE 
 	  	 		translator_id=:v1
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ( (:v4=2 AND taxon_status_id=2) OR (:v4=1  AND taxon_status_id>2)) 
-	  	 	ORDER BY scientificName    
+	  	 	ORDER BY sort_order desc    
 	  	 	LIMIT :v5,:v6;");
 	  
 		$myNull = null;
@@ -176,10 +178,13 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority FROM taxon_concepts
+			inner join selection_batches on selection_batches.id=selection_id
+			inner join priorities on priorities.id=priority_id	  	 	
 	  	 	WHERE 
 	  	 		taxon_status_id=2 
-	  	 	AND translator_id=:v1;");
+	  	 	AND translator_id=:v1
+	  	 	Order by sort_order desc;");
 	  
 		$myNull = null;
 	  
@@ -233,10 +238,13 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority FROM taxon_concepts
+			inner join selection_batches on selection_batches.id=selection_id
+			inner join priorities on priorities.id=priority_id
 	  	 	WHERE	  	  	  
 	  	 		(taxon_status_id>=2 and taxon_status_id <4)  
-	  	 	AND linguistic_reviewer_id=:v1;");
+	  	 	AND linguistic_reviewer_id=:v1
+	  	 	order by sort_order desc;");
 		$myNull = null;
 	  
 		$query->bindParam(':v1', $user);
@@ -252,13 +260,15 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
-	  	 	WHERE	  	  	  
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority FROM taxon_concepts
+	  	 	inner join selection_batches on selection_batches.id=selection_id
+			inner join priorities on priorities.id=priority_id	  	 	
+			WHERE	  	  	  
 	  	 		linguistic_reviewer_id=:v1
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ((:v4=2 AND taxon_status_id=3) OR (:v4=1  AND taxon_status_id>3)) 
-	  	 	;");
+	  	 	order by sort_order desc;");
 		$myNull = null;
 	  
 		$query->bindParam(':v1', $user);
@@ -327,13 +337,16 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
-	  	 	WHERE	  	  	  
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority 
+			FROM taxon_concepts
+	  	 		inner join selection_batches on selection_batches.id=selection_id
+	  	 		inner join priorities on priorities.id=priority_id
+			WHERE	  	  	  
 	  	 	    scientific_reviewer_id=:v1
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ((:v4=2 AND taxon_status_id=4) OR (:v4=1  AND taxon_status_id>4)) 
-	  	 	;");
+	  	 	order by sort_order desc;");
 		$myNull = null;
 	  
 		$query->bindParam(':v1', $user);
@@ -364,7 +377,10 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
+		$query = $con->connection->prepare("SELECT taxon_concepts.* priorities.label as priority
+			FROM taxon_concepts, 
+				inner join selection_batches.id=selection_id
+				inner join priorities on priorities.id=priority_id
 	  	 	WHERE	  	  	  
 	  	 		(taxon_status_id>=2 and taxon_status_id <5)  
 	  	 	AND scientific_reviewer_id=:v1
@@ -420,12 +436,15 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
-	  	 	WHERE	  	  	  
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority
+			FROM taxon_concepts
+	  	 		inner join selection_batches on selection_batches.id=selection_id
+	  	 		inner join priorities on priorities.id=priority_id
+			WHERE	  	  	  
 	  	 		(:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ( (:v4=2 AND taxon_status_id=5) OR (:v4=1  AND taxon_status_id>5)) 
-	  	 	;");
+	  	 	order by sort_order desc;");
 		$myNull = null;
 	  
 		//$query->bindParam(':v1', $user);
@@ -1229,10 +1248,11 @@ class BLL_taxon_concepts {
 	}	
 	
 	static function get_pending_distribution($current_page, $page_size, $sort_by) {
-		$query_str = "select taxon_concepts.*, users.name as selected_by
+		$query_str = "select taxon_concepts.*, users.name as selected_by, priorities.label as priority
 							from taxon_concepts 
 							inner join selection_batches on selection_batches.id=taxon_concepts.selection_id
 							inner join users on users.id=selection_batches.user_id
+							inner join priorities on priorities.id=priority_id
 							where taxon_status_id<=1 ";		
 		
 		if ($sort_by == 'id')
@@ -1241,8 +1261,10 @@ class BLL_taxon_concepts {
 			$query_str .= ' order by selected_by ';
 		elseif ($sort_by == 'date')
 			$query_str .= ' order by selection_date ';
-		else
+		elseif ($sort_by == 'name')
 			$query_str .= ' order by scientificName ';
+		else
+			$query_str .= ' order by sort_order ';
 		
 		$query_str .= Pagination::get_paging_limit($page_size, $current_page);
 		
@@ -1257,14 +1279,16 @@ class BLL_taxon_concepts {
 	}
 	
 	static function get_finished_distribution($keyword, $current_page, $page_size) {
-		$query_str = "select taxon_concepts.*, status.label as taxon_status
+		$query_str = "select taxon_concepts.*, status.label as taxon_status, priorities.label as priority
 							from taxon_concepts 
 							inner join status on status.id=taxon_concepts.taxon_status_id
+							inner join selection_batches on selection_batches.id=selection_id
+							inner join priorities on priorities.id=priority_id
 							where taxon_status_id>=2 ";
 		if ($keyword != '') 
 			$query_str .= " and scientificName like ? ";
 		
-		$query_str .= ' order by scientificName '; 
+		$query_str .= ' order by sort_order desc, scientificName '; 
 		
 		$query_str .= Pagination::get_paging_limit($page_size, $current_page);
 		

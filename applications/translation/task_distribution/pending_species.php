@@ -12,7 +12,7 @@ validate_session('task_distribution');
 
 $items_per_page = $GLOBALS['items_per_page'];
 
-$sort_by = '';
+$sort_by = 'priority';
 
 if (isset($_GET["sort"])) {
 	if (strtolower($_GET['sort']) == 'id')
@@ -21,6 +21,8 @@ if (isset($_GET["sort"])) {
 		$sort_by = 'date';
 	elseif (strtolower($_GET['sort']) == 'user')
 		$sort_by = 'user';
+	elseif (strtolower($_GET['sort']) == 'name')
+		$sort_by = 'name';
 }
 
 $pending_count = BLL_taxon_concepts::get_pending_distribution_count();
@@ -63,7 +65,7 @@ $taxon_concepts = BLL_taxon_concepts::get_pending_distribution($current_page, $i
 					<a href="<?=$_SERVER['PHP_SELF'].'?sort=id'?>">ID</a>
 				<?}?></center></td>
 				<td class="table_head"><center>
-				<?if ($sort_by == '') {?>
+				<?if ($sort_by == 'name') {?>
 					Species Name
 				<?} else {?>
 					<a href="<?=$_SERVER['PHP_SELF'].'?sort=name'?>">Species Name</a>
@@ -73,6 +75,12 @@ $taxon_concepts = BLL_taxon_concepts::get_pending_distribution($current_page, $i
 					Date Selected
 				<?} else {?>
 					<a href="<?=$_SERVER['PHP_SELF'].'?sort=date'?>">Date Selected</a>
+				<?}?></center></td>
+				<td class="table_head"><center>
+				<?if ($sort_by == 'priority') {?>
+					Priority
+				<?} else {?>
+					<a href="<?=$_SERVER['PHP_SELF'].'?sort=priority'?>">Priority</a>
 				<?}?></center></td>
 				<td class="table_head"><center>
 				<?if ($sort_by == 'user') {?>
@@ -101,6 +109,7 @@ $taxon_concepts = BLL_taxon_concepts::get_pending_distribution($current_page, $i
 						</a>
 					</td>				
 					<td class="<?=$td_class?>"><center><?=$taxon_concept->getSelection_date()?></center></td>
+					<td class="<?=$td_class?>"><center><?=$taxon_concept->priority?></center></td>
 					<td class="<?=$td_class?>"><center><?=$taxon_concept->selected_by?></center></td>
 					<td class="<?=$td_class?>"><center><?=BLL_taxon_concepts::get_text_count($taxon_concept->id)?></center></td>
 					<td class="<?=$td_class?>"><center><?=BLL_taxon_concepts::get_images_count($taxon_concept->id)?></center></td>

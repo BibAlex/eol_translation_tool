@@ -123,7 +123,8 @@ include_once '../../../classes/Pagination.php';
 		            <table border="0" cellpadding="10" cellspacing="0" width="100%">
 		              <tr>
 		              	<td class="oddc"  style="width:74px;padding:3px; border-top:1px solid gray;">ID</td>
-		                <td class="odd"  style="padding:3px; border-top:1px solid gray; text-align:center;">Species Name</td>		 
+		                <td class="odd"  style="padding:3px; border-top:1px solid gray; text-align:center;">Species Name</td>
+		                <td class="odd"  style="padding:3px; border-top:1px solid gray; text-align:center;">Priority</td>		 
 		                <td class="oddc"  style="padding:3px; border-top:1px solid gray;">Text</td>
 		                <td class="oddc"  style="padding:3px; border-top:1px solid gray;">Images/ Videos</td>	               
 		                <td class="oddc"  style="width:90px;padding:3px; border-top:1px solid gray;">Action</td>
@@ -137,6 +138,8 @@ include_once '../../../classes/Pagination.php';
 		                </td>
 		                <td style="padding:3px; border-bottom:1px solid gray;" class="oddc" style="text-align:left">
 		                    <input type="text" name="spname" style="width:260px"  value="<?=$spname?>" onkeypress="if(event.keyCode==13){document.frm.submit();}"/>
+		                </td>
+		                <td style="padding:3px; border-bottom:1px solid gray;" class="odd" >	&nbsp;	              		
 		                </td>
 		                <td style="padding:3px; border-bottom:1px solid gray;" class="odd" >	&nbsp;	              		
 		                </td>
@@ -187,8 +190,9 @@ include_once '../../../classes/Pagination.php';
 		                		<?=$taxon->scientificName?>
 		                	</a>
 		                </td>
-		                <td  class="evenc"><?=$CText?></td>
-		                <td  class="evenc"><?=$CMedia?></td>		                	                
+		                <td class="evenc"><?=$taxon->priority?></td>
+		                <td class="evenc"><?=$CText?></td>
+		                <td class="evenc"><?=$CMedia?></td>		                	                
 		                <td class="evenc" ><a href="../details/species.php?tid=<?=$taxon->id?><?=$potherparam?>"><?=$action?></a></td>
 		                <?php if($process==2){?>
 		                <td class="evenc"  ><?=$assigned?></td>
