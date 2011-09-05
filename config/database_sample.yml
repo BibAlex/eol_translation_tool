@@ -1,0 +1,12 @@
+production:
+  host:            localhost
+  username:        root
+  password:        
+  database:        aeol_development
+  encoding:        utf8
+  master_host:     172.16.0.23
+  master_username: root
+  master_password: 
+  master_database: eol_data_production
+  master_encoding: utf8
+  
