@@ -6,6 +6,8 @@ include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/DAL/DAL_users.php';
 include_once '../../../classes/BLL/BLL_status.php';
 include_once '../../../classes/DAL/DAL_status.php';
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
 include_once '../../../classes/BLL/BLL_selection_batches.php';
 include_once '../../../classes/DAL/DAL_selection_batches.php';
 include_once '../../../classes/BLL/BLL_taxon_concepts.php';
@@ -51,9 +53,13 @@ if(isset($_POST['final_editor'])) $final_editor = $_POST['final_editor'];
 else if(isset($_GET['final_editor'])) $final_editor = $_GET['final_editor'];
 else $final_editor=0;
 
-$total_items =  BLL_taxon_concepts::Search_Count_For_taxon_concepts($spid, $spname, $batch, $phase, $translator, $translator_type, $linguistic_reviewer, $scientific_reviewer, $final_editor);
+if(isset($_POST['priority_id'])) $priority_id = $_POST['priority_id']; 	
+else if(isset($_GET['priority_id'])) $priority_id = $_GET['priority_id'];
+else $priority_id=0;
+
+$total_items =  BLL_taxon_concepts::Search_Count_For_taxon_concepts($spid, $spname, $batch, $phase, $translator, $translator_type, $linguistic_reviewer, $scientific_reviewer, $final_editor, $priority_id);
 $current_page = Pagination::get_current_page($total_items, $items_per_page);
-$taxons = BLL_taxon_concepts::Search_For_taxon_concepts($spid, $spname, $batch, $phase, $translator, $translator_type, $linguistic_reviewer, $scientific_reviewer, $final_editor, $current_page, $items_per_page);
+$taxons = BLL_taxon_concepts::Search_For_taxon_concepts($spid, $spname, $batch, $phase, $translator, $translator_type, $linguistic_reviewer, $scientific_reviewer, $final_editor, $current_page, $items_per_page, $priority_id);
 
 function DisplayHistory($cur_taxon) {
 	$result="<ul>";
@@ -246,7 +252,26 @@ function DisplayHistory($cur_taxon) {
 					<td class="oddr"></td>
 					<td class="even2"></td>
 				</tr>
-				
+				<tr>
+					<td class="oddr">Priority:</td>
+					<td class="even2">
+						<select name="priority_id" id="priority_id"   style="width:150px">
+							<option  value="0">--All--</option>
+							<?php
+								$priorities = BLL_priorities::load_all();
+								foreach ($priorities as $priority) {
+									$selected='';
+									if($priority_id==$priority->id)
+										$selected = 'selected';
+							?>
+							<option <?php echo $selected?>  value="<?echo $priority->id?>"><?echo $priority->label?></option>
+							<?php }?>
+						</select>
+					</td>
+					<td style="width:10px"></td>
+					<td class="oddr"></td>
+					<td class="even2"></td>
+				</tr>
 			</table>
 			</div>
 			<div align="center" style="background-color:red; margin-left:200px">
@@ -277,6 +302,7 @@ function DisplayHistory($cur_taxon) {
 	            <tr>
 	                <td class="oddc"  style="padding:7px; ">Species ID</td>
 	                <td class="oddc"  style="padding:7px; text-align:left;" >Scientific Name</td>
+	                <td class="oddc"  style="padding:7px; " >Priority</td>
 	                <td class="oddc"  style="padding:7px; " >Phase</td>
 	                <td class="oddc"  style="padding:7px;">Done</td>
 	                <? if ($_SESSION['it_admin'] == 1) { ?>
@@ -318,6 +344,7 @@ function DisplayHistory($cur_taxon) {
 	            	<td class="even">
 	            		<a target="_blank" href="<?=$eol_site_url?>/pages/<?=$taxon->id?>"><?=$taxon->scientificName?></a>
 	            	</td>
+	            	<td class="evenc"><?=$taxon->priority?></td>
 	            	<td class="evenc">
 	            		<?php	            			 
 	            			echo BLL_status::Select_Status_ByID($taxon->taxon_status_id);

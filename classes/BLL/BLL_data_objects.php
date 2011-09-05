@@ -9,7 +9,15 @@ class BLL_data_objects {
 		 $con = new PDO_Connection();
 	  	 $con->Open($DB);
 	  	
-	  	 $stmt = $con->connection->prepare("INSERT INTO data_objects VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");			 
+	  	 $stmt = $con->connection->prepare("INSERT INTO data_objects 
+	  	 										(id, guid, identifier, data_type_id, mime_type_id,
+	  	 										object_title, language_id, license_id, rights_statement,
+	  	 										rights_holder, bibliographic_citation, source_url, description, 
+	  	 										description_linked, object_url, object_cache_url, thumbnail_url, 
+	  	 										thumbnail_cache_url, location, latitude, longitude, altitude, object_created_at,
+	  	 										object_modified_at, created_at, updated_at, data_rating, vetted_id,
+	  	 										visibility_id, published, curated, aeol_translation) 
+	  	 									VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");			 
 		 $stmt->bindParam(1, $dal_data_objects->id);
 		 $stmt->bindParam(2, $dal_data_objects->guid);
 		 $stmt->bindParam(3, $dal_data_objects->identifier);

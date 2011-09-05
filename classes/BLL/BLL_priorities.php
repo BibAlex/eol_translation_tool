@@ -5,7 +5,7 @@
 		static function load_all() {
 			$con = new PDO_Connection();
 		  	$con->Open('slave');		  	
-		  	$query = $con->connection->prepare("SELECT * FROM priorities order by sort_order desc;");
+		  	$query = $con->connection->prepare("SELECT * FROM priorities order by sort_order;");
 		  	$query->execute();		
 			$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_priorities');
 			$con->Close();

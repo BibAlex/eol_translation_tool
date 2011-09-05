@@ -141,7 +141,7 @@ class BLL_taxon_concepts {
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ( (:v4=2 AND taxon_status_id=2) OR (:v4=1  AND taxon_status_id>2)) 
-	  	 	ORDER BY sort_order desc    
+	  	 	ORDER BY sort_order, scientificName
 	  	 	LIMIT :v5,:v6;");
 	  
 		$myNull = null;
@@ -184,7 +184,7 @@ class BLL_taxon_concepts {
 	  	 	WHERE 
 	  	 		taxon_status_id=2 
 	  	 	AND translator_id=:v1
-	  	 	Order by sort_order desc;");
+	  	 	Order by sort_order, scientificName;");
 	  
 		$myNull = null;
 	  
@@ -244,7 +244,7 @@ class BLL_taxon_concepts {
 	  	 	WHERE	  	  	  
 	  	 		(taxon_status_id>=2 and taxon_status_id <4)  
 	  	 	AND linguistic_reviewer_id=:v1
-	  	 	order by sort_order desc;");
+	  	 	order by sort_order, scientificName;");
 		$myNull = null;
 	  
 		$query->bindParam(':v1', $user);
@@ -268,7 +268,7 @@ class BLL_taxon_concepts {
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ((:v4=2 AND taxon_status_id=3) OR (:v4=1  AND taxon_status_id>3)) 
-	  	 	order by sort_order desc;");
+	  	 	order by sort_order, scientificName;");
 		$myNull = null;
 	  
 		$query->bindParam(':v1', $user);
@@ -346,7 +346,7 @@ class BLL_taxon_concepts {
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ((:v4=2 AND taxon_status_id=4) OR (:v4=1  AND taxon_status_id>4)) 
-	  	 	order by sort_order desc;");
+	  	 	order by sort_order, scientificName;");
 		$myNull = null;
 	  
 		$query->bindParam(':v1', $user);
@@ -444,7 +444,7 @@ class BLL_taxon_concepts {
 	  	 		(:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
 	  	 	AND ( (:v4=2 AND taxon_status_id=5) OR (:v4=1  AND taxon_status_id>5)) 
-	  	 	order by sort_order desc;");
+	  	 	order by sort_order, scientificName;");
 		$myNull = null;
 	  
 		//$query->bindParam(':v1', $user);
@@ -503,12 +503,14 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* FROM taxon_concepts
-	  	 WHERE
-	  	 			taxon_status_id=2 AND translator_id=0
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority FROM taxon_concepts
+				Inner join selection_batches on selection_batches.id=selection_id
+				Inner join priorities on priority_id=priorities.id	  		
+	  		WHERE
+	  	 		taxon_status_id=2 AND translator_id=0
 	  	 		AND (:v1 IS NULL OR taxon_concepts.id=:v1) 
 	  	 		AND (:v2 IS NULL OR scientificName like :v2)
-	  	 		ORDER BY scientificName    
+	  	 		ORDER BY sort_order, scientificName    
 	  	 		LIMIT :v3,:v4;");
 
 		if(trim($speciesID)=='')
@@ -1072,7 +1074,7 @@ class BLL_taxon_concepts {
 	}
 	
 	
-	static function Search_For_taxon_concepts($speciesID,$speciesName,$selection_id,$taxon_status_id,$translator_id,$translator_assigned,$linguistic_reviewer_id,$scientific_reviewer_id,$final_editor_id, $current_page, $items_per_page)
+	static function Search_For_taxon_concepts($speciesID,$speciesName,$selection_id,$taxon_status_id,$translator_id,$translator_assigned,$linguistic_reviewer_id,$scientific_reviewer_id,$final_editor_id, $current_page, $items_per_page, $priority_id)
 	{
 		$con = new PDO_Connection();
 		$con->Open('slave');
@@ -1081,7 +1083,11 @@ class BLL_taxon_concepts {
 			, FUN_CountEnglishObjects(taxon_concepts.id)   AS total_EnglishObjects
 			, FUN_CountArabicObjects(taxon_concepts.id, taxon_status_id ) AS total_ArabicObjects	
 			, users.email
-		FROM taxon_concepts LEFT OUTER JOIN users on (taxon_concepts.translator_id=users.id)  
+			, priorities.label as priority
+		FROM taxon_concepts 
+			LEFT OUTER JOIN users on (taxon_concepts.translator_id=users.id)
+			INNER JOIN selection_batches on selection_id=selection_batches.id
+			INNER JOIN priorities on priorities.id=priority_id			  
 		WHERE	  	 	
 	  	 		(:v1 IS NULL OR taxon_concepts.id=:v1)
 	  	 	AND (:v2 IS NULL OR scientificName like :v2)
@@ -1092,7 +1098,8 @@ class BLL_taxon_concepts {
 	  	 	AND (:v7 IS NULL OR linguistic_reviewer_id=:v7)
 	  	 	AND (:v8 IS NULL OR scientific_reviewer_id=:v8)
 	  	 	AND (:v9 IS NULL OR final_editor_id=:v9)
-	  	 	ORDER BY scientificName    
+	  	 	AND (:v12 IS NULL OR priority_id=:v12)
+	  	 	ORDER BY sort_order, scientificName    
 	  	 	LIMIT :v10,:v11;");
 	  
 		$myNull = null;
@@ -1140,6 +1147,9 @@ class BLL_taxon_concepts {
 		$start = ($current_page - 1)* $items_per_page;
 		$query->bindParam(':v10', $start, PDO::PARAM_INT);
 		$query->bindParam(':v11', $items_per_page, PDO::PARAM_INT);
+		if($priority_id=='0')
+			$query->bindParam(':v12',$myNull, PDO::PARAM_NULL);
+		else $query->bindParam(':v12', $priority_id);
 		$query->execute();
 			
 		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_taxon_concepts');
@@ -1147,13 +1157,14 @@ class BLL_taxon_concepts {
 		return  $records;
 	}
 	
-	static function Search_Count_For_taxon_concepts($speciesID,$speciesName,$selection_id,$taxon_status_id,$translator_id,$translator_assigned,$linguistic_reviewer_id,$scientific_reviewer_id,$final_editor_id)
+	static function Search_Count_For_taxon_concepts($speciesID,$speciesName,$selection_id,$taxon_status_id,$translator_id,$translator_assigned,$linguistic_reviewer_id,$scientific_reviewer_id,$final_editor_id, $priority_id)
 	{	
 		$con = new PDO_Connection();
 		$con->Open('slave');
 		$query = $con->connection->prepare("SELECT 
 			COUNT(*)			
 		FROM taxon_concepts  
+		INNER JOIN selection_batches on selection_id=selection_batches.id
 		WHERE	  	 	
 	  	 		(:v1 IS NULL OR taxon_concepts.id=:v1)
 	  	 	AND (:v2 IS NULL OR scientificName like :v2)
@@ -1164,6 +1175,7 @@ class BLL_taxon_concepts {
 	  	 	AND (:v7 IS NULL OR linguistic_reviewer_id=:v7)
 	  	 	AND (:v8 IS NULL OR scientific_reviewer_id=:v8)
 	  	 	AND (:v9 IS NULL OR final_editor_id=:v9)
+	  	 	AND (:v10 IS NULL OR priority_id=:v10)
 	  	 	;");
 	  
 		$myNull = null;
@@ -1207,6 +1219,10 @@ class BLL_taxon_concepts {
 		if($final_editor_id=='0')
 			$query->bindParam(':v9',$myNull, PDO::PARAM_NULL);
 		else $query->bindParam(':v9', $final_editor_id);
+		
+		if($priority_id=='0')
+			$query->bindParam(':v10',$myNull, PDO::PARAM_NULL);
+		else $query->bindParam(':v10', $priority_id);
 				
 		$query->execute();
 		$result = $query->fetchColumn();
@@ -1288,7 +1304,7 @@ class BLL_taxon_concepts {
 		if ($keyword != '') 
 			$query_str .= " and scientificName like ? ";
 		
-		$query_str .= ' order by sort_order desc, scientificName '; 
+		$query_str .= ' order by sort_order, scientificName '; 
 		
 		$query_str .= Pagination::get_paging_limit($page_size, $current_page);
 		

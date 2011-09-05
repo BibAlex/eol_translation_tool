@@ -111,6 +111,7 @@ include_once '../../../classes/Pagination.php';
 		              <tr>
 		              	<td class="oddc"  style="padding:3px; border-top:1px solid gray;">ID</td>
 		                <td class="odd"  style="padding:3px; border-top:1px solid gray; text-align:center;">Species Name</td>
+		                <td class="oddc"  style="padding:3px; border-top:1px solid gray;">Priority</td>
 		                <td class="oddc"  style="padding:3px; border-top:1px solid gray;">Text</td>
 		                <td class="oddc"  style="padding:3px; border-top:1px solid gray;">Images/ Videos</td>		               
 		                <td class="oddc"  style="padding:3px; border-top:1px solid gray;">Action</td>		               
@@ -121,12 +122,10 @@ include_once '../../../classes/Pagination.php';
 		                 </td>
 		                <td class="even" style="padding:3px; border-bottom:1px solid gray;" >
 		                    <center><input type="text" name="spname" style="width:300px" value="<?=$spname?>" onkeypress="if(event.keyCode==13){document.frm.submit();}"/></center>
-		                 </td>	
-		                
-		                 <td class="evenc" style="padding:3px; border-bottom:1px solid gray;" >&nbsp;
 		                 </td>
-		                 <td class="evenc" style="padding:3px; border-bottom:1px solid gray;" >&nbsp;
-		                 </td>		                 	               
+		                 <td class="evenc" style="padding:3px; border-bottom:1px solid gray;" >&nbsp;</td>
+		                 <td class="evenc" style="padding:3px; border-bottom:1px solid gray;" >&nbsp;</td>
+		                 <td class="evenc" style="padding:3px; border-bottom:1px solid gray;" >&nbsp;</td>		                 	               
 		                <td class="evenc" style="padding:3px; border-bottom:1px solid gray;" >
 		                	<input type="submit"  value="Filter" name="submitBut"/>
 		                	&nbsp;<a href='poollist.php?process=<?=$process?>'>Clear</a>
@@ -142,6 +141,7 @@ include_once '../../../classes/Pagination.php';
 		              <tr>
 		                <td class="oddc"><?=$taxon->id?></td>
 		                <td class="odd"><a target="_blank" href="<?=$eol_site_url?>/pages/<?=$taxon->id?>"><?=$taxon->scientificName?></a></td>
+		                <td class="oddc"><?=$taxon->priority?></td>
 		                <td  class="oddc"><?=$CText?></td>
 		                <td  class="oddc"><?=$CMedia?></td>
 		                <td class="oddc"><a href="javascript:void(0);"  onclick="document.getElementById('pickedID').value=<?=$taxon->id?>;document.frm.submit();">Pick</a></td>
