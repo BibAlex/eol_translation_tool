@@ -43,20 +43,20 @@
           <div id='trans_r' class="right_side"></div>
         </li>
         <?}?>
-        <?
-        if ($_SESSION['linguistic_reviewer'] == 1) {?>
-        <li>
-          <div id='ling_l' class="left_side"></div>
-          <div id='ling_m' class="link_middle"><a href="../list/mylist.php?process=3">Linguistic Review</a></div>
-          <div id='ling_r' class="right_side"></div>
-        </li>
-        <?}?>
         <? 
         if ($_SESSION['scientific_reviewer'] == 1) {?>
         <li>
           <div id='scien_l' class="left_side"></div>
-          <div id='scien_m' class="link_middle"><a href="../list/mylist.php?process=4">Scientific Review</a></div>
+          <div id='scien_m' class="link_middle"><a href="../list/mylist.php?process=3">Scientific Review</a></div>
           <div id='scien_r' class="right_side"></div>
+        </li>
+        <?}?>
+        <?
+        if ($_SESSION['linguistic_reviewer'] == 1) {?>
+        <li>
+          <div id='ling_l' class="left_side"></div>
+          <div id='ling_m' class="link_middle"><a href="../list/mylist.php?process=4">Linguistic Review</a></div>
+          <div id='ling_r' class="right_side"></div>
         </li>
         <?}?>
         <?if ($_SESSION['final_editor'] == 1) {?>
