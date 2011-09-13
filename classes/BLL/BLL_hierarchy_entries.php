@@ -2,7 +2,7 @@
 class BLL_hierarchy_entries {
 
 	static function load_siblings($h_id, $parent_id) {
-		$query_str = 'select string, h1.id, h1.parent_id, (select count(*) from hierarchy_entries as h2 where h2.parent_id=h1.id) as siblings_count
+		$query_str = 'select string, h1.id, h1.parent_id, (select count(*) from hierarchy_entries as h2 where h2.parent_id=h1.id) as siblings_count, h1.taxon_concept_id
                     from hierarchy_entries h1
                     left outer join names on names.id=name_id
                     where hierarchy_id=? and parent_id=? and published=1 order by string;';
