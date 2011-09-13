@@ -36,13 +36,15 @@ CREATE TABLE `priorities` (
 --
 -- Dumping data for table `priorities`
 --
+
+TRUNCATE TABLE `priorities`;
  
 LOCK TABLES `priorities` WRITE;
 /*!40000 ALTER TABLE `priorities` DISABLE KEYS */;
 INSERT INTO `priorities` VALUES (1,'Very low',5,0),(2,'Low',4,0),(3,'Normal',3,1),(4,'High',2,0),(5,'Top',1,0);
 /*!40000 ALTER TABLE `priorities` ENABLE KEYS */;
-ALTER TABLE `selection_batches` ADD COLUMN `priority_id` INT(11) NULL DEFAULT 3;
 UNLOCK TABLES;
+ALTER TABLE `selection_batches` ADD COLUMN `priority_id` INT(11) NULL DEFAULT 3;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
  
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
