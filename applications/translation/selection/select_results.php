@@ -268,7 +268,8 @@ if ($have_text != 0) {
 
 				        <table border="0" style="border-collapse:collapse" cellspacing="0" cellpadding="3" width="100%">
 				            <tr>
-				                <td class="table_head"width="200px">Species Name</td>
+				                <td class="table_head">ID</td>
+				                <td class="table_head" width="200px">Species Name</td>
 				                <td class="table_head" width="40px"><center>Status</center></td>
 				                <td class="table_head" style="text-align:center;"><center>Text Objects</center></td>
 				                <td class="table_head"><center>Images</center></td>
@@ -282,6 +283,7 @@ if ($have_text != 0) {
 					            	if ($td_class=='odd') $td_class='even'; else $td_class='odd';	
 					            	?>
 					                <tr>
+					                	<td class="<?=$td_class?>"><?=$hierarchy_entry->taxon_concept_id?></td>
 					                    <td class="<?=$td_class?>">
 					                    	<a href="<?=$eol_site_url?>/pages/<?=$hierarchy_entry->taxon_concept_id?>" target="_blank">
 					                    		<?=$hierarchy_entry->string?>
@@ -305,7 +307,7 @@ if ($have_text != 0) {
 				            
 				            	}?>
 				            <tr>
-				            	<td class="table_head" colspan="5">
+				            	<td class="table_head" colspan="6">
 									<?echo strval($Count)." new species found";
 									if ($Count>0) {					
 									?>

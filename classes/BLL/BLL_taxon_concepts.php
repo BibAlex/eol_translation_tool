@@ -11,8 +11,8 @@ class BLL_taxon_concepts {
 		$stmt="";
 		switch ($process) {
 			case 2: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE translator_assigned=1 AND taxon_status_id=2  AND translator_id>0;";break;
-			case 3: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE taxon_status_id=3  AND linguistic_reviewer_id>0;";break;
-			case 4: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE taxon_status_id=4  AND scientific_reviewer_id>0;";break;
+			case 3: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE taxon_status_id=3  AND scientific_reviewer_id>0;";break;
+			case 4: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE taxon_status_id=4  AND linguistic_reviewer_id>0;";break;
 		}		
 		$query = $con->connection->prepare($stmt);
 		$query->execute();
@@ -28,7 +28,7 @@ class BLL_taxon_concepts {
 		$stmt="";
 		switch ($process) {
 			case 2: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE translator_assigned=0 AND taxon_status_id=2  AND translator_id>0;";break;
-			case 5: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE taxon_status_id=3  AND linguistic_reviewer_id>0;";break;			
+			case 5: $stmt = "SELECT COUNT(taxon_concepts.id) FROM taxon_concepts WHERE taxon_status_id=3  AND scientific_reviewer_id>0;";break;			
 			
 		}		
 		$query = $con->connection->prepare($stmt);
@@ -205,7 +205,7 @@ class BLL_taxon_concepts {
 	  	 		linguistic_reviewer_id=:v1
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
-	  	 	AND ((:v4=2 AND taxon_status_id=3) OR (:v4=1  AND taxon_status_id>3)) 
+	  	 	AND ((:v4=2 AND taxon_status_id=4) OR (:v4=1  AND taxon_status_id>4)) 
 	  	 	;");
 		$myNull = null;
 	  
@@ -216,7 +216,7 @@ class BLL_taxon_concepts {
 		else $query->bindParam(':v2', $speciesID);
 	  
 		if(trim($speciesName)=='')
-		$query->bindParam(':v3',$myNull, PDO::PARAM_NULL);
+			$query->bindParam(':v3',$myNull, PDO::PARAM_NULL);
 		else
 		{
 			$safeparam =  '%'.trim($speciesName).'%';
@@ -224,7 +224,7 @@ class BLL_taxon_concepts {
 		}
 
 		if($translationStatus=='0')
-		$query->bindParam(':v4',$myNull, PDO::PARAM_NULL);
+			$query->bindParam(':v4',$myNull, PDO::PARAM_NULL);
 		else $query->bindParam(':v4', $translationStatus);
 		 
 		$query->execute();
@@ -242,7 +242,7 @@ class BLL_taxon_concepts {
 			inner join selection_batches on selection_batches.id=selection_id
 			inner join priorities on priorities.id=priority_id
 	  	 	WHERE	  	  	  
-	  	 		(taxon_status_id>=2 and taxon_status_id <4)  
+	  	 		(taxon_status_id>=2 and taxon_status_id <5)  
 	  	 	AND linguistic_reviewer_id=:v1
 	  	 	order by sort_order, scientificName;");
 		$myNull = null;
@@ -267,7 +267,7 @@ class BLL_taxon_concepts {
 	  	 		linguistic_reviewer_id=:v1
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
-	  	 	AND ((:v4=2 AND taxon_status_id=3) OR (:v4=1  AND taxon_status_id>3)) 
+	  	 	AND ((:v4=2 AND taxon_status_id=4) OR (:v4=1  AND taxon_status_id>4)) 
 	  	 	order by sort_order, scientificName;");
 		$myNull = null;
 	  
@@ -304,7 +304,7 @@ class BLL_taxon_concepts {
 		  	 	 scientific_reviewer_id=:v1
 	  	 	AND (:v2 IS NULL OR taxon_concepts.id=:v2) 
 	  	 	AND (:v3 IS NULL OR scientificName like :v3)
-	  	 	AND ((:v4=2 AND taxon_status_id=4) OR (:v4=1  AND taxon_status_id>4)) 
+	  	 	AND ((:v4=2 AND taxon_status_id=3) OR (:v4=1  AND taxon_status_id>3)) 
 	  	 	;");
 		$myNull = null;
 	  
@@ -382,7 +382,7 @@ class BLL_taxon_concepts {
 				inner join selection_batches.id=selection_id
 				inner join priorities on priorities.id=priority_id
 	  	 	WHERE	  	  	  
-	  	 		(taxon_status_id>=2 and taxon_status_id <5)  
+	  	 		(taxon_status_id>=2 and taxon_status_id <4)  
 	  	 	AND scientific_reviewer_id=:v1
 	  	 	;");
 		$myNull = null;
@@ -646,16 +646,16 @@ class BLL_taxon_concepts {
 	}
 
 	static function get_taxons_list($id_list, $hierarchy_id) {		
-		$query_str = 'select distinct taxon_concepts.id, string as scientificName, 						
+		$query_str = 'select distinct he.taxon_concept_id, string as scientificName, 						
                         (select count(*) from data_objects 
-                            inner join data_objects_taxon_concepts 
-                                ON data_objects.id=data_object_id
                             inner join data_objects_table_of_contents 
 	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
                             inner join table_of_contents
                             		ON table_of_contents.id=data_objects_table_of_contents.toc_id
-                            where data_objects_taxon_concepts.taxon_concept_id=taxon_concepts.id
-                                and data_type_id=3 and published=1 and visibility_id=1
+                            inner join data_objects_hierarchy_entries dohe
+					                ON dohe.data_object_id=data_objects.id
+                           	where dohe.hierarchy_entry_id=he.id
+                                and data_type_id=3 and published=1 and visibility_id=2
                                 	and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
@@ -663,16 +663,17 @@ class BLL_taxon_concepts {
                                 		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))) 
                         as total_text_objects,
                         (select count(distinct(data_objects.id)) from data_objects
-	                        	Inner join top_images on data_object_id=data_objects.id 	                        	
-	                        	where top_images.hierarchy_entry_id=hierarchy_entries.id and published=1 and visibility_id=1) as total_image_objects,
+	                        	Inner join top_images on data_object_id=data_objects.id 	
+	                        	inner join data_objects_hierarchy_entries dohe ON dohe.data_object_id=data_objects.id                        	
+	                        	where top_images.hierarchy_entry_id=he.id and published=1 and visibility_id=2) as total_image_objects,
                         (select count(*) from data_objects 
-	                            inner join data_objects_taxon_concepts 
-	                                ON data_objects.id=data_object_id
-	                            where data_objects_taxon_concepts.taxon_concept_id=hierarchy_entries.taxon_concept_id
-	                                and (data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8) and published=1 and visibility_id=1) as total_other_objects
-                    from taxon_concepts
-                    left outer join hierarchy_entries on taxon_concepts.id=hierarchy_entries.taxon_concept_id and hierarchy_id='.strval($hierarchy_id).'                    
-                    left outer join names on names.id=name_id where taxon_concepts.id in ('.$id_list.') order by scientificName';			
+	                            inner join data_objects_hierarchy_entries dohe
+					                ON dohe.data_object_id=data_objects.id
+	                            where dohe.hierarchy_entry_id=he.id
+	                                and (data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8) and published=1 and visibility_id=2) as total_other_objects
+                    from hierarchy_entries he
+                    left outer join names on names.id=name_id 
+                    where taxon_concept_id in ('.$id_list.') and hierarchy_id='.$hierarchy_id.' order by scientificName';			
 		
 		$con = new PDO_Connection();
 		$con->Open('master');

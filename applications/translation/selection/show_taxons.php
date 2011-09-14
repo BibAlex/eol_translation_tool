@@ -139,9 +139,9 @@ if (!isset($selection[0]->id)) {
 			if ($td_class=='odd') $td_class='even'; else $td_class='odd';
 			?>			
 			<tr>
-				<td class="<?=$td_class?>"><?=$master_taxon_concepts[$i]->id?></td>
+				<td class="<?=$td_class?>"><?=$master_taxon_concepts[$i]->taxon_concept_id?></td>
 				<td class="<?=$td_class?>">
-					<a href="<?=$eol_site_url?>/pages/<?=$master_taxon_concepts[$i]->id?>" target="_blank">
+					<a href="<?=$eol_site_url?>/pages/<?=$master_taxon_concepts[$i]->taxon_concept_id?>" target="_blank">
 						<?=$master_taxon_concepts[$i]->scientificName?>
 					</a>
 				</td>				

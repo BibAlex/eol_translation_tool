@@ -191,17 +191,16 @@ function DisplayHistory($cur_taxon) {
 					    <input type="radio" name="translator_type" value="-1" <?php echo $checked?>/> Both
 					</td>
 				</tr>
-				
 				<tr>
-					<td class="oddr">Linguistic Reviewer:</td>
+					<td class="oddr">Scientific Reviewer:</td>
 					<td class="even2">
-						<select name="linguistic_reviewer" id="linguistic_reviewer"   style="width:150px">
+						<select name="scientific_reviewer" id="scientific_reviewer"   style="width:150px">
 							<option  value="0">--All--</option>
 							<?php
 								$users = BLL_users::Select_Users_ByRole(3);
 								foreach ($users as $user) {
 									$selected='';
-									if($linguistic_reviewer==$user->id)
+									if($scientific_reviewer==$user->id)
 										$selected = 'selected';
 							?>
 							<option <?php echo $selected?>  value="<?echo $user->id?>"><?echo $user->name?></option>
@@ -212,16 +211,17 @@ function DisplayHistory($cur_taxon) {
 					<td class="oddr"></td>
 					<td class="even2"></td>
 				</tr>
+				
 				<tr>
-					<td class="oddr">Scientific Reviewer:</td>
+					<td class="oddr">Linguistic Reviewer:</td>
 					<td class="even2">
-						<select name="scientific_reviewer" id="scientific_reviewer"   style="width:150px">
+						<select name="linguistic_reviewer" id="linguistic_reviewer"   style="width:150px">
 							<option  value="0">--All--</option>
 							<?php
 								$users = BLL_users::Select_Users_ByRole(4);
 								foreach ($users as $user) {
 									$selected='';
-									if($scientific_reviewer==$user->id)
+									if($linguistic_reviewer==$user->id)
 										$selected = 'selected';
 							?>
 							<option <?php echo $selected?>  value="<?echo $user->id?>"><?echo $user->name?></option>
