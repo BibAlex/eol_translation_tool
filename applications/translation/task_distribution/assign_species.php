@@ -44,10 +44,11 @@ if (!is_numeric($_GET['id']))
 	header('Location: pending_species.php');
 
 $selection_page = 0;	
-	
-if (is_numeric($_GET['selection_page']))
-	$selection_page = $_GET['selection_page'];
-
+if (isset($_GET['selection_page'])) 
+{	
+	if (is_numeric($_GET['selection_page']))
+		$selection_page = $_GET['selection_page'];
+}
 $id = intval($_GET['id']);
 
 
@@ -68,8 +69,8 @@ if ($taxon_concept->selection_id != $selection_id)
 	header('Location: pending_species.php');
 
 $old_translator_id = 0;
-$old_linguistic_reviewer_id = 0;
 $old_scientific_reviewer_id = 0;
+$old_linguistic_reviewer_id = 0;
 	
 if (isset($_POST["id"])) {
 	
@@ -99,18 +100,18 @@ if (isset($_POST["id"])) {
 												 $_SESSION['user_id']);
 				
 	
-	$taxon_concept->linguistic_reviewer_id = $_POST["linguistic_reviewer"];
-	BLL_taxon_concepts::taxon_concept_assign_log($id, 
-												 intval($_POST["linguistic_reviewer"]), 
-												 3, 
-												 $_SESSION['user_id']);	
-	
 	$taxon_concept->scientific_reviewer_id = $_POST["scientific_reviwer"];
 	BLL_taxon_concepts::taxon_concept_assign_log($id, 
 												 intval($_POST["scientific_reviwer"]), 
-												 4, 
+												 3, 
 												 $_SESSION['user_id']);	
 		
+	$taxon_concept->linguistic_reviewer_id = $_POST["linguistic_reviewer"];
+	BLL_taxon_concepts::taxon_concept_assign_log($id, 
+												 intval($_POST["linguistic_reviewer"]), 
+												 4, 
+												 $_SESSION['user_id']);	
+	
 	BLL_taxon_concepts::assign_taxon($taxon_concept->id, 
 							   $taxon_concept->translator_id,
 							   $taxon_concept->linguistic_reviewer_id,
@@ -141,19 +142,19 @@ $users = new BLL_users();
     <script type="text/javascript">
 		function validateForm(frm) {
 			<?if ($taxon_concept->taxon_status_id <4) {?>
-			if (frm.linguistic_reviewer.value == 0) {
-				alert('Missing linguistc reviewer');
-				frm.linguistic_reviewer.focus();
-				return false;
-			}
-			<?}?>
-			<?if ($taxon_concept->taxon_status_id <5) {?>
 			if (frm.scientific_reviwer.value == 0) {
 				alert('Missing scientific reviewer');
 				frm.scientific_reviwer.focus();
 				return false;
 			}
 			<?}?>
+			<?if ($taxon_concept->taxon_status_id <5) {?>
+			if (frm.linguistic_reviewer.value == 0) {
+				alert('Missing linguistc reviewer');
+				frm.linguistic_reviewer.focus();
+				return false;
+			}
+			<?}?>			
 		}
 	</script>
 </head>
@@ -192,18 +193,18 @@ $users = new BLL_users();
 				</td>
 			</tr>
 			<tr>
-				<td class="odd" width="150"><b>Linguistic Reviewer:</b> </td>
+				<td class="odd" width="150"><b>Scientific Reviewer:</b> </td>
 				<td class="even">					
-					<select name="linguistic_reviewer" id="linguistic_reviewer" <?if ($taxon_concept->taxon_status_id >=4 ) echo("disabled")?>>
-						<?=$users->get_linguistic_reviewers_options($taxon_concept->linguistic_reviewer_id)?>
+					<select name="scientific_reviwer" id="scientific_reviwer" <?if ($taxon_concept->taxon_status_id >=4 ) echo("disabled")?>>
+						<?=$users->get_scientific_reviewers_options($taxon_concept->scientific_reviewer_id)?>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<td class="odd" width="150"><b>Scientific Reviewer:</b> </td>
+				<td class="odd" width="150"><b>Linguistic Reviewer:</b> </td>
 				<td class="even">					
-					<select name="scientific_reviwer" id="scientific_reviwer" <?if ($taxon_concept->taxon_status_id >=5 ) echo("disabled")?>>
-						<?=$users->get_scientific_reviewers_options($taxon_concept->scientific_reviewer_id)?>
+					<select name="linguistic_reviewer" id="linguistic_reviewer" <?if ($taxon_concept->taxon_status_id >=5 ) echo("disabled")?>>
+						<?=$users->get_linguistic_reviewers_options($taxon_concept->linguistic_reviewer_id)?>
 					</select>
 				</td>
 			</tr>

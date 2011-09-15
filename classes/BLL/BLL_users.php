@@ -249,8 +249,8 @@
 			$query_str = '';
 			switch ($role) {
 				case 2: $query_str = 'select * from users where translator=1 ORDER BY name;'; break;
-				case 3: $query_str = 'select * from users where linguistic_reviewer=1  ORDER BY name;'; break;
-				case 4: $query_str = 'select * from users where scientific_reviewer=1  ORDER BY name;'; break;
+				case 3: $query_str = 'select * from users where scientific_reviewer=1  ORDER BY name;'; break;
+				case 4: $query_str = 'select * from users where linguistic_reviewer=1  ORDER BY name;'; break;
 				case 5: $query_str = 'select * from users where final_editor=1  ORDER BY name; '; break;
 			}
 			$con = new PDO_Connection();

@@ -127,11 +127,11 @@ $taxon_concept_Array = $_POST['taxon_concept'];
 				    		&nbsp;&nbsp;&nbsp;&nbsp;Vetted:  
 				    	</td>
 				    	<td class="even">
-				    		<?  if (strrpos($vetted_text, "0")>0)
+				    		<?  if (strrpos($vetted_text, strval($GLOBALS['vetted_unknown']))>0)
 						            echo ("Unknown &nbsp;&nbsp;&nbsp;");
-						        if (strrpos($vetted_text, "4")>0)
+						        if (strrpos($vetted_text, strval($GLOBALS['vetted_untrusted']))>0)
 						            echo ("Untrusted &nbsp;&nbsp;&nbsp;");
-						        if (strrpos($vetted_text, "5")>0)
+						        if (strrpos($vetted_text, strval($GLOBALS['vetted_trusted']))>0)
 						            echo ("trusted");?>
 				    	</td>
 				    </tr>
@@ -180,11 +180,11 @@ $taxon_concept_Array = $_POST['taxon_concept'];
 				    		&nbsp;&nbsp;&nbsp;&nbsp;Vetted:  
 				    	</td>
 				    	<td class="even">
-				    		<?  if (strrpos($vetted_images, "0")>0)
+				    		<? if (strrpos($vetted_images, strval($GLOBALS['vetted_unknown'])))
 						            echo ("Unknown &nbsp;&nbsp;&nbsp;");
-						        if (strrpos($vetted_images, "4")>0)
+						        if (strrpos($vetted_images, strval($GLOBALS['vetted_untrusted'])))
 						            echo ("Untrusted &nbsp;&nbsp;&nbsp;");
-						        if (strrpos($vetted_images, "5")>0)
+						        if (strrpos($vetted_images, strval($GLOBALS['vetted_trusted'])))
 						            echo ("trusted");?>
 				    	</td>
 				    </tr>

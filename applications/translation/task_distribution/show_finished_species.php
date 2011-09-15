@@ -50,9 +50,9 @@ $taxon_concepts = BLL_taxon_concepts::get_finished_distribution($keyword, $curre
 				<td class="table_head" width="300"><center>Species Name</center></td>			
 				<td class="table_head"><center>Priority</center></td>
 				<td class="table_head"><center>Status</center></td>
-				<td class="table_head" colspan="2"><center>Translator</center></td>
-				<td class="table_head"><center>Linguistic Reviewer</center></td>
+				<td class="table_head" colspan="2"><center>Translator</center></td>				
 				<td class="table_head"><center>Scientific Reviewer</center></td>
+				<td class="table_head"><center>Linguistic Reviewer</center></td>
 				<td class="table_head" colspan="2"></td>
 			</tr>
 			<? 
@@ -90,11 +90,11 @@ $taxon_concepts = BLL_taxon_concepts::get_finished_distribution($keyword, $curre
 						?>
 					</center></td>
 					<td class="<?=$td_class?>"><center>
-						<?=BLL_users::get_user_name($taxon_concepts[$i]->linguistic_reviewer_id)?>					
-					</center></td>
-					<td class="<?=$td_class?>"><center>
 						<?=BLL_users::get_user_name($taxon_concepts[$i]->scientific_reviewer_id)?>						
 					</center></td>		
+					<td class="<?=$td_class?>"><center>
+						<?=BLL_users::get_user_name($taxon_concepts[$i]->linguistic_reviewer_id)?>					
+					</center></td>
 					<td class="<?=$td_class?>"><center>
 						<?if ($taxon_concepts[$i]->taxon_status_id <5 && $taxon_concepts[$i]->taxon_status_id>1) { // before scientific revision?>
 							<a target="_blank" href="reassign_species.php?id=<?=$taxon_concepts[$i]->id?>&selection_id=<?=$taxon_concepts[$i]->selection_id?>">Reassign</a>

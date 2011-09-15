@@ -56,12 +56,12 @@ include_once '../../../config/constants.php';
 			       	if($taxon->translator_id!=$_SESSION['user_id'])
 			        	header('location:../users/unauthorized.php');
 			        break;
-		        case 3: //'linguistic_review' assigned
-			        if($taxon->linguistic_reviewer_id!=$_SESSION['user_id'])
+		        case 3: //'scientific_review': assigned
+			        if($taxon->scientific_reviewer_id!=$_SESSION['user_id'])
 			        	header('location:../users/unauthorized.php');
 			        break;
-		        case 4: //'scientific_review': assigned
-			        if($taxon->scientific_reviewer_id!=$_SESSION['user_id'])
+		        case 4: //'linguistic_review' assigned
+			        if($taxon->linguistic_reviewer_id!=$_SESSION['user_id'])
 			        	header('location:../users/unauthorized.php');
 			        break;
 		        case 5: //'final_edit':   From pool

@@ -116,9 +116,9 @@ validate_session('selection');
 			    <input type="radio" name="have_text" value="1" onclick="show_text(true)"/> Yes
 			    <input type="radio" name="have_text" value="0" onclick="show_text(false)"/> No
 			    <br/><br/>
-			    <b>Vetted:</b> <input type="checkbox" name="text_vetted[]" value="5" checked/> trusted
-			            <input type="checkbox" name="text_vetted[]" value="4" checked/> untrusted
-			            <input type="checkbox" name="text_vetted[]" value="0" checked/> unknown
+			    <b>Vetted:</b> <input type="checkbox" name="text_vetted[]" value="<?=$GLOBALS['vetted_trusted']?>" checked/> trusted
+			            <input type="checkbox" name="text_vetted[]" value="<?=$GLOBALS['vetted_untrusted']?>" checked/> untrusted
+			            <input type="checkbox" name="text_vetted[]" value="<?=$GLOBALS['vetted_unknown']?>" checked/> unknown
 			    <br/><br/>
 			    <b>Curated:</b> <input type="radio" name="text_curated" value="-1" checked/> All
 			             <input type="radio" name="text_curated" value="1"/> Yes
@@ -130,9 +130,9 @@ validate_session('selection');
 			    <input type="radio" name="have_images" value="1"  onclick="show_images(true)"/> Yes
 			    <input type="radio" name="have_images" value="0"  onclick="show_images(false)"/> No
 			    <br/><br/>
-			    <b>Vetted:</b> <input type="checkbox" name="images_vetted[]" value="5" checked/> trusted
-			            <input type="checkbox" name="images_vetted[]" value="4" checked/> untrusted
-			            <input type="checkbox" name="images_vetted[]" value="0" checked/> unknown
+			    <b>Vetted:</b> <input type="checkbox" name="images_vetted[]" value="<?=$GLOBALS['vetted_trusted']?>" checked/> trusted
+			            <input type="checkbox" name="images_vetted[]" value="<?=$GLOBALS['vetted_untrusted']?>" checked/> untrusted
+			            <input type="checkbox" name="images_vetted[]" value="<?=$GLOBALS['vetted_unknown']?>" checked/> unknown
 			    <br/><br/>
 			    <b>Curated:</b> <input type="radio" name="images_curated" value="-1" checked/> All
 			             <input type="radio" name="images_curated" value="1"/> Yes

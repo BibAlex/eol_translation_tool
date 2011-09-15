@@ -32,11 +32,10 @@ else
 $select_hotlists = intval($_POST['select_hotlists']);
 
 // getting vetted text checkboxes in one string
-$vetted_text='-1';
+$vetted_text=' ';
 if ($have_text != 0) { 
 	$vetted_text_Array = $_POST['text_vetted'];
-	
-	
+		
 	if (!empty($vetted_text_Array)) {
 	    for ($i=0; $i<count($vetted_text_Array); $i++) {
 	        $vetted_text .= $vetted_text_Array[$i];
@@ -46,11 +45,14 @@ if ($have_text != 0) {
 	}
 }
 
+if ($vetted_text == ' ')
+	$vetted_text = '-1';
+
 $select_sub = intval($_POST["select_sub"]);
 
 // getting vetted images checkboxes in one string
 
-$vetted_images='-1';
+$vetted_images=' ';
 if ($have_text != 0) {
 	$vetted_images_Array = $_POST['images_vetted'];
 	if (!empty($vetted_images_Array)) {
@@ -61,6 +63,9 @@ if ($have_text != 0) {
 	    }
 	}
 } 
+
+if ($vetted_images == ' ')
+	$vetted_images = '-1';
 
 ?>
 
@@ -174,11 +179,11 @@ if ($have_text != 0) {
 					    		&nbsp;&nbsp;&nbsp;&nbsp;Vetted:  
 					    	</td>
 					    	<td class="even">
-					    		<?  if (strrpos($vetted_text, "0")>0)
+					    		<? if (strrpos($vetted_text, strval($GLOBALS['vetted_unknown'])))
 							            echo ("Unknown &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_text, "4")>0)
+							        if (strrpos($vetted_text, strval($GLOBALS['vetted_untrusted'])))
 							            echo ("Untrusted &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_text, "5")>0)
+							        if (strrpos($vetted_text, strval($GLOBALS['vetted_trusted'])))
 							            echo ("trusted");?>
 					    	</td>
 					    </tr>
@@ -227,11 +232,11 @@ if ($have_text != 0) {
 					    		&nbsp;&nbsp;&nbsp;&nbsp;Vetted:  
 					    	</td>
 					    	<td class="even">
-					    		<?  if (strrpos($vetted_images, "0")>0)
+					    		<?  if (strrpos($vetted_images, strval($GLOBALS['vetted_unknown'])))
 							            echo ("Unknown &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_images, "4")>0)
+							        if (strrpos($vetted_images, strval($GLOBALS['vetted_untrusted'])))
 							            echo ("Untrusted &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_images, "5")>0)
+							        if (strrpos($vetted_images, strval($GLOBALS['vetted_trusted'])))
 							            echo ("trusted");?>
 					    	</td>
 					    </tr>
@@ -268,7 +273,8 @@ if ($have_text != 0) {
 
 				        <table border="0" style="border-collapse:collapse" cellspacing="0" cellpadding="3" width="100%">
 				            <tr>
-				                <td class="table_head"width="200px">Species Name</td>
+				                <td class="table_head">ID</td>
+				                <td class="table_head" width="200px">Species Name</td>
 				                <td class="table_head" width="40px"><center>Status</center></td>
 				                <td class="table_head" style="text-align:center;"><center>Text Objects</center></td>
 				                <td class="table_head"><center>Images</center></td>
@@ -282,6 +288,7 @@ if ($have_text != 0) {
 					            	if ($td_class=='odd') $td_class='even'; else $td_class='odd';	
 					            	?>
 					                <tr>
+					                	<td class="<?=$td_class?>"><?=$hierarchy_entry->taxon_concept_id?></td>
 					                    <td class="<?=$td_class?>">
 					                    	<a href="<?=$eol_site_url?>/pages/<?=$hierarchy_entry->taxon_concept_id?>" target="_blank">
 					                    		<?=$hierarchy_entry->string?>
@@ -305,7 +312,7 @@ if ($have_text != 0) {
 				            
 				            	}?>
 				            <tr>
-				            	<td class="table_head" colspan="5">
+				            	<td class="table_head" colspan="6">
 									<?echo strval($Count)." new species found";
 									if ($Count>0) {					
 									?>

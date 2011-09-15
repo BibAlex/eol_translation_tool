@@ -440,7 +440,7 @@
           </div>
           	<?php 
 	          //If only view and also linguistic review or final editor process so display the Finish All Button
-          	 if($process==3 || $process==5)
+          	 if($process==4 || $process==5)
           	 {
           	 ?>
 	          <div class="btn">

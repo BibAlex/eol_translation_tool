@@ -12,7 +12,7 @@
 */
 
 .tree .tree-apple {
-	background:url("bg.jpg") left top repeat;
+	/*background:url("bg.jpg") left top repeat; */
 }
 .tree .tree-apple li.open {
 	background-image:url("minus.gif");
