@@ -94,8 +94,8 @@ if (isset($_POST['keyword'])) {
 						<td class="table_head"><center>Priority</center></td>			
 						<td class="table_head"><center>Status</center></td>
 						<td class="table_head" colspan="2"><center>Translator</center></td>
-						<td class="table_head"><center>Linguistic Reviewer</center></td>
 						<td class="table_head"><center>Scientific Reviewer</center></td>
+						<td class="table_head"><center>Linguistic Reviewer</center></td>
 						<td class="table_head" colspan="2"></td>
 					</tr>
 					<? 
@@ -133,11 +133,11 @@ if (isset($_POST['keyword'])) {
 							?>
 						</center></td>
 						<td class="<?=$td_class?>"><center>
-							<?=BLL_users::get_user_name($taxon_concepts[$i]->linguistic_reviewer_id)?>					
-						</center></td>
-						<td class="<?=$td_class?>"><center>
 							<?=BLL_users::get_user_name($taxon_concepts[$i]->scientific_reviewer_id)?>						
 						</center></td>		
+						<td class="<?=$td_class?>"><center>
+							<?=BLL_users::get_user_name($taxon_concepts[$i]->linguistic_reviewer_id)?>					
+						</center></td>
 						<td class="<?=$td_class?>"><center>
 							<?if ($taxon_concepts[$i]->taxon_status_id <5 && $taxon_concepts[$i]->taxon_status_id>1) { // before scientific revision?>
 								<a target="_blank" href="reassign_species.php?id=<?=$taxon_concepts[$i]->id?>&selection_id=<?=$taxon_concepts[$i]->selection_id?>">Reassign</a>

@@ -75,18 +75,18 @@ include_once '../../../classes/DAL/DAL_status.php';
 	        <span style="font-weight:bold">Species Status:</span>
 	         <span>
 	         <?php switch ($taxon->taxon_status_id) {
-	         	case 3:	echo 'Translation done, Linguisitically review in progress';break;	         	
-	         	case 4:	echo 'Linguisitically review done, Scientific review in progress';break;
-	         	case 5:	echo 'Scientific review done, Final Editing in progress';break;
+	         	case 3:	echo 'Translation done, Scientific review in progress';break;	         	
+	         	case 4:	echo 'Scientific review done, Linguistic review in progress';break;
+	         	case 5:	echo 'Linguistic review done, Final Editing in progress';break;
 	         	case 6:	echo 'Final Edition done, Waiting to be published';break;
 	         	case 7:	echo 'Published';break;	         	
 	         	default:echo 'Translation in progress';break;/*case 2*/	         		
 	         }?></span></div>
 	        <br />
 	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Translator: </span> <span><?php echo $translatedBy?></span></div>
-	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Linguisitic Reviewer: </span><span><?php echo $lingRevBy?></span></div>
 	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Scientific Reviewer: </span><span><?php echo $ScienRevBy?></span></div><br/>
-	    
+	    		<div class="Translated_Reviewed"><span style="font-weight:bold">Linguisitic Reviewer: </span><span><?php echo $lingRevBy?></span></div>
+	        	
 	      <br/> 
         </p>
         

@@ -25,11 +25,11 @@
 	        {
 	            $criteria .= '- <i>Vetted: </i>';
 	
-	            if (strrpos($vetted_text, "0")>0)
+	            if (strrpos($vetted_text, strval($GLOBALS['vetted_unknown'])))
 	                $criteria .= 'Unknown &nbsp;&nbsp;&nbsp;';
-	            if (strrpos($vetted_text, "4")>0)
+	            if (strrpos($vetted_text, strval($GLOBALS['vetted_untrusted'])))
 	                $criteria .= 'Untrusted &nbsp;&nbsp;&nbsp;';
-	            if (strrpos($vetted_text, "5")>0)
+	            if (strrpos($vetted_text, strval($GLOBALS['vetted_trusted'])))
 	                $criteria .= 'trusted';
 	            $criteria .= '<br>';
 	            $criteria .= '<i>Curated: </i>';
@@ -63,11 +63,11 @@
 	
 	        if ($have_images != 0) {
 	            $criteria .= '- <i>Vetted: </i>';
-	            if (strrpos($vetted_images, "0")>0)
+	            if (strrpos($vetted_images, strval($GLOBALS['vetted_unknown'])))
 	                $criteria .= 'Unknown &nbsp;&nbsp;&nbsp;';
-	            if (strrpos($vetted_images, "4")>0)
+	            if (strrpos($vetted_images, strval($GLOBALS['vetted_untrusted'])))
 	                $criteria .= 'Untrusted &nbsp;&nbsp;&nbsp;';
-	            if (strrpos($vetted_images, "5")>0)
+	            if (strrpos($vetted_images, strval($GLOBALS['vetted_trusted'])))
 	                $criteria .= 'trusted';
 	            $criteria .= '<br>';
 	            $criteria .= '- <i>Curated: </i>';

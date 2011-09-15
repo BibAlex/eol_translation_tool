@@ -75,12 +75,12 @@ function DisplayHistory($cur_taxon) {
 	$result .= '<tr><td><b>Translator:</b></td><td>'.$cur_taxon->getTranslatorName()
 				.'</td><td><b>Assigned at: </b></td><td>'.BLL_taxon_concept_assign_log::Select_assignLog($cur_taxon->id,2,$cur_taxon->translator_id)
 				.'</td><td><b>Finished at: </b></td><td>'.$cur_taxon->getTranslation_date().'</td></tr>';				
-	$result .= '<tr><td><b>Linguistic reviewer:</b></td><td>'. $cur_taxon->getLinguisticReviewerName()
-				.'</td><td><b>Assigned at: </b></td><td>'.BLL_taxon_concept_assign_log::Select_assignLog($cur_taxon->id,3,$cur_taxon->linguistic_reviewer_id)
-				.'</td><td><b>Finished at:</td><td>'.$cur_taxon->getLinguisticreview_date().'</td></tr>';
 	$result .= '<tr><td><b>Scientific reviewer by:</b></td><td>'. $cur_taxon->getScientificReviewerName() 
-				.'</td><td><b>Assigned at: </b></td><td>'.BLL_taxon_concept_assign_log::Select_assignLog($cur_taxon->id,4,$cur_taxon->scientific_reviewer_id)
+				.'</td><td><b>Assigned at: </b></td><td>'.BLL_taxon_concept_assign_log::Select_assignLog($cur_taxon->id,3,$cur_taxon->scientific_reviewer_id)
 				.'</td><td><b>Finished at:</td><td>'.$cur_taxon->getScientificreview_date().'</td></tr>';				
+	$result .= '<tr><td><b>Linguistic reviewer:</b></td><td>'. $cur_taxon->getLinguisticReviewerName()
+				.'</td><td><b>Assigned at: </b></td><td>'.BLL_taxon_concept_assign_log::Select_assignLog($cur_taxon->id,4,$cur_taxon->linguistic_reviewer_id)
+				.'</td><td><b>Finished at:</td><td>'.$cur_taxon->getLinguisticreview_date().'</td></tr>';
 	$result .= '<tr><td><b>Final editor:</b></td><td>'. $cur_taxon->getFinalEditorName()
 				.'</td><td><b>Finished at:</b></td><td>'.$cur_taxon->getFinalediting_date().'</td></tr>';
 	$result .= '<tr><td><b>Published at:</b></td><td>'. $cur_taxon->getPublish_date().'</td><td/><td/></tr>';	

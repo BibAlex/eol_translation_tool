@@ -61,16 +61,19 @@ class BLL_data_objects {
 	{
 	 	 $con = new PDO_Connection();
 	  	 $con->Open($DB);
-		  	
-	  	 $str = "SELECT data_objects.* 
+
+	  	 if ($DB == 'master') {
+	  	 	// some changes for switching to V2 DB
+	  	 	$str = "SELECT distinct data_objects.* 
 	  	 					   FROM data_objects
 	  	 					   
-	                           INNER JOIN 		data_objects_taxon_concepts         ON (data_objects.id=data_objects_taxon_concepts.data_object_id)
-                               LEFT OUTER JOIN 	data_objects_table_of_contents 		ON (data_objects_table_of_contents.data_object_id = data_objects.id)
+	                           INNER JOIN data_objects_hierarchy_entries dohe ON (data_objects.id=dohe.data_object_id)
+                               INNER JOIN hierarchy_entries he ON (he.id=dohe.hierarchy_entry_id)
+	                           LEFT OUTER JOIN 	data_objects_table_of_contents 		ON (data_objects_table_of_contents.data_object_id = data_objects.id)
 							   LEFT OUTER JOIN 	table_of_contents 			  		ON (toc_id= table_of_contents.id)
 	                           
-							   WHERE data_objects_taxon_concepts.taxon_concept_id=".$_taxon_concept_id."
-	                               AND published=1 AND visibility_id=1 AND 
+							   WHERE he.taxon_concept_id=".$_taxon_concept_id."
+	                               AND data_objects.published=1 AND dohe.visibility_id=2 AND 
 	                               		(
 	                               			data_type_id=1 or data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8 
 	                               			OR
@@ -84,6 +87,32 @@ class BLL_data_objects {
 	                               				)	
                                				)
 	                               		);";
+	  	 } else {
+	  	 	$str = "SELECT data_objects.* 
+	  	 					   FROM data_objects
+	  	 					   
+	                           INNER JOIN 		data_objects_taxon_concepts         ON (data_objects.id=data_objects_taxon_concepts.data_object_id)
+                               LEFT OUTER JOIN 	data_objects_table_of_contents 		ON (data_objects_table_of_contents.data_object_id = data_objects.id)
+							   LEFT OUTER JOIN 	table_of_contents 			  		ON (toc_id= table_of_contents.id)
+	                           
+							   WHERE data_objects_taxon_concepts.taxon_concept_id=".$_taxon_concept_id."
+	                               AND published=1 AND visibility_id=2 AND 
+	                               		(
+	                               			data_type_id=1 or data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8 
+	                               			OR
+	                               			(
+	                               				data_type_id=3
+	                               				AND
+	                               				(
+		                               			toc_id IN (".$GLOBALS['TOC_included_parent_ids'].")
+		                                		 OR 
+	                                			table_of_contents.parent_id IN (".$GLOBALS['TOC_included_parent_ids'].")	                               			
+	                               				)	
+                               				)
+	                               		);";
+	  	 }
+	  	 
+	  	 
 	  	 
 	  	 
 	  	 $stmt = $con->connection->prepare($str);	 	
@@ -100,39 +129,12 @@ class BLL_data_objects {
 	 	 $con = new PDO_Connection();
 	  	 $con->Open($DB);
 		  	
-	  	 $str = "select distinct data_objects.id,
-								data_objects.guid,
-								data_objects.identifier,
-								data_objects.data_type_id,
-								data_objects.mime_type_id,
-								data_objects.object_title,
-								data_objects.language_id,
-								data_objects.license_id,
-								data_objects.rights_statement,
-								data_objects.rights_holder,
-								data_objects.bibliographic_citation,
-								data_objects.source_url,
-								data_objects.description,
-								data_objects.description_linked,
-								data_objects.object_url,
-								data_objects.object_cache_url,
-								data_objects.thumbnail_url,
-								data_objects.thumbnail_cache_url,
-								data_objects.location,
-								data_objects.latitude,
-								data_objects.longitude,
-								data_objects.altitude,
-								data_objects.object_created_at,
-								data_objects.object_modified_at,
-								data_objects.created_at,
-								data_objects.updated_at,
-								data_objects.data_rating,
-								data_objects.vetted_id,
-								data_objects.visibility_id,
-								data_objects.published,
-								data_objects.curated
-					  	  from data_objects, top_images, hierarchy_entries 
-	  	 			where hierarchy_entry_id=hierarchy_entries.id and taxon_concept_id=? and data_object_id=data_objects.id and data_objects.published=1 AND data_objects.visibility_id=1;";
+	  	 $str = "select distinct do.*
+					  	  from data_objects do
+					  	  Inner join top_images ti on ti.data_object_id=do.id
+					  	  Inner join hierarchy_entries he on he.id=ti.hierarchy_entry_id
+					  	  Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=do.id					  	  
+	  	 			where taxon_concept_id=? and do.published=1 AND dohe.visibility_id=2;";
 	  	 
 	  	$stmt = $con->connection->prepare($str);
 	    $stmt->bindParam(1, $taxon_concept_id);	    

@@ -32,11 +32,10 @@ else
 $select_hotlists = intval($_POST['select_hotlists']);
 
 // getting vetted text checkboxes in one string
-$vetted_text='-1';
+$vetted_text=' ';
 if ($have_text != 0) { 
 	$vetted_text_Array = $_POST['text_vetted'];
-	
-	
+		
 	if (!empty($vetted_text_Array)) {
 	    for ($i=0; $i<count($vetted_text_Array); $i++) {
 	        $vetted_text .= $vetted_text_Array[$i];
@@ -46,11 +45,14 @@ if ($have_text != 0) {
 	}
 }
 
+if ($vetted_text == ' ')
+	$vetted_text = '-1';
+
 $select_sub = intval($_POST["select_sub"]);
 
 // getting vetted images checkboxes in one string
 
-$vetted_images='-1';
+$vetted_images=' ';
 if ($have_text != 0) {
 	$vetted_images_Array = $_POST['images_vetted'];
 	if (!empty($vetted_images_Array)) {
@@ -61,6 +63,9 @@ if ($have_text != 0) {
 	    }
 	}
 } 
+
+if ($vetted_images == ' ')
+	$vetted_images = '-1';
 
 ?>
 
@@ -174,11 +179,11 @@ if ($have_text != 0) {
 					    		&nbsp;&nbsp;&nbsp;&nbsp;Vetted:  
 					    	</td>
 					    	<td class="even">
-					    		<?  if (strrpos($vetted_text, "0")>0)
+					    		<? if (strrpos($vetted_text, strval($GLOBALS['vetted_unknown'])))
 							            echo ("Unknown &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_text, "4")>0)
+							        if (strrpos($vetted_text, strval($GLOBALS['vetted_untrusted'])))
 							            echo ("Untrusted &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_text, "5")>0)
+							        if (strrpos($vetted_text, strval($GLOBALS['vetted_trusted'])))
 							            echo ("trusted");?>
 					    	</td>
 					    </tr>
@@ -227,11 +232,11 @@ if ($have_text != 0) {
 					    		&nbsp;&nbsp;&nbsp;&nbsp;Vetted:  
 					    	</td>
 					    	<td class="even">
-					    		<?  if (strrpos($vetted_images, "0")>0)
+					    		<?  if (strrpos($vetted_images, strval($GLOBALS['vetted_unknown'])))
 							            echo ("Unknown &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_images, "4")>0)
+							        if (strrpos($vetted_images, strval($GLOBALS['vetted_untrusted'])))
 							            echo ("Untrusted &nbsp;&nbsp;&nbsp;");
-							        if (strrpos($vetted_images, "5")>0)
+							        if (strrpos($vetted_images, strval($GLOBALS['vetted_trusted'])))
 							            echo ("trusted");?>
 					    	</td>
 					    </tr>

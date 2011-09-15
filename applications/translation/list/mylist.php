@@ -39,17 +39,17 @@ include_once '../../../classes/Pagination.php';
     		$current_page = Pagination::get_current_page($total_items, $items_per_page);
     		$taxons = BLL_taxon_concepts::Select_taxon_concepts_ForTranslation_ByTranslator('slave',$userID,$spid,$spname,$trstatus,$current_page,$items_per_page);  
     		break;
-	    case 3://pending 
-    		validate_session('linguistic_review');
-    		$total_items =  BLL_taxon_concepts::Count_taxon_concepts_ForLingReview_ByUser('slave',$userID,$spid,$spname,$trstatus);
-    		$current_page = Pagination::get_current_page($total_items, $items_per_page);
-    		$taxons = BLL_taxon_concepts::Select_taxon_concepts_ForLingReview_ByUser('slave',$userID,$spid,$spname,$trstatus,$current_page,$items_per_page);  
-    		break;
-	    case 4:  
+	    case 3:	    	
     		validate_session('scientific_review');
     		$total_items =  BLL_taxon_concepts::Count_taxon_concepts_ForScienReview_ByUser('slave',$userID,$spid,$spname,$trstatus);
     		$current_page = Pagination::get_current_page($total_items, $items_per_page);
     		$taxons = BLL_taxon_concepts::Select_taxon_concepts_ForScienReview_ByUser('slave',$userID,$spid,$spname,$trstatus,$current_page,$items_per_page);  
+    		break;	    	
+	    case 4:  
+    		validate_session('linguistic_review');
+    		$total_items =  BLL_taxon_concepts::Count_taxon_concepts_ForLingReview_ByUser('slave',$userID,$spid,$spname,$trstatus);
+    		$current_page = Pagination::get_current_page($total_items, $items_per_page);
+    		$taxons = BLL_taxon_concepts::Select_taxon_concepts_ForLingReview_ByUser('slave',$userID,$spid,$spname,$trstatus,$current_page,$items_per_page);  
     		break;
 	    case 5:  
     		validate_session('final_edit');
@@ -219,8 +219,8 @@ include_once '../../../classes/Pagination.php';
      	 <script type="text/javascript">
      	 	<?php switch ($process) {
      	 		case 2:	echo "ActiveLink('trans');";break;
-     	 		case 3:	echo "ActiveLink('ling');";break;
-     	 		case 4:	echo "ActiveLink('scien');";break;
+     	 		case 3:	echo "ActiveLink('scien');";break;
+     	 		case 4:	echo "ActiveLink('ling');";break;
      	 		case 5:	echo "ActiveLink('final');";break;
      	 	}?>			
 		 </script>  

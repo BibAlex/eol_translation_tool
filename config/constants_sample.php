@@ -11,6 +11,9 @@ $items_per_page=20;
 $eol_site_url = 'http://www.eol.org';
 $eol_site_content = 'http://content1.eol.bibalex.org/content/';
 $TOC_included_parent_ids='1, 3, 4, 5, 6, 8, 256, 303, 315, 326, 346';
+$data_types_media = '2, 4, 7, 8';
+$data_types_text='3';
+$data_types_images = '1';
 $From_Mail='user@mail.com';
 $External_Mail_Server='mail_server_address';
 $Internal_Mail_Server='internal_mail_address';
@@ -20,6 +23,10 @@ $arabic_language_id=22;
 $to_language_abbreviation = 'ar';
 $accepted_name_status_id = 2;
 $rejected_name_status_id = 3;
+$visibility_visible = '2';
+$vetted_trusted = '4';
+$vetted_untrusted = '2';
+$vetted_unknown = '1';
 ?>
 
 

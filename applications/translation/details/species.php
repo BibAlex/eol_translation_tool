@@ -54,8 +54,8 @@ include_once '../../../classes/SendMail.php';
 	//Check privilege of the page in terms of user privileges
 	switch ($process) {
 	    case 2:  validate_session('translation');  break;
-	    case 3:  validate_session('linguistic_review');  break;
-	    case 4:  validate_session('scientific_review');  break;
+	    case 3:  validate_session('scientific_review');  break;
+	    case 4:  validate_session('linguistic_review');  break;
 	    case 5:  validate_session('final_edit');  break;
 	}
 	
@@ -150,9 +150,9 @@ include_once '../../../classes/SendMail.php';
 	        <span style="font-weight:bold">Species Status:</span>
 	         <span>
 	         <?php switch ($taxon->taxon_status_id) {
-	         	case 3:	echo 'Translation done, Linguisitically review in progress';break;	         	
-	         	case 4:	echo 'Linguisitically review done, Scientific review in progress';break;
-	         	case 5:	echo 'Scientific review done, Final Editing in progress';break;
+	         	case 3:	echo 'Translation done, Scientific review in progress';break;	         	
+	         	case 4:	echo 'Scientific review done, Lingusitic review in progress';break;
+	         	case 5:	echo 'Lingusitic review done, Final Editing in progress';break;
 	         	case 6:	echo 'Final Edition done, Waiting to be published';break;
 	         	case 7:	echo 'Published';break;	         	
 	         	default:echo 'Translation in progress';break;/*case 2*/	         		
@@ -161,9 +161,9 @@ include_once '../../../classes/SendMail.php';
 	        <?php if($process>=2){?>
 	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Translator: </span> <span><?php echo $translatedBy?></span></div>
 	        <?php } if($process>=3){?>
-	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Linguisitic Reviewer: </span><span><?php echo $lingRevBy?></span></div>
+	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Scientific Reviewer: </span><span><?php echo $ScienRevBy?></span></div>
 	        <?php } if($process>=4){?>
-	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Scientific Reviewer: </span><span><?php echo $ScienRevBy?></span></div><br/>
+	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Lingusitic Reviewer: </span><span><?php echo $lingRevBy?></span></div><br/>
 	        <?php }?>
 	      <br/> 
         </p>
@@ -267,8 +267,8 @@ include_once '../../../classes/SendMail.php';
      	<script type="text/javascript">
      	 	<?php switch ($process) {
      	 		case 2:	echo "ActiveLink('trans');";break;
-     	 		case 3:	echo "ActiveLink('ling');";break;
-     	 		case 4:	echo "ActiveLink('scien');";break;
+     	 		case 3:	echo "ActiveLink('scien');";break;
+     	 		case 4:	echo "ActiveLink('ling');";break;
      	 		case 5:	echo "ActiveLink('final');";break;
      	 	}?>			
 

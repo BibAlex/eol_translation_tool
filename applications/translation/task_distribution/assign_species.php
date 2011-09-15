@@ -44,10 +44,11 @@ if (!is_numeric($_GET['id']))
 	header('Location: pending_species.php');
 
 $selection_page = 0;	
-	
-if (is_numeric($_GET['selection_page']))
-	$selection_page = $_GET['selection_page'];
-
+if (isset($_GET['selection_page'])) 
+{	
+	if (is_numeric($_GET['selection_page']))
+		$selection_page = $_GET['selection_page'];
+}
 $id = intval($_GET['id']);
 
 

@@ -23,8 +23,8 @@
 		  public $selection_date;
 		  public $taskdistribution_date;/*date of finishing the task distribution*/
 		  public $translation_date;/*date of finishing translation of all data objectes*/
-		  public $linguisticreview_date;/*date of finishing linguistic review*/
 		  public $scientificreview_date;/*date of finishing scientific review*/
+		  public $linguisticreview_date;/*date of finishing linguistic review*/
 		  public $finalediting_date;/*date of finishing final editing*/
 		  public $publish_date;/*date of publishing*/
 		  public $total_EnglishObjects;
