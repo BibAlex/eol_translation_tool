@@ -655,7 +655,7 @@ class BLL_taxon_concepts {
                             inner join data_objects_hierarchy_entries dohe
 					                ON dohe.data_object_id=data_objects.id
                            	where dohe.hierarchy_entry_id=he.id
-                                and data_type_id=3 and published=1 and visibility_id=2
+                                and data_type_id='.$GLOBALS['data_types_images'].' and published=1 and visibility_id='.$GLOBALS['visibility_visible'].'
                                 	and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
@@ -665,12 +665,12 @@ class BLL_taxon_concepts {
                         (select count(distinct(data_objects.id)) from data_objects
 	                        	Inner join top_images on data_object_id=data_objects.id 	
 	                        	inner join data_objects_hierarchy_entries dohe ON dohe.data_object_id=data_objects.id                        	
-	                        	where top_images.hierarchy_entry_id=he.id and published=1 and visibility_id=2) as total_image_objects,
+	                        	where top_images.hierarchy_entry_id=he.id and published=1 and visibility_id='.$GLOBALS['visibility_visible'].') as total_image_objects,
                         (select count(*) from data_objects 
 	                            inner join data_objects_hierarchy_entries dohe
 					                ON dohe.data_object_id=data_objects.id
 	                            where dohe.hierarchy_entry_id=he.id
-	                                and (data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8) and published=1 and visibility_id=2) as total_other_objects
+	                                and (data_type_id in ('.$GLOBALS['data_types_media'].')) and published=1 and visibility_id='.$GLOBALS['visibility_visible'].') as total_other_objects
                     from hierarchy_entries he
                     left outer join names on names.id=name_id 
                     where taxon_concept_id in ('.$id_list.') and hierarchy_id='.$hierarchy_id.' order by scientificName';			
@@ -1333,12 +1333,15 @@ class BLL_taxon_concepts {
                             	inner join table_of_contents
                             		ON table_of_contents.id=data_objects_table_of_contents.toc_id
 	                            where taxon_concept_id='.$id.'
-	                                and data_type_id=3 and data_objects.published=1 and dohe.visibility_id=2
+	                                and language_id='.$GLOBALS['language_en'].'
+	                            	and data_type_id='.$GLOBALS['data_types_text'].' and data_objects.published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
 	                                and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
 	                                		 or 
                                 		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))';
+		
+		//echo($query_str);
 		$con = new PDO_Connection();
 		$con->Open('master');
 		$query = $con->connection->prepare($query_str);
@@ -1355,8 +1358,33 @@ class BLL_taxon_concepts {
 	                        	Inner join top_images on data_object_id=data_objects.id
 	                        	Inner join hierarchy_entries he on he.id=top_images.hierarchy_entry_id and taxon_concept_id=$id                       	
                         		Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=data_objects.id
-	                        where data_objects.published=1 and dohe.visibility_id=2";
+	                        where data_objects.published=1 
+	                        	and language_id=".$GLOBALS['language_en']."
+	                            and dohe.visibility_id=".$GLOBALS['visibility_visible'];
 				
+		$con = new PDO_Connection();
+		$con->Open('master');
+		$query = $con->connection->prepare($query_str);
+				
+		$query->execute();
+		$result = $query->fetchColumn();
+		$con->Close();
+		
+		return $result;	
+	}
+	
+	static function get_av_count($id) {
+		$query_str = 'select count(distinct data_objects.id) from data_objects 
+	                            inner join data_objects_hierarchy_entries dohe
+	                            	ON dohe.data_object_id=data_objects.id
+	                            inner join hierarchy_entries he
+	                            	ON he.id=dohe.hierarchy_entry_id
+								where taxon_concept_id='.$id.'
+	                                and language_id='.$GLOBALS['language_en'].'
+	                            	and data_type_id in ('.$GLOBALS['data_types_media'].') 
+	                            	and data_objects.published=1 
+	                            	and dohe.visibility_id='.$GLOBALS['visibility_visible'].';';
+		
 		$con = new PDO_Connection();
 		$con->Open('master');
 		$query = $con->connection->prepare($query_str);

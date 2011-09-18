@@ -90,6 +90,7 @@ $taxon_concepts = BLL_taxon_concepts::get_pending_distribution($current_page, $i
 				<?}?></center></td>
 				<td class="table_head"><center>Text</center></td>
 				<td class="table_head"><center>Images</center></td>			
+				<td class="table_head"><center>Audio/Video</center></td>			
 				<td class="table_head"><center>Assign</center></td>
 			</tr>
 			<? 
@@ -113,6 +114,7 @@ $taxon_concepts = BLL_taxon_concepts::get_pending_distribution($current_page, $i
 					<td class="<?=$td_class?>"><center><?=$taxon_concept->selected_by?></center></td>
 					<td class="<?=$td_class?>"><center><?=BLL_taxon_concepts::get_text_count($taxon_concept->id)?></center></td>
 					<td class="<?=$td_class?>"><center><?=BLL_taxon_concepts::get_images_count($taxon_concept->id)?></center></td>
+					<td class="<?=$td_class?>"><center><?=BLL_taxon_concepts::get_av_count($taxon_concept->id)?></center></td>
 					<td class="<?=$td_class?>"><center><a href="assign_species.php?id=<?=$taxon_concept->id?>&selection_id=<?=$taxon_concept->selection_id?>&page=<?=$current_page?>">Assign</a></center></td>
 								
 				</tr>

@@ -73,12 +73,14 @@ class BLL_data_objects {
 							   LEFT OUTER JOIN 	table_of_contents 			  		ON (toc_id= table_of_contents.id)
 	                           
 							   WHERE he.taxon_concept_id=".$_taxon_concept_id."
-	                               AND data_objects.published=1 AND dohe.visibility_id=2 AND 
+	                               AND language_id=".$GLOBALS['language_en']."
+	                               AND data_objects.published=1 AND dohe.visibility_id=".$GLOBALS['visibility_visible']." AND 
 	                               		(
-	                               			data_type_id=1 or data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8 
+	                               			data_type_id=".$GLOBALS['data_types_images']." 
+	                               			OR data_type_id in (".$GLOBALS['data_types_media'].")
 	                               			OR
 	                               			(
-	                               				data_type_id=3
+	                               				data_type_id=".$GLOBALS['data_types_text']."
 	                               				AND
 	                               				(
 		                               			toc_id IN (".$GLOBALS['TOC_included_parent_ids'].")
@@ -96,12 +98,13 @@ class BLL_data_objects {
 							   LEFT OUTER JOIN 	table_of_contents 			  		ON (toc_id= table_of_contents.id)
 	                           
 							   WHERE data_objects_taxon_concepts.taxon_concept_id=".$_taxon_concept_id."
-	                               AND published=1 AND visibility_id=2 AND 
+	                               AND published=1 AND visibility_id=".$GLOBALS['visibility_visible']." AND 
 	                               		(
-	                               			data_type_id=1 or data_type_id=2 or data_type_id=4 or data_type_id=7 or data_type_id=8 
+	                               			data_type_id=".$GLOBALS['data_types_images']." 
+	                               			OR data_type_id in (".$GLOBALS['data_types_media'].")
 	                               			OR
 	                               			(
-	                               				data_type_id=3
+	                               				data_type_id=".$GLOBALS['data_types_text']."
 	                               				AND
 	                               				(
 		                               			toc_id IN (".$GLOBALS['TOC_included_parent_ids'].")
@@ -128,14 +131,25 @@ class BLL_data_objects {
 	{
 	 	 $con = new PDO_Connection();
 	  	 $con->Open($DB);
-		  	
-	  	 $str = "select distinct do.*
+	  	 if ($DB == 'master') {
+	  	 	$str = "select distinct do.*
 					  	  from data_objects do
 					  	  Inner join top_images ti on ti.data_object_id=do.id
 					  	  Inner join hierarchy_entries he on he.id=ti.hierarchy_entry_id
 					  	  Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=do.id					  	  
-	  	 			where taxon_concept_id=? and do.published=1 AND dohe.visibility_id=2;";
-	  	 
+	  	 			where taxon_concept_id=? 
+	  	 				and language_id=".$GLOBALS['language_en']."
+	  	 				and do.published=1 AND dohe.visibility_id=".$GLOBALS['visibility_visible'].";";
+	  	} else {
+	  		$str = "select distinct do.*
+					  	  from data_objects do
+					  	  Inner join top_images ti on ti.data_object_id=do.id
+					  	  Inner join hierarchy_entries he on he.id=ti.hierarchy_entry_id
+					  	  Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=do.id					  	  
+	  	 			where taxon_concept_id=? 
+	  	 				and do.published=1 AND dohe.visibility_id=".$GLOBALS['visibility_visible'].";";
+	  	} 	
+	  	  
 	  	$stmt = $con->connection->prepare($str);
 	    $stmt->bindParam(1, $taxon_concept_id);	    
 		$stmt->execute();		
@@ -156,7 +170,7 @@ class BLL_data_objects {
 	                           INNER JOIN data_types 
 	                           		ON (data_types.id = data_objects.data_type_id)
 	                           WHERE  data_objects_taxon_concepts.taxon_concept_id=?
-	                               AND data_types.type=? AND data_objects.published=1 AND data_objects.visibility_id=1;");
+	                               AND data_types.type=? AND data_objects.published=1 AND data_objects.visibility_id=".$GLOBALS['visibility_visible'].";");
 	 	
 	    $stmt->bindParam(1, $taxon_concept_id);
 	    $stmt->bindParam(2, $type);//type is 'image','text','video'
@@ -230,7 +244,7 @@ class BLL_data_objects {
 	{
 		$con = new PDO_Connection();
 	  	$con->Open($DB);		  	
-	  	$query = $con->connection->prepare("SELECT id FROM data_objects WHERE data_type_id=3  AND id>=? ORDER BY id");
+	  	$query = $con->connection->prepare("SELECT id FROM data_objects WHERE data_type_id=".$GLOBALS['data_types_text']."  AND id>=? ORDER BY id");
 	  	$query->bindParam(1, $startID);
 	  	$query->execute();
 	  	$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		

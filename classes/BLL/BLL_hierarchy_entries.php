@@ -67,6 +67,7 @@ class BLL_hierarchy_entries {
                             	inner join data_objects_hierarchy_entries dohe
                             		ON dohe.data_object_id=data_objects.id
 	                            where dohe.hierarchy_entry_id=he.id
+	                            	and language_id='.$GLOBALS['language_en'].'
 	                            	and data_type_id='.$GLOBALS['data_types_text'].' and data_objects.published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
 	                                and 
 	                                	(
@@ -77,12 +78,15 @@ class BLL_hierarchy_entries {
 	                        	Inner join top_images on data_object_id=data_objects.id 	                        	
 	                        	inner join data_objects_hierarchy_entries dohe
                             		ON dohe.data_object_id=data_objects.id
-	                            where top_images.hierarchy_entry_id=he.id and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') as total_image_objects,
+	                            where top_images.hierarchy_entry_id=he.id 
+	                            	and language_id='.$GLOBALS['language_en'].'
+	                            	and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') as total_image_objects,
                         	(select count(*) from data_objects 
 	                            inner join data_objects_hierarchy_entries dohe
                             		ON dohe.data_object_id=data_objects.id
 	                            where dohe.hierarchy_entry_id=he.id
-	                                and (data_type_id in ('.$GLOBALS['data_types_media'].')) and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') as total_other_objects
+	                                and language_id='.$GLOBALS['language_en'].'
+	                            	and (data_type_id in ('.$GLOBALS['data_types_media'].')) and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') as total_other_objects
 	                    from hierarchy_entries he';
 
 		$query_str .= ' left outer join names on names.id=name_id ';
@@ -107,7 +111,8 @@ class BLL_hierarchy_entries {
                             		ON dohe.data_object_id=data_objects.id
 	                            where dohe.hierarchy_entry_id=he.id
 	                                and data_type_id='.$GLOBALS['data_types_text'].' and data_objects.published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
-	                                and 
+	                                and language_id='.$GLOBALS['language_en'].'
+	                            	and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
 	                                		 or 
@@ -122,7 +127,8 @@ class BLL_hierarchy_entries {
                             		ON dohe.data_object_id=data_objects.id
 	                            where dohe.hierarchy_entry_id=he.id
 	                                and data_type_id='.$GLOBALS['data_types_text'].' and data_objects.published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
-	                                and 
+	                                and language_id='.$GLOBALS['language_en'].'
+	                            	and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
 	                                		 or 
@@ -138,7 +144,8 @@ class BLL_hierarchy_entries {
 				                            		ON dohe.data_object_id=data_objects.id
 					                            where dohe.hierarchy_entry_id=he.id
 					                                and data_type_id='.$GLOBALS['data_types_text'].' and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
-                                                	and dohe.hierarchy_entry_id=he.id
+                                                	and language_id='.$GLOBALS['language_en'].'
+	                            					and dohe.hierarchy_entry_id=he.id
                                                 	and 
 				                                	(
 				                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
@@ -161,20 +168,26 @@ class BLL_hierarchy_entries {
 	                        	Inner join top_images on data_object_id=data_objects.id 	                        	
 	                        	inner join data_objects_hierarchy_entries dohe
                             		ON dohe.data_object_id=data_objects.id
-	                            where top_images.hierarchy_entry_id=he.id and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') ';
+	                            where top_images.hierarchy_entry_id=he.id 
+	                            	and language_id='.$GLOBALS['language_en'].'
+	                            	and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') ';
 		if ($have_images == 1)
 		$query_str .= ' and exists (select * from data_objects
 	                        	Inner join top_images on data_object_id=data_objects.id 	                        	
 	                        	inner join data_objects_hierarchy_entries dohe
                             		ON dohe.data_object_id=data_objects.id
-	                            where top_images.hierarchy_entry_id=he.id and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') ';
+	                            where top_images.hierarchy_entry_id=he.id 
+	                            	and language_id='.$GLOBALS['language_en'].'
+	                            	and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') ';
 		if ($have_images != 0) {
 			if ($images_curated > -1 || count($vetted_images_array) != 3) {
 				$query_str .= ' and exists (select data_objects.* from data_objects
 	                        						Inner join top_images on data_object_id=data_objects.id 	                        	
 	                        						inner join data_objects_hierarchy_entries dohe
 					                            		ON dohe.data_object_id=data_objects.id
-						                            where top_images.hierarchy_entry_id=he.id and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].' ';
+						                            where top_images.hierarchy_entry_id=he.id 
+						                            	and language_id='.$GLOBALS['language_en'].'
+	                            						and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].' ';
 				if ($images_curated > -1)
 					$query_str .= ' and curated='.strval($images_curated);
 				if (count($vetted_images_array) != 3) {
