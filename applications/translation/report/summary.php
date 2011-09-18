@@ -83,7 +83,7 @@ function DisplayHistory($cur_taxon) {
 				.'</td><td><b>Finished at:</td><td>'.$cur_taxon->getLinguisticreview_date().'</td></tr>';
 	$result .= '<tr><td><b>Final editor:</b></td><td>'. $cur_taxon->getFinalEditorName()
 				.'</td><td><b>Finished at:</b></td><td>'.$cur_taxon->getFinalediting_date().'</td></tr>';
-	$result .= '<tr><td><b>Published at:</b></td><td>'. $cur_taxon->getPublish_date().'</td><td/><td/></tr>';	
+	//$result .= '<tr><td><b>Published at:</b></td><td>'. $cur_taxon->getPublish_date().'</td><td/><td/></tr>';	
 	return $result.'</table></ul>'; 
 }
 

@@ -27,6 +27,7 @@ $visibility_visible = '2';
 $vetted_trusted = '4';
 $vetted_untrusted = '2';
 $vetted_unknown = '1';
+$language_en = '1';
 ?>
 
 
