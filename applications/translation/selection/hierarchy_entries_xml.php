@@ -33,7 +33,7 @@ foreach ($hierarchy_entries as $hierarchy_entry)
     else
         echo "\t\tstate: 'leaf',\n";
     
-    echo "\t\tdata: '".$hierarchy_entry->string."',\n";
+    echo "\t\tdata: '".str_replace("\n", " ", str_replace("'", "\'", $hierarchy_entry->string))."',\n";
     echo "\t\ttaxon_concept_id: '".$hierarchy_entry->taxon_concept_id."'\n";
     echo "\t}\n";
     $i += 1;
