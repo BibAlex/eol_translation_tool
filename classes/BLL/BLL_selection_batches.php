@@ -283,7 +283,7 @@
 		}
 		
 		static function get_selected_taxons($selection_id) {			
-			$query_str = 'select * from taxon_concepts where selection_id=?;';
+			$query_str = 'select * from taxon_concepts where selection_id=? order by scientificName;';
 			
 			$con = new PDO_Connection();
 	  	 	$con->Open('slave');		  	
