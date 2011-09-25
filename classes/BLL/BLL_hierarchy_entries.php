@@ -64,29 +64,38 @@ class BLL_hierarchy_entries {
 	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
                             	inner join table_of_contents
                             		ON table_of_contents.id=data_objects_table_of_contents.toc_id
+                            	inner join data_objects_taxon_concepts dotc
+                            		ON dotc.data_object_id=data_objects.id
                             	inner join data_objects_hierarchy_entries dohe
-                            		ON dohe.data_object_id=data_objects.id
-	                            where dohe.hierarchy_entry_id=he.id
+                            		On dohe.data_object_id=data_objects.id
+	                            where dotc.taxon_concept_id=he.taxon_concept_id
+	                            	and dohe.visibility_id<>'.$GLOBALS['visibility_invisible'].'
 	                            	and language_id='.$GLOBALS['language_en'].'
-	                            	and data_type_id='.$GLOBALS['data_types_text'].' and data_objects.published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
-	                                and 
+	                            	and data_type_id='.$GLOBALS['data_types_text'].' 
+	                            	and data_objects.published=1 
+	                            	and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
 	                                		 or 
                                 		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))) as total_text_objects,
 	                        (select count(distinct(data_objects.id)) from data_objects
-	                        	Inner join top_images on data_object_id=data_objects.id 	                        	
-	                        	inner join data_objects_hierarchy_entries dohe
-                            		ON dohe.data_object_id=data_objects.id
-	                            where top_images.hierarchy_entry_id=he.id 
+	                        	Inner join top_concept_images tc on tc.data_object_id=data_objects.id
+	                        	Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=data_objects.id	                        	
+	                            where language_id='.$GLOBALS['language_en'].'
+	                            	and published=1 
+	                            	and tc.taxon_concept_id=he.taxon_concept_id
+									and dohe.visibility_id<>'.$GLOBALS['visibility_invisible'].') as total_image_objects,
+                        	(select count(distinct data_objects.id) from data_objects 
+	                            inner join data_objects_taxon_concepts dotc
+                            		ON dotc.data_object_id=data_objects.id
+                            	inner join data_objects_hierarchy_entries dohe
+                            		On dohe.data_object_id=data_objects.id
+	                            where dotc.taxon_concept_id=he.taxon_concept_id
+	                            	and dohe.visibility_id<>'.$GLOBALS['visibility_invisible'].'
 	                            	and language_id='.$GLOBALS['language_en'].'
-	                            	and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') as total_image_objects,
-                        	(select count(*) from data_objects 
-	                            inner join data_objects_hierarchy_entries dohe
-                            		ON dohe.data_object_id=data_objects.id
-	                            where dohe.hierarchy_entry_id=he.id
-	                                and language_id='.$GLOBALS['language_en'].'
-	                            	and (data_type_id in ('.$GLOBALS['data_types_media'].')) and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].') as total_other_objects
+	                            	and (data_type_id in ('.$GLOBALS['data_types_media'].'))
+	                            	and data_objects.published=1 
+	                            	and published=1) as total_other_objects
 	                    from hierarchy_entries he';
 
 		$query_str .= ' left outer join names on names.id=name_id ';
@@ -102,32 +111,40 @@ class BLL_hierarchy_entries {
 		 	$query_str .= ' and (he.id='.strval($hierarchy_entry_id).' or (he.lft='.strval($lft).' and he.rgt='.strval($rgt).'))';
 		 
 		if ($have_text == 0)
-		$query_str .= ' and not exists (select * from data_objects 
+		$query_str .= ' and not exists (select count(distinct data_objects.id) from data_objects 
 	                            inner join data_objects_table_of_contents 
 	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
                             	inner join table_of_contents
                             		ON table_of_contents.id=data_objects_table_of_contents.toc_id
-	                            inner join data_objects_hierarchy_entries dohe
-                            		ON dohe.data_object_id=data_objects.id
-	                            where dohe.hierarchy_entry_id=he.id
-	                                and data_type_id='.$GLOBALS['data_types_text'].' and data_objects.published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
-	                                and language_id='.$GLOBALS['language_en'].'
+                            	inner join data_objects_taxon_concepts dotc
+                            		ON dotc.data_object_id=data_objects.id
+                            	inner join data_objects_hierarchy_entries dohe
+                            		On dohe.data_object_id=data_objects.id
+	                            where dotc.taxon_concept_id=he.taxon_concept_id
+	                            	and dohe.visibility_id<>'.$GLOBALS['visibility_invisible'].'
+	                            	and language_id='.$GLOBALS['language_en'].'
+	                            	and data_type_id='.$GLOBALS['data_types_text'].' 
+	                            	and data_objects.published=1 
 	                            	and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
 	                                		 or 
                                 		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))) ';
 		if ($have_text == 1)
-		$query_str .= ' and exists (select * from data_objects 
+		$query_str .= ' and exists (select count(distinct data_objects.id) from data_objects 
 	                            inner join data_objects_table_of_contents 
 	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
                             	inner join table_of_contents
                             		ON table_of_contents.id=data_objects_table_of_contents.toc_id
-	                            inner join data_objects_hierarchy_entries dohe
-                            		ON dohe.data_object_id=data_objects.id
-	                            where dohe.hierarchy_entry_id=he.id
-	                                and data_type_id='.$GLOBALS['data_types_text'].' and data_objects.published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
-	                                and language_id='.$GLOBALS['language_en'].'
+                            	inner join data_objects_taxon_concepts dotc
+                            		ON dotc.data_object_id=data_objects.id
+                            	inner join data_objects_hierarchy_entries dohe
+                            		On dohe.data_object_id=data_objects.id
+	                            where dotc.taxon_concept_id=he.taxon_concept_id
+	                            	and dohe.visibility_id<>'.$GLOBALS['visibility_invisible'].'
+	                            	and language_id='.$GLOBALS['language_en'].'
+	                            	and data_type_id='.$GLOBALS['data_types_text'].' 
+	                            	and data_objects.published=1 
 	                            	and 
 	                                	(
 	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
@@ -135,22 +152,25 @@ class BLL_hierarchy_entries {
                                 		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))) ';
 		if ($have_text != 0) {
 			if ($text_curated > -1 || count($vetted_text_array) != 3) {
-				$query_str .= ' and exists (select * from data_objects
-	                                            inner join data_objects_table_of_contents 
-	                            					ON data_objects_table_of_contents.data_object_id=data_objects.id
-                            					inner join table_of_contents
-                            						ON table_of_contents.id=data_objects_table_of_contents.toc_id
-                                                inner join data_objects_hierarchy_entries dohe
-				                            		ON dohe.data_object_id=data_objects.id
-					                            where dohe.hierarchy_entry_id=he.id
-					                                and data_type_id='.$GLOBALS['data_types_text'].' and published=1 and dohe.visibility_id='.$GLOBALS['visibility_visible'].'
-                                                	and language_id='.$GLOBALS['language_en'].'
-	                            					and dohe.hierarchy_entry_id=he.id
-                                                	and 
-				                                	(
-				                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
-				                                		 or 
-			                                		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))';
+				$query_str .= ' and exists (select count(distinct data_objects.id) from data_objects 
+	                            inner join data_objects_table_of_contents 
+	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
+                            	inner join table_of_contents
+                            		ON table_of_contents.id=data_objects_table_of_contents.toc_id
+                            	inner join data_objects_taxon_concepts dotc
+                            		ON dotc.data_object_id=data_objects.id
+                            	inner join data_objects_hierarchy_entries dohe
+                            		On dohe.data_object_id=data_objects.id
+	                            where dotc.taxon_concept_id=he.taxon_concept_id
+	                            	and dohe.visibility_id<>'.$GLOBALS['visibility_invisible'].'
+	                            	and language_id='.$GLOBALS['language_en'].'
+	                            	and data_type_id='.$GLOBALS['data_types_text'].' 
+	                            	and data_objects.published=1 
+	                            	and 
+	                                	(
+	                                	toc_id in ('.$GLOBALS['TOC_included_parent_ids'].')
+	                                		 or 
+                                		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].')) ';
 				if ($text_curated > -1)
 				$query_str .= ' and curated='.strval($text_curated);
 				if (count($vetted_text_array) != 3) {

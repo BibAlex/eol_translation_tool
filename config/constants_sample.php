@@ -23,11 +23,12 @@ $arabic_language_id=22;
 $to_language_abbreviation = 'ar';
 $accepted_name_status_id = 2;
 $rejected_name_status_id = 3;
-$visibility_visible = '2';
+$visibility_visible = '1';
+$visibility_invisible = '0';
 $vetted_trusted = '4';
 $vetted_untrusted = '2';
 $vetted_unknown = '1';
-$language_en = '1';
+$language_en = '152';
 ?>
 
 
