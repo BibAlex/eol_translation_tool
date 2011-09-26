@@ -132,14 +132,13 @@ class BLL_data_objects {
 	 	 $con = new PDO_Connection();
 	  	 $con->Open($DB);
 	  	 if ($DB == 'master') {
-	  	 	$str = "select distinct do.*
-					  	  from data_objects do
-					  	  Inner join top_images ti on ti.data_object_id=do.id
-					  	  Inner join hierarchy_entries he on he.id=ti.hierarchy_entry_id
-					  	  Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=do.id					  	  
-	  	 			where taxon_concept_id=? 
-	  	 				and language_id=".$GLOBALS['language_en']."
-	  	 				and do.published=1 AND dohe.visibility_id=".$GLOBALS['visibility_visible'].";";
+	  	 	$str = "select count(distinct(data_objects.id)) from data_objects
+	                        	Inner join top_concept_images tc on tc.data_object_id=data_objects.id
+	                        	Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=data_objects.id	                        	
+	                            where language_id=".$GLOBALS['language_en']."
+	                            	and published=1 
+	                            	and tc.taxon_concept_id=?
+									and dohe.visibility_id<>".$GLOBALS['visibility_invisible'];
 	  	} else {
 	  		$str = "select distinct do.*
 					  	  from data_objects do

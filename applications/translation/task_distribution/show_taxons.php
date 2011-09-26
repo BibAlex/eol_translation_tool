@@ -6,7 +6,8 @@ include_once '../../../classes/BLL/BLL_taxon_concepts.php';
 include_once '../../../classes/DAL/DAL_taxon_concepts.php';
 include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/DAL/DAL_users.php';
-
+include_once '../../../classes/BLL/BLL_priorities.php';
+include_once '../../../classes/DAL/DAL_priorities.php';
 
 validate_session('task_distribution');
 
@@ -132,6 +133,10 @@ function get_record_index($taxon_concepts, $id) {
 		<tr>
 			<td class="odd"><b>Date:</b></td>
 			<td class="even"><?=date("d M Y H:i", strtotime($selection[0]->date_selected))?></td>
+		</tr>
+		<tr>
+			<td class="odd"><b>Priority:</b></td>
+			<td class="even"><?=BLL_priorities::find_label($selection[0]->priority_id)?></td>
 		</tr>
 	</table>
 	 </div>	

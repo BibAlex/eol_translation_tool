@@ -377,14 +377,15 @@ class BLL_taxon_concepts {
 	{
 		$con = new PDO_Connection();
 		$con->Open($DB);
-		$query = $con->connection->prepare("SELECT taxon_concepts.* priorities.label as priority
-			FROM taxon_concepts, 
-				inner join selection_batches.id=selection_id
+		$query = $con->connection->prepare("SELECT taxon_concepts.*, priorities.label as priority
+			FROM taxon_concepts
+				inner join selection_batches on selection_batches.id=selection_id
 				inner join priorities on priorities.id=priority_id
 	  	 	WHERE	  	  	  
 	  	 		(taxon_status_id>=2 and taxon_status_id <4)  
 	  	 	AND scientific_reviewer_id=:v1
 	  	 	;");
+
 		$myNull = null;
 	  
 		$query->bindParam(':v1', $user);
