@@ -133,7 +133,7 @@ if (isset($_POST["name"])) {
 			window.location='list_users.php';
 		</script>
 		<?
-		break;
+		//break;
 		
 	}
 	
