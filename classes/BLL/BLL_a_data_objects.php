@@ -208,7 +208,7 @@
 		static function SubmitAction($objectID,$userID,$process, $actionType, $SP_title, $SP_location, $RS_editor, $RH_editor, $D_editor, $taxon_concept_id)
 		{
 			$cur_process = $process;
-			if($actionType==1)//finish
+			if($actionType==1)//finishscientific_reviewer_id
 			{
 				$locked=0;
 				$process =$process+1;
@@ -261,10 +261,10 @@
 		  			$stmt = "UPDATE a_data_objects SET  translator_id=? WHERE id=?";
 		  			break;
 		  		case 3:
-		  			$stmt = "UPDATE a_data_objects SET  linguistic_reviewer_id=? WHERE id=?";		  			
+		  			$stmt = "UPDATE a_data_objects SET  scientific_reviewer_id=? WHERE id=?";		  					  			
 		  			break;
 		  		case 4:
-		  			$stmt = "UPDATE a_data_objects SET  scientific_reviewer_id=? WHERE id=?";		  			
+		  			$stmt = "UPDATE a_data_objects SET  linguistic_reviewer_id=? WHERE id=?";		  			
 		  			break;
 		  		case 5:
 		  			$stmt = "UPDATE a_data_objects SET  final_editor_id=? WHERE id=?";		  			

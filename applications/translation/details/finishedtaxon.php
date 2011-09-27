@@ -8,7 +8,7 @@
 	Thank you for your effort
 	<br/><br/>Translation of <a target="_blank" href="<?=$eol_site_url?>/pages/<?=$taxon->id?>"><?=$taxon->scientificName?></a> has been completed. 
 	<br/><br/>No further modifications are allowed. 
-	<br/><br/>Now the translated material will be submitted to Linguistic
+	<br/><br/>Now the translated material will be submitted to Scientific
 Review. 
 <?php }else if($process==3){?>
 	Thank you for your effort
@@ -25,7 +25,7 @@ Linguistic Review.
 	Thank you for your effort
 	<br/><br/>Final Editing of <a target="_blank" href="<?=$eol_site_url?>/pages/<?=$taxon->id?>"><?=$taxon->scientificName?></a> has been completed. 
 	<br/><br/>No further modifications are allowed. 
-	<br/><br/>Now the final editing material will be waiting to be published.
+	<br/><br/>Now the finally edited material will be waiting to be published.
 <?php }?>
 </h2>
 </div>
