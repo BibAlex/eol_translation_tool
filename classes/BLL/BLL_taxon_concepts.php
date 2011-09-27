@@ -790,8 +790,7 @@ class BLL_taxon_concepts {
 		BLL_names::download_names($id);
 								   
 		// get data objects						   
-		$dataobjects = BLL_data_objects::Select_DataObjects_ByTaxonConceptID('master',$id);
-		  	
+		$dataobjects = BLL_data_objects::Select_DataObjects_ByTaxonConceptID('master',$id);		
 		foreach ($dataobjects as $dataobject)	
 	  	{ 	  		
 	  		//Fill data_object table
@@ -829,7 +828,8 @@ class BLL_taxon_concepts {
 	  	
 		// get Images						   
 		$image_dataobjects = BLL_data_objects::Select_Images_ByTaxonConceptID('master',$id);
-		//echo(count($image_dataobjects));  	
+		//echo(count($image_dataobjects));
+		  	
 		foreach ($image_dataobjects as $dataobject)	
 	  	{ 	  		
 	  		//Fill data_object table

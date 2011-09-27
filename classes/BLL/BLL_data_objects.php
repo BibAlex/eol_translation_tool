@@ -132,7 +132,7 @@ class BLL_data_objects {
 	 	 $con = new PDO_Connection();
 	  	 $con->Open($DB);
 	  	 if ($DB == 'master') {
-	  	 	$str = "select count(distinct(data_objects.id)) from data_objects
+	  	 	$str = "select distinct(data_objects.id) from data_objects
 	                        	Inner join top_concept_images tc on tc.data_object_id=data_objects.id
 	                        	Inner join data_objects_hierarchy_entries dohe on dohe.data_object_id=data_objects.id	                        	
 	                            where language_id=".$GLOBALS['language_en']."
