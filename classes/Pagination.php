@@ -5,11 +5,12 @@ class Pagination {
         if($current_page) 
 			$start = ($current_page - 1) * $items_per_page; 			//first item to display on this page
 		else
-			$start = 0;
+			$start = 1;
 
 		$query = ' LIMIT '.strval($start).', '.strval($items_per_page);		
 		
 		return $query;
+		
     }
     
  

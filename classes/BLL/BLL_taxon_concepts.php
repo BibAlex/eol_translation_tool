@@ -1248,8 +1248,14 @@ class BLL_taxon_concepts {
 	}
 	
 	static function get_pending_distribution_count() {
-		$query_str = "select count(*) as Total_Pending from taxon_concepts where taxon_status_id<=1 ";
-							
+		//$query_str = "select count(*) as Total_Pending from taxon_concepts where taxon_status_id<=1 ";
+		$query_str = "select count(*) as Total_Pending
+              from taxon_concepts 
+              inner join selection_batches on selection_batches.id=taxon_concepts.selection_id
+              inner join users on users.id=selection_batches.user_id
+              inner join priorities on priorities.id=priority_id
+              where taxon_status_id<=1 ";
+			
 		$con = new PDO_Connection();
 		$con->Open('slave');
 		$query = $con->connection->prepare($query_str);
