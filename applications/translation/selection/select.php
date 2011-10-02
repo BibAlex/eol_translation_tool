@@ -155,19 +155,36 @@ validate_session('selection');
         document.getElementById("h_container").innerHTML = '<img src="../images/throbber.gif" />';
         initTree(id);
     }
+    
+    function getCheckedValue(radioObj) {
+		if(!radioObj)
+			return "";
+		var radioLength = radioObj.length;
+		if(radioLength == undefined)
+			if(radioObj.checked)
+				return radioObj.value;
+			else
+				return "";
+		for(var i = 0; i < radioLength; i++) {
+			if(radioObj[i].checked) {
+				return radioObj[i].value;
+			}
+		}
+		return "";
+	}
 
     function validateForm(frm) {
         if (frm.hierarchy_entry_id.value == "0") {
             alert("Please select a hierarchy entry");
             return false;
         }
-
-        if (!validateCheckboxGroup(frm, 'text_vetted[]')) {
+		
+		if (!validateCheckboxGroup(frm, 'text_vetted[]') && parseInt(getCheckedValue(frm.have_text)) != 0) {
 			alert("You must have at least one text vetted option selected");
 			return false;
         }
 
-        if (!validateCheckboxGroup(frm, 'images_vetted[]')) {
+        if (!validateCheckboxGroup(frm, 'images_vetted[]') && parseInt(getCheckedValue(frm.have_image)) != 0) {
 			alert("You must have at least one image vetted option selected");
 			return false;
         }
