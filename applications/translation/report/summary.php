@@ -67,7 +67,7 @@ function DisplayHistory($cur_taxon) {
 	$result .= "<li><b>Scientific Name:</b> " . $cur_taxon->scientificName;
 	$result .= "<li><b>Current status:</b> " . BLL_status::Select_Status_ByID($cur_taxon->taxon_status_id);
 	if($cur_taxon->taxon_status_id>=2 )
-		$result .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('.$cur_taxon->total_ArabicObjects.'/'.$cur_taxon->total_EnglishObjects.' are done)';
+		$result .= "<li><b>Total number of objects:</b> " . $cur_taxon->total_EnglishObjects;
 	$result .= "<table>";		
 	$result .= '<tr><td><b>Selector:</b></td><td>'. $cur_taxon->getSelectorName()
 				.'</td><td><b>Selected at: </b></td><td>'.$cur_taxon->getSelection_date().'</td></tr>';
