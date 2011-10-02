@@ -34,8 +34,8 @@ include_once '../../../classes/DAL/DAL_users.php';
                 <td class="table_head" align="center">Selector</td>
                 <td class="table_head" align="center">Task Distributor</td>
                 <td class="table_head" align="center">Translator</td>
-                <td class="table_head" align="center">Linguistic Reviewer</td>
                 <td class="table_head" align="center">Scientific Reviewer</td>
+                <td class="table_head" align="center">Linguistic Reviewer</td>
                 <td class="table_head" align="center">Final Editor</td>                
                 <td class="table_head" align="center">Edit</td>
             </tr>
@@ -74,12 +74,12 @@ include_once '../../../classes/DAL/DAL_users.php';
             			<?}?>
             		</td>
             		<td class="<?=$td_class?>" style="text-align: center">
-            			<?if ($user->linguistic_reviewer) {?>
+            			<?if ($user->scientific_reviewer) {?>
             				<img src="../images/finished.png" />
             			<?}?>
             		</td>
             		<td class="<?=$td_class?>" style="text-align: center">
-            			<?if ($user->scientific_reviewer) {?>
+            			<?if ($user->linguistic_reviewer) {?>
             				<img src="../images/finished.png" />
             			<?}?>
             		</td>

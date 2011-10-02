@@ -261,19 +261,19 @@ if (isset($_POST["name"])) {
 				</td>
 			</tr>
 			<tr>
-				<td style="text-align:right;" class="odd">Lingustic reviewer</td>
-				<td class="even">
-					<input type="radio" name="linguistic_reviewer" value="1" <?if ($user->linguistic_reviewer == 1) echo "checked"?> /> Yes
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<input type="radio" name="linguistic_reviewer" value="0" <?if ($user->linguistic_reviewer == 0) echo "checked"?> /> No
-				</td>
-			</tr>
-			<tr>
 				<td style="text-align:right;" class="odd">Scientific reviewer</td>
 				<td class="even">
 					<input type="radio" name="scientific_reviewer" value="1" <?if ($user->scientific_reviewer == 1) echo "checked"?> /> Yes
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<input type="radio" name="scientific_reviewer" value="0" <?if ($user->scientific_reviewer == 0) echo "checked"?> /> No
+				</td>
+			</tr>
+			<tr>
+				<td style="text-align:right;" class="odd">Lingustic reviewer</td>
+				<td class="even">
+					<input type="radio" name="linguistic_reviewer" value="1" <?if ($user->linguistic_reviewer == 1) echo "checked"?> /> Yes
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="radio" name="linguistic_reviewer" value="0" <?if ($user->linguistic_reviewer == 0) echo "checked"?> /> No
 				</td>
 			</tr>
 			<tr>
