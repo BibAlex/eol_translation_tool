@@ -752,14 +752,14 @@ class BLL_taxon_concepts {
 		
 		// update a_data_objects to release locks
 		if ($linguistic_reviewer_id != $old_linguistic_reviewer_id) {			
-			$query_str = "update a_data_objects set locked=0 where process_id=3 and user_id=".$old_linguistic_reviewer_id." and taxon_concept_id=".strval($id).";";
+			$query_str = "update a_data_objects set locked=0 where process_id=4 and user_id=".$old_linguistic_reviewer_id." and taxon_concept_id=".strval($id).";";
 			$query = $con->connection->prepare($query_str);
 			$query->execute();
 		}
 		
 		// update a_data_objects to release locks
 		if ($scientific_reviewer_id != $old_scientific_reviewer_id) {			
-			$query_str = "update a_data_objects set locked=0 where process_id=4 and user_id=".$old_scientific_reviewer_id." and taxon_concept_id=".strval($id).";";
+			$query_str = "update a_data_objects set locked=0 where process_id=3 and user_id=".$old_scientific_reviewer_id." and taxon_concept_id=".strval($id).";";
 			$query = $con->connection->prepare($query_str);
 			$query->execute();
 		}
