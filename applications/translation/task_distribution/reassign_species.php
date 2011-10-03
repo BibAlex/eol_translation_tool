@@ -202,25 +202,40 @@ $users = new BLL_users();
 			<tr>
 				<td class="odd" width="150"><b>Translator:</b> </td>
 				<td class="even">					
-					<select name="translator" id="translator" <?if ($taxon_concept->taxon_status_id >=3 ) echo("disabled")?>>
-						<?=$users->get_translators_options($taxon_concept->translator_id)?>
-					</select>
+					<?if ($taxon_concept->taxon_status_id >=3) {?>
+						<?=BLL_users::get_user_name($taxon_concept->translator_id)?>
+						<input type="hidden" name="translator" value="<?=$taxon_concept->translator_id?>" />
+					<?}else{?>						
+						<select name="translator" id="translator">
+							<?=$users->get_translators_options($taxon_concept->translator_id)?>
+						</select>
+					<?}?>
 				</td>
 			</tr>
 			<tr>
 				<td class="odd" width="150"><b>Scientific Reviewer:</b> </td>
 				<td class="even">					
-					<select name="scientific_reviwer" id="scientific_reviwer" <?if ($taxon_concept->taxon_status_id >=4 ) echo("disabled")?>>
-						<?=$users->get_scientific_reviewers_options($taxon_concept->scientific_reviewer_id)?>
-					</select>
+					<?if ($taxon_concept->taxon_status_id >=4) {?>
+						<?=BLL_users::get_user_name($taxon_concept->scientific_reviewer_id)?>
+						<input type="hidden" name="scientific_reviwer" value="<?=$taxon_concept->scientific_reviewer_id?>" />
+					<?}else{?>	
+						<select name="scientific_reviwer" id="scientific_reviwer">
+							<?=$users->get_scientific_reviewers_options($taxon_concept->scientific_reviewer_id)?>
+						</select>
+					<?}?>
 				</td>
 			</tr>
 			<tr>
 				<td class="odd" width="150"><b>Linguistic Reviewer:</b> </td>
 				<td class="even">					
-					<select name="linguistic_reviewer" id="linguistic_reviewer" <?if ($taxon_concept->taxon_status_id >=5 ) echo("disabled")?>>
-						<?=$users->get_linguistic_reviewers_options($taxon_concept->linguistic_reviewer_id)?>
-					</select>
+					<?if ($taxon_concept->taxon_status_id >=5) {?>
+						<?=BLL_users::get_user_name($taxon_concept->scientific_reviewer_id)?>
+						<input type="hidden" name="linguistic_reviewer" value="<?=$taxon_concept->linguistic_reviewer_id?>" />
+					<?}else{?>	
+						<select name="linguistic_reviewer" id="linguistic_reviewer">
+							<?=$users->get_linguistic_reviewers_options($taxon_concept->linguistic_reviewer_id)?>
+						</select>
+					<?}?>
 				</td>
 			</tr>
 			<tr>
