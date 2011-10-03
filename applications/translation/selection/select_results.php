@@ -53,11 +53,11 @@ $select_sub = intval($_POST["select_sub"]);
 // getting vetted images checkboxes in one string
 
 $vetted_images=' ';
-if ($have_text != 0) {
+if ($have_images != 0) {
 	$vetted_images_Array = $_POST['images_vetted'];
 	if (!empty($vetted_images_Array)) {
 	    for ($i=0; $i<count($vetted_images_Array); $i++) {
-	        $vetted_images = $vetted_images.$vetted_images_Array[$i];
+	        $vetted_images .= $vetted_images_Array[$i];
 	        if ($i < count($vetted_images_Array)-1)
 	            $vetted_images .= ',';
 	    }

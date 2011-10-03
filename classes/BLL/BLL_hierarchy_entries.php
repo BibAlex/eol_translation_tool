@@ -111,7 +111,7 @@ class BLL_hierarchy_entries {
 		 	$query_str .= ' and (he.id='.strval($hierarchy_entry_id).' or (he.lft='.strval($lft).' and he.rgt='.strval($rgt).'))';
 		 
 		if ($have_text == 0)
-		$query_str .= ' and not exists (select count(distinct data_objects.id) from data_objects 
+		$query_str .= ' and not exists (select * from data_objects 
 	                            inner join data_objects_table_of_contents 
 	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
                             	inner join table_of_contents
@@ -131,7 +131,7 @@ class BLL_hierarchy_entries {
 	                                		 or 
                                 		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))) ';
 		if ($have_text == 1)
-		$query_str .= ' and exists (select count(distinct data_objects.id) from data_objects 
+		$query_str .= ' and exists (select * from data_objects 
 	                            inner join data_objects_table_of_contents 
 	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
                             	inner join table_of_contents
@@ -152,7 +152,7 @@ class BLL_hierarchy_entries {
                                 		table_of_contents.parent_id in ('.$GLOBALS['TOC_included_parent_ids'].'))) ';
 		if ($have_text != 0) {
 			if ($text_curated > -1 || count($vetted_text_array) != 3) {
-				$query_str .= ' and exists (select count(distinct data_objects.id) from data_objects 
+				$query_str .= ' and exists (select * from data_objects 
 	                            inner join data_objects_table_of_contents 
 	                            	ON data_objects_table_of_contents.data_object_id=data_objects.id
                             	inner join table_of_contents
