@@ -25,7 +25,7 @@ class Notifications {
 			$user = BLL_users::load_by_id($taxon->linguistic_reviewer_id);
 			$user = $user[0];
 			$message = 'Dear '.$user->name .',<br/>';
-			$message .= 'Species \'<b>'.$taxon->scientificName. '</b>\' has been finally translated by '. BLL_users::get_user_name($userID). ' ('.BLL_users::get_user_email($userID).'). <br/>Please check it as a Linguistic reviewer.';
+			$message .= 'Species \'<b>'.$taxon->scientificName. '</b>\' has been finally scientifically reviewed by '. BLL_users::get_user_name($userID). ' ('.BLL_users::get_user_email($userID).'). <br/>Please check it as a Linguistic reviewer.';
 			if ($user->email != '' && $user->active==1) 
 				SendMail::send_email($user->email, "AEOL: New Linguistic review species", $message);
 		}
@@ -36,7 +36,7 @@ class Notifications {
 			$user = BLL_users::load_by_id($taxon->scientific_reviewer_id);
 			$user = $user[0];		
 			$message = 'Dear '.$user->name .',<br/>';
-			$message .= 'Species \'<b>'.$taxon->scientificName. '</b>\' has been finally linguistically reviewed by '. BLL_users::get_user_name($userID). ' ('.BLL_users::get_user_email($userID).'). <br/>Please check it as a Scientific reviewer.';		
+			$message .= 'Species \'<b>'.$taxon->scientificName. '</b>\' has been finally translated by '. BLL_users::get_user_name($userID). ' ('.BLL_users::get_user_email($userID).'). <br/>Please check it as a Scientific reviewer.';		
 			if ($user->email != '' && $user->active==1) 
 				SendMail::send_email($user->email, "AEOL: New Scientific Review Species", $message);
 		}			
@@ -46,7 +46,7 @@ class Notifications {
 		$users = BLL_users::get_users_by_type('final_editor');		
 		foreach ($users as $user) {
 			$message = 'Dear '.$user->name .',<br/>';
-			$message .= 'Species \'<b>'.$taxon->scientificName. '</b>\' has been finally scientifically reviewed by '. BLL_users::get_user_name($userID). ' ('.BLL_users::get_user_email($userID).'). <br/>Please check it for final editing.';
+			$message .= 'Species \'<b>'.$taxon->scientificName. '</b>\' has been finally linguistically reviewed by '. BLL_users::get_user_name($userID). ' ('.BLL_users::get_user_email($userID).'). <br/>Please check it for final editing.';
 			if ($user->email != '' && $user->active==1) 
 				SendMail::send_email($user->email, "AEOL: New Final Editing Species", $message);
 		}	
