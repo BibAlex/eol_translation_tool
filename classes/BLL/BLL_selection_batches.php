@@ -169,7 +169,7 @@
 		static function get_batches_count_by_user($user_id) {			
 			$con = new PDO_Connection();
 		  	$con->Open('slave');		  	
-		  	$query = $con->connection->prepare('select count(*) as total_count from selection_batches where user_id='.$user_id.';');		  		 	
+		  	$query = $con->connection->prepare('select count(*) as total_count from selection_batches;');		  		 	
 		    $query->execute();	
 		    $result = $query->fetchColumn();	    	
 		  	$con->Close();
