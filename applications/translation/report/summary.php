@@ -151,7 +151,7 @@ function DisplayHistory($cur_taxon) {
 									$selected='';
 								if($iphase->id==1)
 								{					
-									$iphase->id=0;
+									$iphase->id=1;
 									$iphase->label='Distribution';
 								}
 								if($iphase->id==$phase)
