@@ -11,6 +11,7 @@ Installation (for ubuntu):
 	sudo pear channel-discover pear.horde.org
 	sudo pear install horde/Horde_Yaml
 	sudo pear install Mail
+	
 2- rename config/database_sample.yml to config/database.yml and add db connection variables
 3- rename config/constants_sample.php to config/constants.php and edit variables in this constants file
 4- create 2 databases for translation tool and for eol data sample
