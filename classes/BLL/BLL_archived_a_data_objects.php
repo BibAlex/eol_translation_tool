@@ -17,7 +17,7 @@
 			$con = new PDO_Connection();
 		  	$con->Open('slave');		  	
 		  	$query = $con->connection->prepare("INSERT INTO archived_a_data_objects 
-		  	(data_object_id, user_id, process_id, object_title, location, rights_statement, rights_holder, description, modified_at, locked, taxon_concept_id )
+		  	(data_object_id, user_id, process_id, object_title, location, rights_statement, rights_holder, description, modified_at, locked, taxon_concept_id)
 		  	 VALUES(?,?,?,?,?,?,?,?,NOW(),?,?);");
 		  	$query->bindParam(1, $data_object_id);			  		 	
 		  	$query->bindParam(2, $user_id);
@@ -28,7 +28,7 @@
 			$query->bindParam(7, $rights_holder);
 			$query->bindParam(8, $description);
 			$query->bindParam(9, $locked);
-			$query->bindParam(10, $taxon_concept_id);  		  			  			  	
+			$query->bindParam(10, $taxon_concept_id);  		
 		    $query->execute();		
 			$con->Close();
 		}

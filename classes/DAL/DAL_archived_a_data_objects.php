@@ -14,6 +14,5 @@
    		public $locked;	
    		public $location;
    		public $taxon_concept_id;/*this field help to know the common object is locked by wich taxon page*/
-   		
 	}
 ?>

@@ -45,6 +45,12 @@
 		  public $description_source;
 		  public $location_source;
 		  
+		  public $harvest_batch_id;
+		  public $harvest_batch_type;
+		  public $hidden;
+		  public $parent_data_object_id;
+		  
+		  
 	 
 	}
 ?>

@@ -265,6 +265,33 @@ class BLL_data_objects {
 	    return $result;    
 	}
 	
+     static function Select_all_data_objects_guid($DB) 
+	{
+		$con = new PDO_Connection();
+	  	$con->Open($DB);		  	
+	  	$query = $con->connection->prepare("SELECT distinct guid FROM data_objects WHERE guid IS NOT NULL ");
+	  	$query->execute();
+	  	$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;
+	}
+	
+	static function Select_latest_DataObjects_ByGuid($DB, $guid) 
+	{
+	 	$con = new PDO_Connection();
+	  	$con->Open($DB);
+		  	
+	  	$stmt = $con->connection->prepare("SELECT distinct data_objects.id FROM data_objects 
+	  	INNER JOIN data_objects_hierarchy_entries dohe  ON (dohe.data_object_id=data_objects.id)
+	  	WHERE published=1 AND  guid=? AND (language_id=?  OR language_id=0 )AND dohe.visibility_id<>?;");
+	    $stmt->bindParam(1, $guid);
+	    $stmt->bindParam(2,$GLOBALS['language_en']);
+	    $stmt->bindParam(3,$GLOBALS['visibility_invisible']);
+		$stmt->execute();		
+		$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;    
+	}
 }
 
 ?>

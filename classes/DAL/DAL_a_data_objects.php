@@ -17,6 +17,7 @@
    		public $linguistic_reviewer_id;
    		public $scientific_reviewer_id;
    		public $final_editor_id;
+   		public $update_status_id;
    		
 	}
 ?>
