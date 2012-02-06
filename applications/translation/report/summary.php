@@ -166,7 +166,7 @@ if(isset($_POST['actionType']) && $_POST['actionType']=='1'){
 			// End Excel Filling File Here
 	$output = $output . "</table></body></html>";
 		
-	$myFile = $userID . ".xls";
+	$myFile =  "xls/".$userID . ".xls";
 	$fh = fopen($myFile, 'w') or die("can't open file");
 	fwrite($fh, $output);
 	fclose($fh);
@@ -597,7 +597,7 @@ if(isset($_POST['actionType']) && $_POST['actionType']=='1'){
 	if(isset($_POST['actionType']) && $_POST['actionType']=='1'){
 		?>
 		<script>
-			window.location('<?php echo $myFile; ?>');
+		    window.location = '<?php echo $myFile; ?>';
 		</script>
 		<?
 	}
