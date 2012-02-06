@@ -145,7 +145,7 @@ if(isset($_POST['actionType']) && $_POST['actionType']=='1'){
 		$output = $output . "</td>";
 		$output = $output . "<td>";
 		if($taxon->taxon_status_id>=2){
-			$output = $output . "<a href=" . "http://".$_SERVER['HTTP_HOST'] . "/eol_translation_tool/applications/translation/report/species.php?tid=$taxon->id>View</a>";
+			 $output = $output . "<a href=" .$GLOBALS['AEOL_url'] . "/applications/translation/report/species.php?tid=$taxon->id>View</a>";
 		}
 		$output = $output . "</td>";
 		$output .= "<td>" . $taxon->getSelectorName() . "</td><td>" . $taxon->getSelection_date() . "</td>";
