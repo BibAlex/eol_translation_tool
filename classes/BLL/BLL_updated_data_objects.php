@@ -53,12 +53,24 @@
 		}
 		
 		
-		static function Delete_updated_dataObjects_By_guid($guid)
+		static function Delete_updated_dataObjects_By_guid($guid, $id, $data_type_id)
 		{
 			 $con = new PDO_Connection();
 		  	 $con->Open('slave');	  
-		  	 $stmt = $con->connection->prepare("DELETE FROM  updated_data_objects WHERE guid=?");			 
+		  	 $stmt = $con->connection->prepare("DELETE FROM  updated_data_objects WHERE guid=? AND id <>? AND data_type_id=?");			 
 			 $stmt->bindParam(1, $guid);
+			 $stmt->bindParam(2, $id);
+			 $stmt->bindParam(3, $data_type_id);
+			 $stmt->execute();
+			 $con->Close();
+		}
+		
+		static function Delete_updated_dataObjects_By_id($id)
+		{
+			 $con = new PDO_Connection();
+		  	 $con->Open('slave');	  
+		  	 $stmt = $con->connection->prepare("DELETE FROM  updated_data_objects WHERE id=?");
+			 $stmt->bindParam(1, $id);
 			 $stmt->execute();
 			 $con->Close();
 		}
@@ -73,5 +85,17 @@
 		    $con->Close();    
 		    return $records;    
 		}
+		
+		static function Exist_Updated_DataObjects_ByID($ObjID) 
+	    {
+		 	$con = new PDO_Connection();
+		  	$con->Open('slave');			  	
+		  	$stmt = $con->connection->prepare("SELECT COUNT(id) FROM updated_data_objects WHERE id=?;");		 	
+		    $stmt->bindParam(1, $ObjID);
+			$stmt->execute();		
+			$result = $stmt->fetchColumn();		
+		    $con->Close();   
+		    return $result;    
+	    }
 	}
 ?>

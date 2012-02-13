@@ -87,6 +87,91 @@ function DisplayHistory($cur_taxon) {
 	return $result.'</table></ul>'; 
 }
 
+if(isset($_POST['actionType']) && $_POST['actionType']=='1'){
+	$userID=$_SESSION['user_id'];
+	$excel_taxons = BLL_taxon_concepts::Search_For_taxon_concepts($spid, $spname, $batch, $phase, $translator, $translator_type, $linguistic_reviewer, $scientific_reviewer, $final_editor, 1, 100000000, $priority_id);
+	$output = "<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" " .
+			"xmlns:x=\"urn:schemas-microsoft-com:office:excel\" " .
+			"xmlns=\"http://www.w3.org/TR/REC-html40\">" .
+			"<head>" .
+			"<meta http-equiv=Content-Type content=\"text/html; charset=windows-1252\">" .
+			"<meta name=ProgId content=Excel.Sheet>" .
+			"<meta name=Generator content=\"Microsoft Excel 9\"><!--[if gte mso 9]>" . 
+			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" .
+			"<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>" .
+			"<x:Name>download</x:Name><x:WorksheetOptions>" .
+			"<x:Selected/><x:ProtectContents>False</x:ProtectContents>" .
+			"<x:ProtectObjects>False</x:ProtectObjects>" .
+			"<x:ProtectScenarios>False</x:ProtectScenarios>" .
+			"</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets>" .
+			"<x:ProtectStructure>False</x:ProtectStructure>" .
+			"<x:ProtectWindows>False</x:ProtectWindows></x:ExcelWorkbook></xml>" .
+			"<![endif]--></head><body>" .
+			"<table>" .
+			// Begin Excel Filling File Here
+			"<tr>" .
+			"<td><center><b><font size='5'>Species ID</font></b></center></td>" .
+			"<td><center><b><font size='5'>Scientific Name</font></b></center></td>" .
+			"<td><center><b><font size='5'>Priority</font></b></center></td>" .
+			"<td><center><b><font size='5'>Phase</font></b></center></td>" .
+			"<td><center><b><font size='5'>Done</font></b></center></td>" .
+			"<td></td>" .
+			"<td><center><b><font size='5'>Selector</font></b></center></td>" .
+			"<td><center><b><font size='5'>Selected At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Distributed At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Translator</font></b></center></td>" .
+			"<td><center><b><font size='5'>Assigned At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Finished At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Scientific Reviewer</font></b></center></td>" .
+			"<td><center><b><font size='5'>Assigned At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Finished At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Linguistic Reviewer</font></b></center></td>" .
+			"<td><center><b><font size='5'>Assigned At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Finished At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Final Editor</font></b></center></td>" .
+			"<td><center><b><font size='5'>Finished At</font></b></center></td>" .
+			"<td><center><b><font size='5'>Translator Email</font></b></center></td>" .
+			"</tr>";
+	foreach($excel_taxons as $taxon){
+		$output = $output . "<tr>";
+		$output = $output . "<td>$taxon->id</td>";
+		$output = $output . "<td><a href=$eol_site_url/pages/$taxon->id>$taxon->scientificName</a></td>";
+		$output = $output . "<td>$taxon->priority</td>";
+		$output = $output . "<td>" . BLL_status::Select_Status_ByID($taxon->taxon_status_id) . "</td>";
+		$output = $output . "<td>";
+		if($taxon->taxon_status_id>=2){
+			$output = $output . $taxon->total_ArabicObjects.'/'.$taxon->total_EnglishObjects;	
+		}
+		$output = $output . "</td>";
+		$output = $output . "<td>";
+		if($taxon->taxon_status_id>=2){
+			 $output = $output . "<a href=" .$GLOBALS['AEOL_url'] . "/applications/translation/report/species.php?tid=$taxon->id>View</a>";
+		}
+		$output = $output . "</td>";
+		$output .= "<td>" . $taxon->getSelectorName() . "</td><td>" . $taxon->getSelection_date() . "</td>";
+		$output .= "<td>" . $taxon->getTaskdistribution_date()."</td>";	
+		$output .= "<td>" . $taxon->getTranslatorName() . "</td><td>" . BLL_taxon_concept_assign_log::Select_assignLog($taxon->id,2,$taxon->translator_id) . "</td>";
+		$output .= "<td>" . $taxon->getTranslation_date() . "</td>";				
+		$output .= "<td>" . $taxon->getScientificReviewerName() . "</td>";
+		$output .= "<td>" . BLL_taxon_concept_assign_log::Select_assignLog($taxon->id,3,$taxon->scientific_reviewer_id) . "</td>";
+		$output .= "<td>" . $taxon->getScientificreview_date() . "</td>";				
+		$output .= "<td>" . $taxon->getLinguisticReviewerName() . "</td>";
+		$output .= "<td>" . BLL_taxon_concept_assign_log::Select_assignLog($taxon->id,4,$taxon->linguistic_reviewer_id) . "</td>";
+		$output .= "<td>" . $taxon->getLinguisticreview_date() . "</td>";
+		$output .= "<td>" . $taxon->getFinalEditorName() . "</td>";
+		$output .= "<td>" . $taxon->getFinalediting_date() . "</td>";
+		$output = $output . "<td>$taxon->email</td>";
+		$output = $output . "</tr>";
+	}	
+			// End Excel Filling File Here
+	$output = $output . "</table></body></html>";
+		
+	$myFile =  "xls/".$userID . ".xls";
+	$fh = fopen($myFile, 'w') or die("can't open file");
+	fwrite($fh, $output);
+	fclose($fh);
+
+}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -274,10 +359,11 @@ function DisplayHistory($cur_taxon) {
 				</tr>
 			</table>
 			</div>
+			<input type="hidden" id="actionType" name="actionType" value="" />
 			<div align="center" style="background-color:red; margin-left:200px">
 				<div class="btn">
 		            <div class="link_middle">
-		            	<a href="javascript:void(0);" onclick='document.frm.submit();'>
+		            	<a href="javascript:void(0);" onclick='document.getElementById("actionType").value="0"; document.frm.submit();'>
 		            		Search
 		            	</a>
 		            </div>
@@ -289,7 +375,13 @@ function DisplayHistory($cur_taxon) {
 		            	</a>
 		            </div>
 		        </div>
-			
+				<div class="btn">
+		            <div class="link_middle">
+		            	<a href="javascript:void(0);" onclick='document.getElementById("actionType").value="1"; document.frm.submit();'>
+		            		Print to Excel
+		            	</a>
+		            </div>
+		        </div>
 			</div>
 			  
 			
@@ -501,5 +593,14 @@ function DisplayHistory($cur_taxon) {
 	}
     </script>	
 <? include ('../master/footer.php');?>
+ <?
+	if(isset($_POST['actionType']) && $_POST['actionType']=='1'){
+		?>
+		<script>
+		    window.location = '<?php echo $myFile; ?>';
+		</script>
+		<?
+	}
+?> 
 </body>
 </html>

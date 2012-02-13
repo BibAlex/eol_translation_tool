@@ -37,7 +37,15 @@ CREATE TABLE `updated_data_objects` (
   PRIMARY KEY (`id`) 
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8$$
 
-
+--Create the updated_data_objects_taxon_concepts table that will contains the newly harvested updates temporary
+delimiter $$
+CREATE TABLE `updated_data_objects_taxon_concepts` (
+  `taxon_concept_id` int(10) unsigned NOT NULL,
+  `data_object_id` int(10) unsigned NOT NULL,
+  `harvested_batch_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`taxon_concept_id`,`data_object_id`),
+  KEY `data_object_id` (`data_object_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8$$
 
 --Create the harvest batch_type table that will only contain an identifier for that batch job
 delimiter $$
