@@ -577,6 +577,17 @@ class BLL_taxon_concepts {
 		$con->Close();
 		return  $records;
 	}
+	
+	static function Select_taxon_concepts_after_task_distribution($DB)
+	{
+		$con = new PDO_Connection();
+		$con->Open($DB);
+		$query = $con->connection->prepare("SELECT id FROM taxon_concepts where taxon_status_id>=2;");
+		$query->execute();
+		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_taxon_concepts');
+		$con->Close();
+		return  $records;
+	}
 
 	static function Select_taxon_concept($DB, $id)
 	{

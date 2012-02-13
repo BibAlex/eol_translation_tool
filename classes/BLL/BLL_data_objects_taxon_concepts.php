@@ -67,6 +67,23 @@ class BLL_data_objects_taxon_concepts {
 		 $con->Close();    
 		 return  $records;	        
 	}	
+	
+	static function Select_taxons_of_data_object_guids($DB, $guid) 
+	{
+	 	 $con = new PDO_Connection();
+	  	 $con->Open($DB);		  	
+	  	 $query = $con->connection->prepare("
+		  	 SELECT distinct taxon_concept_id 
+		  	 FROM data_objects_taxon_concepts 
+		  	 WHERE data_object_id IN(
+		  	 	SELECT id FROM data_objects where guid = ?
+		  	 );");
+	  	 $query->bindParam(1, $guid);	 	
+	     $query->execute();		
+		 $records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects_taxon_concepts');
+		 $con->Close();    
+		 return  $records;	        
+	}		
 }
 
 ?>

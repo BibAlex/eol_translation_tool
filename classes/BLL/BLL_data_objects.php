@@ -55,6 +55,60 @@ class BLL_data_objects {
 		 $con->Close();
 
 	}
+	
+	static function Insert_Updated_DataObject(DAL_updated_data_objects $dal_updated_data_objects)
+	{
+		 $con = new PDO_Connection();
+	  	 $con->Open('slave');
+	  	
+	  	 $stmt = $con->connection->prepare("INSERT INTO data_objects 
+	  	 										(id, guid, identifier, data_type_id, mime_type_id,
+	  	 										object_title, language_id, license_id, rights_statement,
+	  	 										rights_holder, bibliographic_citation, source_url, description, 
+	  	 										description_linked, object_url, object_cache_url, thumbnail_url, 
+	  	 										thumbnail_cache_url, location, latitude, longitude, altitude, object_created_at,
+	  	 										object_modified_at, created_at, updated_at, data_rating, vetted_id,
+	  	 										visibility_id, published, curated, aeol_translation,harvested_batch_id, harvest_batch_type) 
+	  	 									VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");			 
+		 $stmt->bindParam(1, $dal_updated_data_objects->id);
+		 $stmt->bindParam(2, $dal_updated_data_objects->guid);
+		 $stmt->bindParam(3, $dal_updated_data_objects->identifier);
+		 $stmt->bindParam(4, $dal_updated_data_objects->data_type_id);
+		 $stmt->bindParam(5, $dal_updated_data_objects->mime_type_id);
+		 $stmt->bindParam(6, $dal_updated_data_objects->object_title);
+		 $stmt->bindParam(7, $dal_updated_data_objects->language_id);
+		 $stmt->bindParam(8, $dal_updated_data_objects->license_id);
+		 $stmt->bindParam(9, $dal_updated_data_objects->rights_statement);
+		 $stmt->bindParam(10, $dal_updated_data_objects->rights_holder);
+		 $stmt->bindParam(11, $dal_updated_data_objects->bibliographic_citation);
+		 $stmt->bindParam(12, $dal_updated_data_objects->source_url);
+		 $stmt->bindParam(13, $dal_updated_data_objects->description);
+		 $stmt->bindParam(14, $dal_updated_data_objects->description_linked);
+		 $stmt->bindParam(15, $dal_updated_data_objects->object_url);
+		 $stmt->bindParam(16, $dal_updated_data_objects->object_cache_url);
+		 $stmt->bindParam(17, $dal_updated_data_objects->thumbnail_url);
+		 $stmt->bindParam(18, $dal_updated_data_objects->thumbnail_cache_url);
+		 $stmt->bindParam(19, $dal_updated_data_objects->location);
+		 $stmt->bindParam(20, $dal_updated_data_objects->latitude);
+		 $stmt->bindParam(21, $dal_updated_data_objects->longitude);
+		 $stmt->bindParam(22, $dal_updated_data_objects->altitude);
+		 $stmt->bindParam(23, $dal_updated_data_objects->object_created_at);
+		 $stmt->bindParam(24, $dal_updated_data_objects->object_modified_at);
+		 $stmt->bindParam(25, $dal_updated_data_objects->created_at);
+		 $stmt->bindParam(26, $dal_updated_data_objects->updated_at);
+		 $stmt->bindParam(27, $dal_updated_data_objects->data_rating);
+		 $stmt->bindParam(28, $dal_updated_data_objects->vetted_id);
+		 $stmt->bindParam(29, $dal_updated_data_objects->visibility_id);
+		 $stmt->bindParam(30, $dal_updated_data_objects->published);
+		 $stmt->bindParam(31, $dal_updated_data_objects->curated);
+		 $stmt->bindParam(32, $dal_updated_data_objects->aeol_translation);
+		 $stmt->bindParam(33, $dal_updated_data_objects->harvested_batch_id);
+		 $stmt->bindParam(34, $GLOBALS['harvest_batch_type_updates_batch']);
+		 	
+		 $stmt->execute();
+		 $con->Close();
+
+	}
 
 	
 	static function Select_DataObjects_ByTaxonConceptID($DB, $_taxon_concept_id) 
@@ -265,6 +319,71 @@ class BLL_data_objects {
 	    return $result;    
 	}
 	
+	static function Exist_DataObjects_ByGUID($DB, $GUID) 
+	{
+	 	 $con = new PDO_Connection();
+	  	 $con->Open($DB);
+		  	
+	  	 $stmt = $con->connection->prepare("SELECT COUNT(id) FROM data_objects WHERE guid=?;");
+	 	
+	    $stmt->bindParam(1, $GUID);
+		$stmt->execute();		
+		$result = $stmt->fetchColumn();		
+	    $con->Close();   
+	    return $result;    
+	}
+	
+     static function Select_all_data_objects_guid($DB) 
+	{
+		$con = new PDO_Connection();
+	  	$con->Open($DB);		  	
+	  	$query = $con->connection->prepare("SELECT distinct guid FROM data_objects WHERE guid IS NOT NULL ");
+	  	$query->execute();
+	  	$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;
+	}
+	
+	static function Select_latest_DataObjects_ByGuid($DB, $guid) 
+	{
+	 	$con = new PDO_Connection();
+	  	$con->Open($DB);
+		  	
+	  	$stmt = $con->connection->prepare("SELECT distinct data_objects.id FROM data_objects 
+	  	INNER JOIN data_objects_hierarchy_entries dohe  ON (dohe.data_object_id=data_objects.id)
+	  	WHERE published=1 AND  guid=? AND (language_id=?  OR language_id=0 )AND dohe.visibility_id<>?;");
+	    $stmt->bindParam(1, $guid);
+	    $stmt->bindParam(2,$GLOBALS['language_en']);
+	    $stmt->bindParam(3,$GLOBALS['visibility_invisible']);
+		$stmt->execute();		
+		$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;    
+	}
+	
+	static function Select_DataObjects_ByGuid($DB, $guid, $data_type_id) 
+	{
+	 	$con = new PDO_Connection();
+	  	$con->Open($DB);
+		  	
+	  	$stmt = $con->connection->prepare("SELECT * FROM data_objects where guid = ? AND data_type_id=?;");
+	    $stmt->bindParam(1, $guid);	   
+	    $stmt->bindParam(2, $data_type_id);	   
+		$stmt->execute();		
+		$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;    
+	}
+
+	static function Hide_DataObject($do_id)
+	{
+		 $con = new PDO_Connection();
+	  	 $con->Open('slave');	  	
+	  	 $stmt = $con->connection->prepare("UPDATE data_objects set hidden=1 WHERE id=?;");	  	 									
+		 $stmt->bindParam(1,$do_id);		 	
+		 $stmt->execute();
+		 $con->Close();
+	}
 }
 
 ?>
