@@ -104,7 +104,8 @@
 						$rights_holder,
 						$description,
 						$taxon_concept_id,
-						$locked					
+						$locked,
+						$update_status_id=null					
 						) 
 		{	
 			//echo $location;
@@ -112,8 +113,9 @@
 		  	$con->Open('slave');
 		  	$query = $con->connection->prepare("INSERT INTO a_data_objects (id, user_id, process_id, object_title
 		  																	, rights_statement, rights_holder, description
-		  																	, modified_at, locked, taxon_concept_id, location) 
-		  										VALUES(?,?,?,?,?,?,?,Now(),?,?,?);");
+		  																	, modified_at, locked, taxon_concept_id, location
+		  																	, update_status_id) 
+		  										VALUES(?,?,?,?,?,?,?,Now(),?,?,?,?);");
 		  	$query->bindParam(1, $id);		
 		  	$query->bindParam(2, $user_id);
 		  	$query->bindParam(3, $process_id);	
@@ -124,6 +126,7 @@
 		  	$query->bindParam(8, $locked);
 		  	$query->bindParam(9, $taxon_concept_id);
 			$query->bindParam(10, $location);
+			$query->bindParam(11, $update_status_id);
 					  	
 		    $query->execute();
 			$con->Close();
