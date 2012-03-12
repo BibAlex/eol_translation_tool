@@ -14,6 +14,9 @@ include_once '../../../classes/DAL/DAL_templates.php';
 include_once '../../../classes/BLL/BLL_data_objects.php';
 include_once '../../../classes/DAL/DAL_data_objects.php';
 
+include_once '../../../classes/BLL/BLL_updated_data_objects.php';
+include_once '../../../classes/DAL/DAL_updated_data_objects.php';
+
 include_once '../../../classes/BLL/BLL_a_data_objects.php';
 include_once '../../../classes/DAL/DAL_a_data_objects.php';
 

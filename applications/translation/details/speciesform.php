@@ -1,27 +1,38 @@
 <?php
 	// Include CKEditor class.
 	include_once "../../../classes/modules/ckeditor/ckeditor.php";
+	include_once "../../../classes/modules/Simple_Diff.php";
 	
 	//Load current Object info	 
 	$EnObj = BLL_data_objects::Select_DataObjects_ByID('slave',$objectID);       
 	$ArObj = BLL_a_data_objects::Select_a_data_objects_ByID($objectID);//select latest version of that object at any process
+	if($EnObj->parent_data_object_id != null){
+		$oldArObj = BLL_a_data_objects::Select_a_data_objects_ByID($EnObj->parent_data_object_id);
+		$oldEnObj = BLL_data_objects::Select_DataObjects_ByID('slave',$EnObj->parent_data_object_id); 
+	}
 
 	$object_title='';
 	$rights_statement='';
 	$rights_holder='';
 	$description='';
-	$location='';	
+	$location='';
 	
 	//Load data of last data Object
-	if($ArObj!=null)
-	{
+	if($ArObj != null){
 	   	$object_title = $ArObj->object_title;
 	   	$rights_statement = $ArObj->rights_statement ;
 	 	$rights_holder = $ArObj->rights_holder;
 	 	$description = $ArObj->description;
 	 	$location = $ArObj->location;
 	}
-	
+	else if ($oldArObj != null){
+		$object_title = $oldArObj->object_title;
+	   	$rights_statement = $oldArObj->rights_statement ;
+	 	$rights_holder = $oldArObj->rights_holder;
+	 	$description = $oldArObj->description;
+	 	$location = $oldArObj->location;
+	}
+
 	//Calculate condition of the Object	
 	$condition = BLL_a_data_objects::Condition($process,$ArObj);	
 	$onlyView = 0;
@@ -31,7 +42,26 @@
     <!-- -------------------------Begin of Data Object Form -------------------- -->
 
 <script type="text/javascript">   
-
+	function showObj(type, text) {
+		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  		xmlhttp=new XMLHttpRequest();
+	  	}
+		else {// code for IE6, IE5
+	  		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  	}
+		xmlhttp.onreadystatechange=function(){
+	  		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+	  			document.getElementById(type).innerHTML=xmlhttp.responseText;
+	  			document.getElementById('old'+type).style.color = "blue";
+	  			document.getElementById('new'+type).style.color = "blue";
+	  			document.getElementById('compare'+type).style.color = "blue";
+	  			document.getElementById(text).style.color = "red";
+	    	}
+	  	}
+		xmlhttp.open("GET","objects.php?q="+text +"&r="+<?php echo $objectID?>,true);
+		xmlhttp.send();
+	}
+	
      function validate_form()
      {
     	 	//Reset last Errors
@@ -106,7 +136,6 @@
    </script>  
  
     <form name="frm" id="frm"  method="post" action="species.php?tid=<?=$taxonID?>&oid=<?=$objectID?><?=$otherparam?>" >
-    
         <div class="form">
           <h2>
           	<span style="float:left">
@@ -143,8 +172,41 @@
               	</tr>
 			<?php if(TRIM($EnObj->object_title)=='') $display="none"; else $display="block"; ?>
 				<tr style="display:<?=$display?>">
-                	<td class="odd_left" width="108">Title (En):</td>
-                	<td class="odd" style="width:531px"><?=$EnObj->object_title?></td>
+                	<?php
+						if($ArObj==null && $EnObj->parent_data_object_id != null){
+					?>
+							<td width="108">
+		                		<table>
+		                			<tr>
+		                				<td class="odd_left" colspan="3">
+		                					Title (En):
+		                				</td>
+		                			</tr>
+		                			<tr>
+		                				<td>
+		                					<a style="cursor: hand; cursor: pointer;" onclick="showObj('Title', 'oldTitle');">Old</a>
+		                				</td>
+		                				<td>
+		                					<a style="cursor: hand; cursor: pointer;" onclick="showObj('Title', 'newTitle');">New</a>
+		                				</td>
+		                				<td>
+		                					<a style="cursor: hand; cursor: pointer;" onclick="showObj('Title', 'compareTitle');">Compare</a>
+		                				</td>
+		                			</tr>
+		                		</table>
+		                	</td>
+		                	<td class="odd" style="width:531px">
+		                		<span id="Title"><?=Simple_Diff::htmlDiff($oldEnObj->object_title, $EnObj->object_title)?></span>
+		                	</td>
+                	<?php
+						}
+						else{
+                	?>
+                			<td class="odd_left" width="108">Title (En):</td>
+                			<td class="odd" style="width:531px"><?=$EnObj->object_title?></td>
+                	<?php
+                		}
+                	?>
               	</tr>
               	<tr style="display:<?=$display?>">
                 	<td class="even_left" width="108">Title (Ar):</td>
@@ -177,8 +239,41 @@
              	?>
              	
               <tr style="display:<?=$display?>">
-                <td class="odd_left"  width="108">Location (En):</td>
-                <td class="odd"  style="width:531px"><?=$EnObj->location?></td>
+                <?php
+					if($ArObj==null && $EnObj->parent_data_object_id != null){
+				?>
+						<td width="108">
+	                		<table>
+	                			<tr>
+	                				<td class="odd_left" colspan="3">
+	                					Location (En):
+	                				</td>
+	                			</tr>
+	                			<tr>
+	                				<td>
+	                					<a id="oldLocation" style="cursor: hand; cursor: pointer;" onclick="showObj('Location', 'oldLocation');">Old</a>
+	                				</td>
+	                				<td>
+	                					<a id="newLocation" style="cursor: hand; cursor: pointer;" onclick="showObj('Location', 'newLocation');">New</a>
+	                				</td>
+	                				<td>
+	                					<a id="compareLocation" style="cursor: hand; cursor: pointer;" onclick="showObj('Location', 'compareLocation');">Compare</a>
+	                				</td>
+	                			</tr>
+	                		</table>
+	                	</td>
+	                	<td class="odd" style="width:531px">
+	                		<span id="Location"><?=Simple_Diff::htmlDiff($oldEnObj->location, $EnObj->location)?></span>
+	                	</td>
+            	<?php
+					}
+					else{
+            	?>
+            			<td class="odd_left" width="108">Location (En):</td>
+            			<td class="odd" style="width:531px"><?=$EnObj->location?></td>
+            	<?php
+            		}
+            	?>
               </tr>
               <tr style="display:<?=$display?>">
                 <td class="even_left"  width="108">Location (Ar):</td>
@@ -200,7 +295,7 @@
 							$config['width'] = 530;
 							$config['height'] = 30;
 		 					$config['toolbarCanCollapse'] = false;
-		 					
+
 							// Create second instance.
 							echo $LOC_CKEditor->editor("LOC_editor", $location, $config);
           				}
@@ -261,8 +356,41 @@
               	else{
               	?>
               		<tr style="display:<?=$display?>">
-		                <td class="odd_left"  width="108">Rights Stat. (En):</td>
-		                <td class="odd"  style="width:531px"><?=$EnObj->rights_statement?></td>
+		                <?php
+							if($ArObj==null && $EnObj->parent_data_object_id != null){
+						?>
+								<td width="108">
+			                		<table>
+			                			<tr>
+			                				<td class="odd_left" colspan="3">
+			                					Rights Stat. (En):
+			                				</td>
+			                			</tr>
+			                			<tr>
+			                				<td>
+			                					<a id="oldRights_statement" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_statement', 'oldRights_statement');">Old</a>
+			                				</td>
+			                				<td>
+			                					<a id="newRights_statement" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_statement', 'newRights_statement');">New</a>
+			                				</td>
+			                				<td>
+			                					<a id="compareRights_statement" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_statement', 'compareRights_statement');">Compare</a>
+			                				</td>
+			                			</tr>
+			                		</table>
+			                	</td>
+			                	<td class="odd" style="width:531px">
+			                		<span id="Rights_statement"><?=Simple_Diff::htmlDiff($oldEnObj->rights_statement, $EnObj->rights_statement)?></span>
+			                	</td>
+	                	<?php
+							}
+							else{
+	                	?>
+	                			<td class="odd_left" width="108">Rights Stat. (En):</td>
+	                			<td class="odd" style="width:531px"><?=$EnObj->rights_statement?></td>
+	                	<?php
+                		}
+                		?>
 		              </tr>
 		              <tr style="display:<?=$display?>">
 		                <td class="even_left"  width="108">Rights Stat. (Ar):</td>
@@ -338,8 +466,41 @@
 					else{
 				?>
 						<tr style="display:<?=$display?>">
-			                <td class="odd_left" width="108">Rights Holder (En):</td>
-			                <td class="odd" style="width:531px"><?=$EnObj->rights_holder?></td>                				   
+							<?php
+								if($ArObj==null && $EnObj->parent_data_object_id != null){
+							?>
+									<td width="108">
+				                		<table>
+				                			<tr>
+				                				<td class="odd_left" colspan="3">
+				                					Rights Holder (En):
+				                				</td>
+				                			</tr>
+				                			<tr>
+				                				<td>
+				                					<a id="oldRights_holder" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_holder', 'oldRights_holder');">Old</a>
+				                				</td>
+				                				<td>
+				                					<a id="newRights_holder" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_holder', 'newRights_holder');">New</a>
+				                				</td>
+				                				<td>
+				                					<a id="compareRights_holder" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_holder', 'compareRights_holder');">Compare</a>
+				                				</td>
+				                			</tr>
+				                		</table>
+				                	</td>
+				                	<td class="odd" style="width:531px">
+				                		<span id="Rights_holder"><?=Simple_Diff::htmlDiff($oldEnObj->rights_holder, $EnObj->rights_holder)?></span>
+				                	</td>
+		                	<?php
+								}
+								else{
+		                	?>
+		                			<td class="odd_left" width="108">Rights Holder (En):</td>
+		                			<td class="odd" style="width:531px"><?=$EnObj->rights_holder?></td>
+		                	<?php
+	                		}
+	                		?>            				   
 			              </tr>
 			              <tr style="display:<?=$display?>">
 			                <td class="even_left"  width="108">Rights Holder (Ar):</td>
@@ -365,12 +526,47 @@
               <?php if(TRIM($EnObj->description)=='') $display="none"; else $display="block"; ?>
              
               <tr style="display:<?=$display?>">
-                <td class="odd_left" width="108">Details (En):</td>
-                <td class="odd">
-                	<div style="overflow: auto; max-height: 200px; width:531px">
-                		<?=$EnObj->description?> 
-                	</div>
-                </td>
+                <?php
+					if($ArObj==null && $EnObj->parent_data_object_id != null){
+				?>
+						<td width="108">
+	                		<table>
+	                			<tr>
+	                				<td class="odd_left" colspan="3">
+	                					Details (En):
+	                				</td>
+	                			</tr>
+	                			<tr>
+	                				<td>
+	                					<a id="oldDescription" style="cursor: hand; cursor: pointer;" onclick="showObj('Description', 'oldDescription');">Old</a>
+	                				</td>
+	                				<td>
+	                					<a id="newDescription" style="cursor: hand; cursor: pointer;" onclick="showObj('Description', 'newDescription');">New</a>
+	                				</td>
+	                				<td>
+	                					<a id="compareDescription" style="cursor: hand; cursor: pointer;" onclick="showObj('Description', 'compareDescription');">Compare</a>
+	                				</td>
+	                			</tr>
+	                		</table>
+	                	</td>
+	                	<td class="odd" style="width:531px">
+	                		<div style="overflow: auto; max-height: 200px; width:531px">
+		                		<span id="Description"><?=Simple_Diff::htmlDiff($oldEnObj->description, $EnObj->description)?></span>
+		                	</div>
+	                	</td>
+            	<?php
+					}
+					else{
+            	?>
+            			<td class="odd_left" width="108">Details (En):</td>
+		                <td class="odd">
+		                	<div style="overflow: auto; max-height: 200px; width:531px">
+		                		<?=$EnObj->description?> 
+		                	</div>
+		                </td>
+            	<?php
+        		}
+        		?>            	
               </tr>
               <tr style="display:<?=$display?>">
                 <td class="even_left"  width="108">Details (Ar):</td>
@@ -472,4 +668,3 @@
     </script>
     
        <!-- -------------------------End of Data Object Form-------------------- -->
-        

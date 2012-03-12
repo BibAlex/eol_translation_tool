@@ -86,6 +86,35 @@
 		    return $records;    
 		}
 		
+		static function Select_limit_updated_dataObjects($start, $limit) 
+		{
+		 	$con = new PDO_Connection();
+		  	$con->Open('slave');			  	
+		  	$stmt = $con->connection->prepare("SELECT * FROM updated_data_objects limit 1,200;");
+		  	$stmt->execute();		
+			$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_updated_data_objects');		
+		    $con->Close();    
+		    return $records;    
+		}
+		
+		static function Select_DataObjects_ByGUID_And_DataType($DB, $guid, $data_type_id) 
+		{
+		 	 $con = new PDO_Connection();
+		  	 $con->Open($DB);
+			  	
+		  	 $stmt = $con->connection->prepare("SELECT * FROM updated_data_objects WHERE guid=? and data_type_id = ?;");
+		 	
+		    $stmt->bindParam(1, $guid);
+		    $stmt->bindParam(2, $data_type_id);
+			$stmt->execute();		
+			$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_updated_data_objects');		
+		    $con->Close();
+		    if(count($records) > 0)
+		    	return $records[0];
+		    else	   
+		    	return new DAL_updated_data_objects(); 
+		}
+		
 		static function Exist_Updated_DataObjects_ByID($ObjID) 
 	    {
 		 	$con = new PDO_Connection();
