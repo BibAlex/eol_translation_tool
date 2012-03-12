@@ -778,6 +778,43 @@ class BLL_taxon_concepts {
 		$con->Close();
 	}
 	
+	static function Insert_data_object_and_its_relations($data_object, $taxon_concept_id)
+	{
+		//1. Fill data_object table
+		if(BLL_data_objects::Exist_DataObjects_ByID('slave',$dataobject->id)==0)
+		{
+			$dataobject->aeol_translation=0;//Original record from woods hole not translated
+			BLL_data_objects::Insert_DataObject('slave',$dataobject);
+		}
+		
+		//2. Fill data_object_taxon_concept table
+		if(BLL_data_objects_taxon_concepts::Exist_data_objects_taxon_concepts('slave',$dataobject->id,$taxon_concept_id) ==0)
+			BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave',$taxon_concept_id,$dataobject->id);
+		
+		//Select the TOC of the current data_object from master
+		$dobj_tocs = BLL_data_objects_table_of_contents::Select_data_objects_table_of_contents_ByDataObjectId('master', $dataobject->id);
+		
+		//3. Fill the data_objects_table_of_contents table
+		foreach ($dobj_tocs as $dobj_toc)
+		{
+			if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
+			{
+				BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);
+			}
+		}
+		//Select the InfoItem of the current data_object from master
+		$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
+
+		//4. Fill the data_objects_info_items table
+		foreach ($dobj_infos as $dobj_info)
+		{
+			if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
+			{
+				BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
+			}
+		}
+	}
+	
 	static function assign_taxon($id, $translator_id, $linguistic_reviewer_id, $scientific_reviewer_id) {
 		
 		$query_str = 'update taxon_concepts set taxon_status_id=2 , translator_id='.strval($translator_id);
@@ -804,76 +841,14 @@ class BLL_taxon_concepts {
 		$dataobjects = BLL_data_objects::Select_DataObjects_ByTaxonConceptID('master',$id);		
 		foreach ($dataobjects as $dataobject)	
 	  	{ 	  		
-	  		//Fill data_object table
-	  		if(BLL_data_objects::Exist_DataObjects_ByID('slave',$dataobject->id)==0)
-	  		{		
-		  		$dataobject->aeol_translation=0;//Original record from woods hole not translated
-				BLL_data_objects::Insert_DataObject('slave',$dataobject);
-	  		}
-			
-			//Fill data_object_taxon_concept table
-			if(BLL_data_objects_taxon_concepts::Exist_data_objects_taxon_concepts('slave',$dataobject->id,$id) ==0)
-				BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave',$id,$dataobject->id);
-			
-			//Select the TOC of the current data_object from master
-			$dobj_tocs = BLL_data_objects_table_of_contents::Select_data_objects_table_of_contents_ByDataObjectId('master', $dataobject->id);
-			//Fill the data_objects_table_of_contents table 
-			foreach ($dobj_tocs as $dobj_toc)		
-			{		
-				if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
-				{
-					BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);					
-				}
-			}
-			//Select the InfoItem of the current data_object from master
-			$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
-			//Fill the data_objects_info_items table 
-			foreach ($dobj_infos as $dobj_info)		
-			{		
-				if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
-				{
-					BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
-				}
-			}		
+	  		Insert_data_object_and_its_relations($dataobject,$id);
 	  	}
 	  	
 		// get Images						   
 		$image_dataobjects = BLL_data_objects::Select_Images_ByTaxonConceptID('master',$id);
-		//echo(count($image_dataobjects));
-		  	
 		foreach ($image_dataobjects as $dataobject)	
 	  	{ 	  		
-	  		//Fill data_object table
-	  		if(BLL_data_objects::Exist_DataObjects_ByID('slave',$dataobject->id)==0)
-	  		{		
-		  		$dataobject->aeol_translation=0;//Original record from woods hole not translated
-				BLL_data_objects::Insert_DataObject('slave',$dataobject);
-	  		}
-			
-			//Fill data_object_taxon_concept table
-			if(BLL_data_objects_taxon_concepts::Exist_data_objects_taxon_concepts('slave',$dataobject->id,$id) ==0)
-				BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave',$id,$dataobject->id);
-			
-			//Select the TOC of the current data_object from master
-			$dobj_tocs = BLL_data_objects_table_of_contents::Select_data_objects_table_of_contents_ByDataObjectId('master', $dataobject->id);
-			//Fill the data_objects_table_of_contents table 
-			foreach ($dobj_tocs as $dobj_toc)		
-			{		
-				if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
-				{
-					BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);
-				}
-			}	
-			//Select the InfoItem of the current data_object from master
-			$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
-			//Fill the data_objects_info_items table 
-			foreach ($dobj_infos as $dobj_info)		
-			{		
-				if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
-				{
-					BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
-				}
-			}			
+	  		Insert_data_object_and_its_relations($dataobject,$id);
 	  	}
 		
 	}

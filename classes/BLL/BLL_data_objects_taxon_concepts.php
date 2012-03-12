@@ -7,7 +7,7 @@ class BLL_data_objects_taxon_concepts {
 	 {
 	 	 $con = new PDO_Connection();
 	  	 $con->Open($DB);		  	
-	  	 $query = $con->connection->prepare("INSERT INTO  data_objects_taxon_concepts VALUES(?,?);");
+	  	 $query = $con->connection->prepare("INSERT IGNORE INTO  data_objects_taxon_concepts VALUES(?,?);");
 	  	 $query->bindParam(1, $taxon_concept_id);	 	
 	  	 $query->bindParam(2, $data_object_id);	 		 	
 	     $query->execute();

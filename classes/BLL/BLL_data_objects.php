@@ -68,7 +68,7 @@ class BLL_data_objects {
 	  	 										description_linked, object_url, object_cache_url, thumbnail_url, 
 	  	 										thumbnail_cache_url, location, latitude, longitude, altitude, object_created_at,
 	  	 										object_modified_at, created_at, updated_at, data_rating, vetted_id,
-	  	 										visibility_id, published, curated, aeol_translation,harvested_batch_id, harvest_batch_type) 
+	  	 										visibility_id, published, curated, aeol_translation,harvest_batch_id, harvest_batch_type) 
 	  	 									VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");			 
 		 $stmt->bindParam(1, $dal_updated_data_objects->id);
 		 $stmt->bindParam(2, $dal_updated_data_objects->guid);
@@ -361,12 +361,39 @@ class BLL_data_objects {
 	    return $records;    
 	}
 	
-	static function Select_DataObjects_ByGuid($DB, $guid, $data_type_id) 
+	static function Select_DataObjects_ByGuid_NOT_Hidden($guid, $data_type_id) 
 	{
 	 	$con = new PDO_Connection();
-	  	$con->Open($DB);
+	  	$con->Open('slave');
 		  	
-	  	$stmt = $con->connection->prepare("SELECT * FROM data_objects where guid = ? AND data_type_id=?;");
+	  	$stmt = $con->connection->prepare("SELECT dos.* 
+	  										FROM data_objects dos
+	  										 	INNER JOIN  a_data_objects ado  ON (ado.id=dos.id)
+	  										WHERE guid = ? 
+	  											AND data_type_id=? 
+	  											AND hidden<>1  
+	  										ORDER BY ado.process_id DESC;");
+	    $stmt->bindParam(1, $guid);	   
+	    $stmt->bindParam(2, $data_type_id);	   
+		$stmt->execute();		
+		$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;    
+	}
+	
+	static function Select_Latest_DataObjects_ByGuid_AND_Hidden_AND_Has_Parent($guid, $data_type_id) 
+	{
+	 	$con = new PDO_Connection();
+	  	$con->Open('slave');
+		  	
+	  	$stmt = $con->connection->prepare("SELECT * 
+	  										FROM data_objects 
+	  										WHERE guid = ? 
+	  											AND data_type_id=? 
+	  											AND hidden=1 
+	  											AND parent_data_object_id IS NOT NULL 
+	  										ORDER BY id DESC
+	  										LIMIT 0,1;");
 	    $stmt->bindParam(1, $guid);	   
 	    $stmt->bindParam(2, $data_type_id);	   
 		$stmt->execute();		
@@ -375,12 +402,39 @@ class BLL_data_objects {
 	    return $records;    
 	}
 
-	static function Hide_DataObject($do_id)
+	static function Update_data_object_set_Parent($data_object_id, $parent_data_object_id)
+	{
+		$con = new PDO_Connection();
+	  	$con->Open('slave');
+		  	
+	  	$stmt = $con->connection->prepare("UPDATE data_objects SET parent_data_object_id=? WHERE id=?");
+	    $stmt->bindParam(1, $parent_data_object_id);
+	    $stmt->bindParam(2, $data_object_id);
+		$stmt->execute();		
+	    $con->Close();
+	}
+	
+	static function Hide_DataObject_If_no_adata_object($guid, $data_type_id)
 	{
 		 $con = new PDO_Connection();
 	  	 $con->Open('slave');	  	
-	  	 $stmt = $con->connection->prepare("UPDATE data_objects set hidden=1 WHERE id=?;");	  	 									
-		 $stmt->bindParam(1,$do_id);		 	
+	  	 $stmt = $con->connection->prepare("UPDATE data_objects dos set hidden=1 
+	  	 									WHERE dos.guid=? 
+	  	 										AND dos.data_type_id=? 
+	  	 										AND hidden<>1 
+	  	 										AND id NOT IN (SELECT ado.id FROM a_data_objects ado WHERE ado.id=dos.id);");	  	 									
+		 $stmt->bindParam(1,$guid);	
+		 $stmt->bindParam(2,$data_type_id);	 	
+		 $stmt->execute();
+		 $con->Close();
+	}
+	
+	static function Hide_DataObject($data_object_id)
+	{
+		 $con = new PDO_Connection();
+	  	 $con->Open('slave');	  	
+	  	 $stmt = $con->connection->prepare("UPDATE data_objects dos set hidden=1 WHERE id=?	;");	  	 									
+		 $stmt->bindParam(1,$data_object_id);
 		 $stmt->execute();
 		 $con->Close();
 	}
