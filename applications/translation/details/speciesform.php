@@ -57,7 +57,7 @@
      		if(en_rs.length>0)
      		{  		
 	     		var rs = document.getElementById('cke_contents_RS_editor').getElementsByTagName('iframe');
-	     		if (en_rs.length>0 && rs[0].contentWindow.document.body.innerHTML.length<=4)
+	     		if (rs[0].contentWindow.document.body.innerHTML=='<br>' || rs[0].contentWindow.document.body.innerHTML.length<=2)
 	         	{       			
 	         		document.getElementById('s_error').style.display="block";
 	         		valid=false;
@@ -68,7 +68,7 @@
      		if(en_rh.length>0)
      		{   
 	            var rh = document.getElementById('cke_contents_RH_editor').getElementsByTagName('iframe');
-	            if (rh[0].contentWindow.document.body.innerHTML.length<=4)
+	            if (rh[0].contentWindow.document.body.innerHTML=='<br>' ||  rh[0].contentWindow.document.body.innerHTML.length<2)
 	     		{       			
 	         		document.getElementById('h_error').style.display="block";
 	         		valid=false;
@@ -79,7 +79,7 @@
      		if(en_loc.length>0)
      		{  		
 	     		var loc = document.getElementById('cke_contents_LOC_editor').getElementsByTagName('iframe');
-	     		if (en_loc.length>0 && loc[0].contentWindow.document.body.innerHTML.length<=4)
+	     		if (loc[0].contentWindow.document.body.innerHTML=='<br>' || loc[0].contentWindow.document.body.innerHTML.length<2)
 	         	{       			
 	         		document.getElementById('l_error').style.display="block";
 	         		valid=false;
