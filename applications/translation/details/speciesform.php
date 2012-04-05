@@ -25,7 +25,7 @@
 	 	$description = $ArObj->description;
 	 	$location = $ArObj->location;
 	}
-	else if ($oldArObj != null){
+	else if ($EnObj->parent_data_object_id != null && $oldArObj != null){
 		$object_title = $oldArObj->object_title;
 	   	$rights_statement = $oldArObj->rights_statement ;
 	 	$rights_holder = $oldArObj->rights_holder;
@@ -40,32 +40,31 @@
 		$onlyView = 1;    
 ?>
     <!-- -------------------------Begin of Data Object Form -------------------- -->
-
-<script type="text/javascript">   
-	function showObj(type, text) {
-		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  		xmlhttp=new XMLHttpRequest();
-	  	}
-		else {// code for IE6, IE5
-	  		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  	}
-		xmlhttp.onreadystatechange=function(){
-	  		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-	  			document.getElementById(type).innerHTML=xmlhttp.responseText;
-	  			document.getElementById('old'+type).style.color = "blue";
-	  			document.getElementById('new'+type).style.color = "blue";
-	  			document.getElementById('compare'+type).style.color = "blue";
-	  			document.getElementById(text).style.color = "red";
-	    	}
-	  	}
-		xmlhttp.open("GET","objects.php?q="+text +"&r="+<?php echo $objectID?>,true);
-		xmlhttp.send();
-	}
 	
-     function validate_form()
-     {
+	<script type="text/javascript">   
+		function showObj(type, text) {
+			if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  		xmlhttp=new XMLHttpRequest();
+		  	}
+			else {// code for IE6, IE5
+		  		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  	}
+			xmlhttp.onreadystatechange=function(){
+		  		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+		  			document.getElementById(type).innerHTML=xmlhttp.responseText;
+		  			document.getElementById('old'+type).style.color = "#0b7db6";
+		  			document.getElementById('new'+type).style.color = "#0b7db6";
+		  			document.getElementById('compare'+type).style.color = "#0b7db6";
+		  			document.getElementById(text).style.color = "#d26800";
+		    	}
+		  	}
+			xmlhttp.open("GET","objects.php?q="+text +"&r="+<?php echo $objectID?>,true);
+			xmlhttp.send();
+		}
+	
+		function validate_form() {
     	 	//Reset last Errors
-    	 	document.getElementById('t_error').style.display="none";
+			document.getElementById('t_error').style.display="none";
     	 	document.getElementById('s_error').style.display="none";
     	 	document.getElementById('h_error').style.display="none";
     	 	document.getElementById('d_error').style.display="none";
@@ -83,11 +82,11 @@
 	     		}
     		} 
 
-     		var en_rs="<?php echo str_replace("\"","'",TRIM($EnObj->rights_statement));?>";
+     		var en_rs="<?php echo str_replace("\"","'",TRIM($EnObj->rights_statement));?>";         
      		if(en_rs.length>0)
      		{  		
 	     		var rs = document.getElementById('cke_contents_RS_editor').getElementsByTagName('iframe');
-	     		if (en_rs.length>0 && rs[0].contentWindow.document.body.innerHTML.length<=4)
+                if (rs[0].contentWindow.document.body.innerHTML=='<br>' || rs[0].contentWindow.document.body.innerHTML.length<=2)
 	         	{       			
 	         		document.getElementById('s_error').style.display="block";
 	         		valid=false;
@@ -98,7 +97,7 @@
      		if(en_rh.length>0)
      		{   
 	            var rh = document.getElementById('cke_contents_RH_editor').getElementsByTagName('iframe');
-	            if (rh[0].contentWindow.document.body.innerHTML.length<=4)
+	            if (rh[0].contentWindow.document.body.innerHTML=='<br>' ||  rh[0].contentWindow.document.body.innerHTML.length<2)
 	     		{       			
 	         		document.getElementById('h_error').style.display="block";
 	         		valid=false;
@@ -109,7 +108,7 @@
      		if(en_loc.length>0)
      		{  		
 	     		var loc = document.getElementById('cke_contents_LOC_editor').getElementsByTagName('iframe');
-	     		if (en_loc.length>0 && loc[0].contentWindow.document.body.innerHTML.length<=4)
+	     		if (loc[0].contentWindow.document.body.innerHTML=='<br>' || loc[0].contentWindow.document.body.innerHTML.length<2)
 	         	{       			
 	         		document.getElementById('l_error').style.display="block";
 	         		valid=false;
@@ -131,10 +130,18 @@
          		alert('Please fill in the all fields');
      		
      		return valid;
-     }
+		}
           
-   </script>  
- 
+	</script>  
+	<style>
+ 		.Old_New_Compare a:hover {
+			text-decoration:underline;
+			cursor: hand; 
+		}
+		.Old_New_Compare td {
+			padding:2px;
+		}
+	</style>
     <form name="frm" id="frm"  method="post" action="species.php?tid=<?=$taxonID?>&oid=<?=$objectID?><?=$otherparam?>" >
         <div class="form">
           <h2>
@@ -175,22 +182,22 @@
                 	<?php
 						if($ArObj==null && $EnObj->parent_data_object_id != null){
 					?>
-							<td width="108">
+							<td width="108" class="odd_left">
 		                		<table>
 		                			<tr>
 		                				<td class="odd_left" colspan="3">
 		                					Title (En):
 		                				</td>
 		                			</tr>
-		                			<tr>
-		                				<td>
-		                					<a style="cursor: hand; cursor: pointer;" onclick="showObj('Title', 'oldTitle');">Old</a>
+		                			<tr style="font-weight:normal;" class="Old_New_Compare">
+		                				<td >
+		                					<a id="oldTitle" onclick="showObj('Title', 'oldTitle');">Old</a>
 		                				</td>
 		                				<td>
-		                					<a style="cursor: hand; cursor: pointer;" onclick="showObj('Title', 'newTitle');">New</a>
+		                					<a id="newTitle" onclick="showObj('Title', 'newTitle');">New</a>
 		                				</td>
 		                				<td>
-		                					<a style="cursor: hand; cursor: pointer;" onclick="showObj('Title', 'compareTitle');">Compare</a>
+		                					<a id="compareTitle" style="color:#d26800" onclick="showObj('Title', 'compareTitle');">Compare</a>
 		                				</td>
 		                			</tr>
 		                		</table>
@@ -242,22 +249,22 @@
                 <?php
 					if($ArObj==null && $EnObj->parent_data_object_id != null){
 				?>
-						<td width="108">
+						<td width="108" class="odd_left">
 	                		<table>
 	                			<tr>
-	                				<td class="odd_left" colspan="3">
+	                				<td colspan="3">
 	                					Location (En):
 	                				</td>
 	                			</tr>
-	                			<tr>
+	                			<tr style="font-weight:normal;" class="Old_New_Compare">
 	                				<td>
-	                					<a id="oldLocation" style="cursor: hand; cursor: pointer;" onclick="showObj('Location', 'oldLocation');">Old</a>
+	                					<a id="oldLocation" onclick="showObj('Location', 'oldLocation');">Old</a>
 	                				</td>
 	                				<td>
-	                					<a id="newLocation" style="cursor: hand; cursor: pointer;" onclick="showObj('Location', 'newLocation');">New</a>
+	                					<a id="newLocation" onclick="showObj('Location', 'newLocation');">New</a>
 	                				</td>
 	                				<td>
-	                					<a id="compareLocation" style="cursor: hand; cursor: pointer;" onclick="showObj('Location', 'compareLocation');">Compare</a>
+	                					<a id="compareLocation" style="color:#d26800" onclick="showObj('Location', 'compareLocation');">Compare</a>
 	                				</td>
 	                			</tr>
 	                		</table>
@@ -359,22 +366,22 @@
 		                <?php
 							if($ArObj==null && $EnObj->parent_data_object_id != null){
 						?>
-								<td width="108">
+								<td width="108" class="odd_left">
 			                		<table>
 			                			<tr>
-			                				<td class="odd_left" colspan="3">
+			                				<td colspan="3">
 			                					Rights Stat. (En):
 			                				</td>
 			                			</tr>
-			                			<tr>
+			                			<tr style="font-weight:normal;" class="Old_New_Compare">
 			                				<td>
-			                					<a id="oldRights_statement" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_statement', 'oldRights_statement');">Old</a>
+			                					<a id="oldRights_statement" onclick="showObj('Rights_statement', 'oldRights_statement');">Old</a>
 			                				</td>
 			                				<td>
-			                					<a id="newRights_statement" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_statement', 'newRights_statement');">New</a>
+			                					<a id="newRights_statement" onclick="showObj('Rights_statement', 'newRights_statement');">New</a>
 			                				</td>
 			                				<td>
-			                					<a id="compareRights_statement" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_statement', 'compareRights_statement');">Compare</a>
+			                					<a id="compareRights_statement" style="color:#d26800" onclick="showObj('Rights_statement', 'compareRights_statement');">Compare</a>
 			                				</td>
 			                			</tr>
 			                		</table>
@@ -471,20 +478,20 @@
 							?>
 									<td width="108">
 				                		<table>
-				                			<tr>
-				                				<td class="odd_left" colspan="3">
+				                			<tr class="odd_left">
+				                				<td colspan="3">
 				                					Rights Holder (En):
 				                				</td>
 				                			</tr>
-				                			<tr>
+				                			<tr style="font-weight:normal;" class="Old_New_Compare">
 				                				<td>
-				                					<a id="oldRights_holder" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_holder', 'oldRights_holder');">Old</a>
+				                					<a id="oldRights_holder" onclick="showObj('Rights_holder', 'oldRights_holder');">Old</a>
 				                				</td>
 				                				<td>
-				                					<a id="newRights_holder" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_holder', 'newRights_holder');">New</a>
+				                					<a id="newRights_holder" onclick="showObj('Rights_holder', 'newRights_holder');">New</a>
 				                				</td>
 				                				<td>
-				                					<a id="compareRights_holder" style="cursor: hand; cursor: pointer;" onclick="showObj('Rights_holder', 'compareRights_holder');">Compare</a>
+				                					<a id="compareRights_holder" style="color:#d26800" onclick="showObj('Rights_holder', 'compareRights_holder');">Compare</a>
 				                				</td>
 				                			</tr>
 				                		</table>
@@ -529,22 +536,22 @@
                 <?php
 					if($ArObj==null && $EnObj->parent_data_object_id != null){
 				?>
-						<td width="108">
+						<td width="108" class="odd_left">
 	                		<table>
 	                			<tr>
-	                				<td class="odd_left" colspan="3">
+	                				<td colspan="3">
 	                					Details (En):
 	                				</td>
 	                			</tr>
-	                			<tr>
+	                			<tr style="font-weight:normal;" class="Old_New_Compare">
 	                				<td>
-	                					<a id="oldDescription" style="cursor: hand; cursor: pointer;" onclick="showObj('Description', 'oldDescription');">Old</a>
+	                					<a id="oldDescription" onclick="showObj('Description', 'oldDescription');">Old</a>
 	                				</td>
 	                				<td>
-	                					<a id="newDescription" style="cursor: hand; cursor: pointer;" onclick="showObj('Description', 'newDescription');">New</a>
+	                					<a id="newDescription" onclick="showObj('Description', 'newDescription');">New</a>
 	                				</td>
 	                				<td>
-	                					<a id="compareDescription" style="cursor: hand; cursor: pointer;" onclick="showObj('Description', 'compareDescription');">Compare</a>
+	                					<a id="compareDescription" style="color:#d26800" onclick="showObj('Description', 'compareDescription');">Compare</a>
 	                				</td>
 	                			</tr>
 	                		</table>

@@ -88,6 +88,11 @@ CREATE  TABLE `update_status` (
 
 INSERT INTO update_status (name) VALUES ('Automatically updated'),('Manually updated from scratch'),('Manually updated from already exisiting data_object');
 
+--Added by Yosra
+
+--Add column in table taxon_concepts
+ALTER TABLE `aeol_test`.`taxon_concepts` ADD COLUMN `taxon_update` TINYINT(1) UNSIGNED NOT NULL  AFTER `publish_date` ;
+
 
 
 

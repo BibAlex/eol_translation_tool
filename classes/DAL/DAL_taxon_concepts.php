@@ -31,6 +31,7 @@
 		  public $total_ArabicObjects;
 		  public $selected_by;
 		  public $priority; /* Priorities -> label "virtual denormalized field "*/
+		  public $taxon_update; //added by Yosra 01-04-2012 for "updating scenario" 
 		  
 		  public function Dates($date)
 		  {

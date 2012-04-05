@@ -193,12 +193,12 @@
 		 	 $con = new PDO_Connection();
 		  	 $con->Open('slave');
 			  	
-		  	 $stmt = $con->connection->prepare("SELECT COUNT(id)
-		  	 						FROM a_data_objects
+		  	 $stmt = $con->connection->prepare("SELECT COUNT(a_data_objects.id)
+		  	 						FROM a_data_objects INNER JOIN data_objects ON (a_data_objects.id=data_objects.id)
 		                           INNER JOIN  data_objects_taxon_concepts
-		                                ON (a_data_objects.id=data_object_id)	                        
+		                                ON (data_objects.id=data_objects_taxon_concepts.data_object_id)	                        
 		                           WHERE  data_objects_taxon_concepts.taxon_concept_id=?  AND 
-		                           (	process_id>=?  );");
+		                           (	process_id>=?  ) AND data_objects.hidden=0;");
 		 	
 		    $stmt->bindParam(1, $taxon_concept_id);
 		    $stmt->bindParam(2, $process_id);

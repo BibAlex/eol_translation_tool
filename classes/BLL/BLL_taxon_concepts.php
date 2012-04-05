@@ -778,6 +778,53 @@ class BLL_taxon_concepts {
 		$con->Close();
 	}
 	
+	static function reassign_updated_taxon($id, $translator_id, $old_translator_id, $linguistic_reviewer_id, $old_linguistic_reviewer_id, $scientific_reviewer_id, $old_scientific_reviewer_id) {
+		
+		$query_str = 'update taxon_concepts set translator_id='.strval($translator_id);
+		if ($translator_id > 0)
+		$query_str .= ', translator_assigned=1 ';
+		else
+		$query_str .= ', translator_assigned=0 ';
+		$query_str .= ', linguistic_reviewer_id='.strval($linguistic_reviewer_id);
+		if ($linguistic_reviewer_id > 0)
+		$query_str .= ' , linguistic_assigned=1 ';
+		else
+		$query_str .= ' , linguistic_assigned=0 ';
+		$query_str .= ', scientific_reviewer_id='.strval($scientific_reviewer_id);
+		
+		$query_str .= ', taxon_update=0';
+		$query_str .= ' where id='.strval($id).';';		
+
+		//echo($query_str.'<br>');
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$query = $con->connection->prepare($query_str);
+		$query->execute();
+		
+		// update a_data_objects to release locks
+		if ($translator_id != $old_translator_id) {			
+			$query_str = "update a_data_objects set locked=0 where process_id=2 and user_id=".$old_translator_id." and taxon_concept_id=".strval($id).";";
+			$query = $con->connection->prepare($query_str);
+			$query->execute();
+		}
+		
+		// update a_data_objects to release locks
+		if ($linguistic_reviewer_id != $old_linguistic_reviewer_id) {			
+			$query_str = "update a_data_objects set locked=0 where process_id=4 and user_id=".$old_linguistic_reviewer_id." and taxon_concept_id=".strval($id).";";
+			$query = $con->connection->prepare($query_str);
+			$query->execute();
+		}
+		
+		// update a_data_objects to release locks
+		if ($scientific_reviewer_id != $old_scientific_reviewer_id) {			
+			$query_str = "update a_data_objects set locked=0 where process_id=3 and user_id=".$old_scientific_reviewer_id." and taxon_concept_id=".strval($id).";";
+			$query = $con->connection->prepare($query_str);
+			$query->execute();
+		}
+		
+		$con->Close();
+	}
+	
 	static function Insert_data_object_and_its_relations($data_object, $taxon_concept_id)
 	{
 		//1. Fill data_object table
@@ -855,6 +902,28 @@ class BLL_taxon_concepts {
 	
 	static function get_finished_taxons() {
 		$query_str = 'select * from taxon_concepts where taxon_status_id>=6';
+		
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$query = $con->connection->prepare($query_str);
+		$query->execute();
+		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_taxon_concepts');
+		$con->Close();
+		
+		return $records;
+	}
+	
+	//Method added by Yosra on 27 March to change publishing criteria to allow publishing of a taxon with one or more published data objects
+	static function get_finished_a_data_objects_taxons() {
+		$query_str = 'SELECT * 
+						FROM taxon_concepts 
+						WHERE taxon_concepts.id IN (
+							SELECT DISTINCT data_objects_taxon_concepts.taxon_concept_id
+							FROM data_objects_taxon_concepts
+							INNER JOIN a_data_objects ON
+								(data_objects_taxon_concepts.data_object_id = a_data_objects.id)
+							WHERE a_data_objects.process_id >= 6
+						);';
 		
 		$con = new PDO_Connection();
 		$con->Open('slave');
@@ -949,11 +1018,11 @@ class BLL_taxon_concepts {
 					d2.scientific_reviewer_id,
 					d2.final_editor_id
  				FROM data_objects d1
-					inner join a_data_objects d2 on d1.id=d2.id
-					inner join data_types on d1.data_type_id=data_types.id
-					left outer join mime_types on d1.mime_type_id=mime_types.id
-					left outer join licenses on licenses.id=license_id
-					inner join data_objects_taxon_concepts ON data_objects_taxon_concepts.data_object_id=d1.id and data_objects_taxon_concepts.taxon_concept_id=?;");
+					INNER JOIN a_data_objects d2 ON d1.id=d2.id
+					INNER JOIN data_types ON d1.data_type_id=data_types.id
+					LEFT OUTER JOIN mime_types ON d1.mime_type_id=mime_types.id
+					LEFT OUTER JOIN licenses ON licenses.id=license_id
+					INNER JOIN data_objects_taxon_concepts ON data_objects_taxon_concepts.data_object_id=d1.id AND data_objects_taxon_concepts.taxon_concept_id=? AND d1.hidden=0 AND d2.process_id >=6;"); // AND a_data_objects.process_id >=6 added by Yosra on 27 March to publish only finished a_data_objects
 		$query->bindParam(1, $id);
 		$query->execute();
 		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_a_data_objects');
@@ -1084,7 +1153,7 @@ class BLL_taxon_concepts {
 		$query = $con->connection->prepare("SELECT 
 			taxon_concepts.*
 			, FUN_CountEnglishObjects(taxon_concepts.id)   AS total_EnglishObjects
-			, FUN_CountArabicObjects(taxon_concepts.id, taxon_status_id ) AS total_ArabicObjects	
+			, FUN_CountArabicObjects(taxon_concepts.id, taxon_concepts.taxon_status_id ) AS total_ArabicObjects	
 			, users.email
 			, priorities.label as priority
 		FROM taxon_concepts 
@@ -1270,6 +1339,21 @@ class BLL_taxon_concepts {
 		$con->Close();
 		
 		return $result;			
+	}
+	
+	//added by Yosra on 01-04-2012
+	static function get_updated_taxons_count() {
+		$query_str = "SELECT COUNT(*) AS Total_Pending FROM taxon_concepts WHERE taxon_update=1 ";
+		
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$query = $con->connection->prepare($query_str);
+		
+		$query->execute();
+		$result = $query->fetchColumn();
+		$con->Close();
+		
+		return $result;			
 	}	
 	
 	static function get_pending_distribution($current_page, $page_size, $sort_by) {
@@ -1322,6 +1406,34 @@ class BLL_taxon_concepts {
 		$query = $con->connection->prepare($query_str);
 		if ($keyword != '') 
 			$query->bindParam(1, '%'.$keyword.'%');
+		
+		$query->execute();
+		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_taxon_concepts');
+		$con->Close();
+		return  $records;
+	}
+	
+	static function get_updated_taxons($current_page, $page_size, $sort_by) {
+		$query_str = "SELECT taxon_concepts.*, status.label AS taxon_status, priorities.label AS priority
+							FROM taxon_concepts 
+							INNER JOIN status ON status.id=taxon_concepts.taxon_status_id
+							INNER JOIN selection_batches ON selection_batches.id=selection_id
+							INNER JOIN priorities ON priorities.id=priority_id
+							WHERE taxon_update=1 ";
+		if ($sort_by == 'id')
+			$query_str .= ' order by taxon_concepts.id ';
+		elseif ($sort_by == 'date')
+			$query_str .= ' order by selection_date ';
+		elseif ($sort_by == 'name')
+			$query_str .= ' order by scientificName ';
+		else
+			$query_str .= ' order by sort_order ';
+		
+		$query_str .= Pagination::get_paging_limit($page_size, $current_page);
+		
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$query = $con->connection->prepare($query_str);
 		
 		$query->execute();
 		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_taxon_concepts');

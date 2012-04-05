@@ -251,7 +251,7 @@ class BLL_data_objects {
 	                           		ON (data_types.id = data_objects.data_type_id)
 	                           		
 	                           WHERE  data_objects_taxon_concepts.taxon_concept_id=?
-	                               AND data_types.type=? AND hidden = 0;"); /* "AND hidden = 0" added by Yosra to avoid dispaying old english objects 12-3-2-12*/
+	                               AND data_types.type=? AND hidden=0;"); /* "AND hidden = 0" added by Yosra to avoid dispaying old english objects 12-3-2-12*/
 	 	
 	    $stmt->bindParam(1, $taxon_concept_id);
 	    $stmt->bindParam(2, $type);//type is 'image','text','video'
@@ -270,7 +270,7 @@ class BLL_data_objects {
 	  	 						FROM data_objects
 	                           INNER JOIN  data_objects_taxon_concepts
 	                                ON (data_objects.id=data_object_id)	                        
-	                           WHERE  data_objects_taxon_concepts.taxon_concept_id=?;");
+	                           WHERE  data_objects_taxon_concepts.taxon_concept_id=? AND data_objects.hidden=0;");
 	 	
 	    $stmt->bindParam(1, $taxon_concept_id);
 		$stmt->execute();		
