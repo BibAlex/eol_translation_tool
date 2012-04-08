@@ -59,7 +59,7 @@ foreach ($finished_taxons as $taxon) {
 			//echo ("<mimeType>".$data_object->mime_type."</mimeType>");
 			//2.Agent(s)	
 			//echo ('<agent role="creator">'.htmlspecialchars(BLL_users::get_user_name($taxon->translator_id)).'</agent>');
-			echo ('<agent role="provider">Bibliotheca Alexandrina</agent>');
+			//echo ('<agent role="provider">Bibliotheca Alexandrina</agent>');
 			
 			//3.Title
 			if ($data_object->object_title != '')
