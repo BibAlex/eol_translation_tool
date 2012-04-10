@@ -3,10 +3,8 @@ include_once '../../../classes/PDO_Connection.php';
 include_once '../../../config/constants.php';
 include_once '../../../classes/BLL/BLL_taxon_concepts.php';
 include_once '../../../classes/BLL/BLL_users.php';
-include_once '../../../classes/BLL/BLL_data_objects_info_items.php';
 include_once '../../../classes/BLL/BLL_data_objects.php';
 include_once '../../../classes/DAL/DAL_taxon_concepts.php';
-include_once '../../../classes/DAL/DAL_info_items.php';
 include_once '../../../classes/DAL/DAL_data_objects.php';
 include_once '../../../classes/DAL/DAL_a_data_objects.php';
 include_once '../../../classes/DAL/DAL_names.php';
@@ -31,8 +29,9 @@ $finished_taxons = BLL_taxon_concepts::get_finished_a_data_objects_taxons();
 foreach ($finished_taxons as $taxon) {	
 
 	// Get data objects
-	//Note: If Arabic text is empty display by default the english text
-	$data_objects = BLL_taxon_concepts::get_translated_data_objects($taxon->id);
+	//Note: If Arabic text is empty display by default the english text	
+	$data_objects = BLL_taxon_concepts::get_translated_data_objects_guid($taxon->id); //return only distinct guids and data types
+	
 	if(count($data_objects) > 0){	//make sure not all data objects are hidden to avoid creating empty taxon node
 		echo("<taxon>");
 		echo("<dc:identifier>batr:tid:".$taxon->id."</dc:identifier>");
@@ -45,12 +44,9 @@ foreach ($finished_taxons as $taxon) {
 		}
 		
 		foreach ($data_objects as $data_object) {
-			//check if the current data_object has updates
- 			$latest_data_object = BLL_data_objects::Select_Latest_DataObject_ByGuid_and_Data_type($data_object->guid, $data_object->data_type_id); 
- 			if($latest_data_object->id != $data_object->id)
- 			{
- 				$data_object = BLL_taxon_concepts::get_full_translated_data_object($latest_data_object->id);
- 			}
+			//Get the latest translated data object by guid and data type id
+ 			$data_object = BLL_taxon_concepts::get_full_latest__translated_data_object($data_object->guid, $data_object->data_type_id);
+ 		
 			echo ("<dataObject>");
 			//1.Identifier
 			echo ("<dc:identifier>batr:doid:".$data_object->id."</dc:identifier>");			
