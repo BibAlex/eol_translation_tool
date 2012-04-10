@@ -998,17 +998,40 @@ class BLL_taxon_concepts {
 			return new DAL_taxon_concepts();
 	}
 	
-	static function get_translated_data_objects($id) {
+	static function get_translated_data_objects_guid($taxon_concept_id) {
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$query = $con->connection->prepare("
+				SELECT  DISTINCT guid, data_type_id				 
+ 				FROM data_objects d1
+					INNER JOIN a_data_objects d2 ON d1.id=d2.id					
+					INNER JOIN data_objects_taxon_concepts 
+					 ON data_objects_taxon_concepts.data_object_id=d1.id 
+					    AND data_objects_taxon_concepts.taxon_concept_id=?					   
+					    AND d2.process_id >=6;"); // AND a_data_objects.process_id >=6 added by Yosra on 27 March to publish only finished a_data_objects
+		$query->bindParam(1, $taxon_concept_id);
+		$query->execute();
+		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');
+		$con->Close();
+
+		return $records;
+	}
+	
+	/*Author: Sara Elshobaky 
+	 * Date: 2012-04-09
+	 * Purpose fill latest translated data_object 
+	 * */
+	static function get_full_latest__translated_data_object($guid, $data_type_id) {
 		$con = new PDO_Connection();
 		$con->Open('slave');
 		$query = $con->connection->prepare("
 				SELECT
 					d2.object_title, d2.rights_statement, d2.rights_holder, d2.description, d2.location, d1.data_type_id,
-				    d1.object_title as object_title_source, d1.rights_statement as rights_statement_source, d1.rights_holder as rights_holder_source, d1.description as description_source, d1.location as location_source,
+					d1.object_title as object_title_source, d1.rights_statement as rights_statement_source, d1.rights_holder as rights_holder_source, d1.description as description_source, d1.location as location_source,
 					data_types.schema_value as data_type,
 					mime_types.label as mime_type,
 					licenses.source_url as license,
-				    guid,
+					guid,
 					d1.source_url,
 					d1.object_url,
 					d1.object_cache_url,
@@ -1017,55 +1040,17 @@ class BLL_taxon_concepts {
 					d2.linguistic_reviewer_id,
 					d2.scientific_reviewer_id,
 					d2.final_editor_id
- 				FROM data_objects d1
+				FROM data_objects d1
 					INNER JOIN a_data_objects d2 ON d1.id=d2.id
 					INNER JOIN data_types ON d1.data_type_id=data_types.id
 					LEFT OUTER JOIN mime_types ON d1.mime_type_id=mime_types.id
 					LEFT OUTER JOIN licenses ON licenses.id=license_id
-					INNER JOIN data_objects_taxon_concepts 
-					 ON data_objects_taxon_concepts.data_object_id=d1.id 
-					    AND data_objects_taxon_concepts.taxon_concept_id=? 
-					    AND d1.hidden=0 
-					    AND d2.process_id >=6;"); // AND a_data_objects.process_id >=6 added by Yosra on 27 March to publish only finished a_data_objects
-		$query->bindParam(1, $id);
-		$query->execute();
-		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_a_data_objects');
-		$con->Close();
-
-		return $records;
-	}
-	
-	/*Author: Sara Elshobaky -> Copy from get_translated_data_objects
-	 * Date: 2012-04-09
-	 * Purpose fill latest translated data_object 
-	 * */
-	static function get_full_translated_data_object($data_object_id) {
-		$con = new PDO_Connection();
-		$con->Open('slave');
-		$query = $con->connection->prepare("
-				SELECT
-				d2.object_title, d2.rights_statement, d2.rights_holder, d2.description, d2.location, d1.data_type_id,
-				d1.object_title as object_title_source, d1.rights_statement as rights_statement_source, d1.rights_holder as rights_holder_source, d1.description as description_source, d1.location as location_source,
-				data_types.schema_value as data_type,
-				mime_types.label as mime_type,
-				licenses.source_url as license,
-				guid,
-				d1.source_url,
-				d1.object_url,
-				d1.object_cache_url,
-				d1.id,
-				d2.translator_id,
-				d2.linguistic_reviewer_id,
-				d2.scientific_reviewer_id,
-				d2.final_editor_id
-				FROM data_objects d1
-				INNER JOIN a_data_objects d2 ON d1.id=d2.id
-				INNER JOIN data_types ON d1.data_type_id=data_types.id
-				LEFT OUTER JOIN mime_types ON d1.mime_type_id=mime_types.id
-				LEFT OUTER JOIN licenses ON licenses.id=license_id
-				WHERE d1.id=?
+				WHERE d1.guid=? AND d1.data_type_id=?
+				ORDER by d1.id DESC
+				LIMIT 0,1
 				;");
-		$query->bindParam(1, $data_object_id);
+		$query->bindParam(1, $guid);
+		$query->bindParam(2, $data_type_id);
 		$query->execute();
 		$records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_a_data_objects');
 		$con->Close();
