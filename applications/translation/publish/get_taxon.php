@@ -4,12 +4,14 @@ include_once '../../../config/constants.php';
 include_once '../../../classes/BLL/BLL_taxon_concepts.php';
 include_once '../../../classes/BLL/BLL_users.php';
 include_once '../../../classes/BLL/BLL_data_objects_info_items.php';
+include_once '../../../classes/BLL/BLL_data_objects.php';
 include_once '../../../classes/DAL/DAL_taxon_concepts.php';
 include_once '../../../classes/DAL/DAL_info_items.php';
 include_once '../../../classes/DAL/DAL_data_objects.php';
 include_once '../../../classes/DAL/DAL_a_data_objects.php';
 include_once '../../../classes/DAL/DAL_names.php';
 include_once '../../../classes/DAL/DAL_users.php';
+
 
 
 header("Content-type: text/xml");
@@ -36,30 +38,22 @@ foreach ($finished_taxons as $taxon) {
 		echo("<dc:identifier>batr:tid:".$taxon->id."</dc:identifier>");
 		echo("<dwc:ScientificName>".htmlspecialchars($taxon->scientificName)."</dwc:ScientificName>");
 		
-		// Get Common Names
-		//<commonName xml:lang="ar">NameHere</commonName>
+		// Get Common Names		
 		$names = BLL_taxon_concepts::get_accepted_common_names($taxon->id);
 		foreach ($names as $name) {
 			echo('<commonName xml:lang="'.$GLOBALS['to_language_abbreviation'].'">'.htmlspecialchars($name->string).'</commonName>');
 		}
 		
-		// Get rejected Common Names
-		//<rejectedCommonName name_id="15"/>
-		//$rejected_names = BLL_taxon_concepts::get_rejected_common_names($id);
-		//foreach ($rejected_names as $rejected_name) {
-		//	echo('<rejectedCommonName name_id="'.$rejected_name->id.'" />');
-		//}
-		
 		foreach ($data_objects as $data_object) {
-			
+			//check if the current data_object has updates
+ 			$latest_data_object = BLL_data_objects::Select_Latest_DataObject_ByGuid_and_Data_type($data_object->guid, $data_object->data_type_id); 
+ 			if($latest_data_object->id != $data_object->id)
+ 			{
+ 				$data_object = BLL_taxon_concepts::get_full_translated_data_object($latest_data_object->id);
+ 			}
 			echo ("<dataObject>");
 			//1.Identifier
-			echo ("<dc:identifier>batr:doid:".$data_object->id."</dc:identifier>");
-			//echo ("<dataType>".$data_object->data_type."</dataType>");	
-			//echo ("<mimeType>".$data_object->mime_type."</mimeType>");
-			//2.Agent(s)	
-			//echo ('<agent role="creator">'.htmlspecialchars(BLL_users::get_user_name($taxon->translator_id)).'</agent>');
-			//echo ('<agent role="provider">Bibliotheca Alexandrina</agent>');
+			echo ("<dc:identifier>batr:doid:".$data_object->id."</dc:identifier>");			
 			
 			//3.Title
 			if ($data_object->object_title != '')
@@ -68,7 +62,7 @@ foreach ($finished_taxons as $taxon) {
 				echo ("<dc:title>".htmlspecialchars($data_object->object_title_source, ENT_NOQUOTES, "UTF-8")."</dc:title>");
 			//4.Language	
 			echo ("<dc:language>ar</dc:language>");
-			//echo ("<license>".htmlspecialchars($data_object->license, ENT_NOQUOTES, "UTF-8")."</license>");
+			
 			//5.Rights
 			if ($data_object->rights_statement != '') {
 				echo ("<dc:rights>".htmlspecialchars($data_object->rights_statement, ENT_NOQUOTES, "UTF-8")."</dc:rights>");		
@@ -82,14 +76,8 @@ foreach ($finished_taxons as $taxon) {
 			}
 			elseif ($data_object->rights_holder_source != '') {
 				echo ("<dcterms:rightsHolder>".htmlspecialchars($data_object->rights_holder_source, ENT_NOQUOTES, "UTF-8")."</dcterms:rightsHolder>");
-			}
-				
-			//echo ("<dc:source>".htmlspecialchars($data_object->source_url, ENT_NOQUOTES, "UTF-8")."</dc:source>");
+			}				
 			
-		
-			//$info_item = BLL_data_objects_info_items::Select_info_items_ByDataObjectId('master', $data_object->id);
-			//if ($info_item != null)
-			//	echo ("<subject>".htmlspecialchars($info_item->schema_value, ENT_NOQUOTES, "UTF-8")."</subject>");	
 		    //7.Description
 			if ($data_object->description != '')
 				echo ("<dc:description>".htmlspecialchars($data_object->description, ENT_NOQUOTES, "UTF-8")."</dc:description>");
@@ -125,11 +113,9 @@ foreach ($finished_taxons as $taxon) {
 			echo ("</additionalInformation>");
 			
 			echo ("</dataObject>");
-		}
-		
+		}		
 		echo("</taxon>");	
-	}  
-	
+	}  	
 }
 echo("</response>");
 ?>

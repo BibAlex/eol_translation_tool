@@ -381,6 +381,29 @@ class BLL_data_objects {
 	    return $records;    
 	}
 	
+	/*Author: Sara Elshobaky
+	 * Date: 2012-04-09
+	 * Purpose: For the XML file to select latest guid*/
+	static function Select_Latest_DataObject_ByGuid_and_Data_type($guid, $data_type_id)
+	{
+		$con = new PDO_Connection();
+		$con->Open('slave');
+	
+		$stmt = $con->connection->prepare("SELECT id
+				FROM data_objects
+				WHERE guid = ?
+				AND data_type_id=?
+				AND hidden=0				
+				ORDER BY id DESC
+				LIMIT 0,1;");
+		$stmt->bindParam(1, $guid);
+		$stmt->bindParam(2, $data_type_id);
+		$stmt->execute();
+		$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');
+		$con->Close();
+		return $records[0];
+	}
+	
 	static function Select_Latest_DataObjects_ByGuid_AND_Hidden_AND_Has_Parent($guid, $data_type_id) 
 	{
 	 	$con = new PDO_Connection();
