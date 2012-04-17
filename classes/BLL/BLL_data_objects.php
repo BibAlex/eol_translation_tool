@@ -414,6 +414,18 @@ class BLL_data_objects {
 	    $con->Close();
 	}
 	
+	static function Update_data_object_set_Hidden($data_object_id, $hidden)
+	{
+		$con = new PDO_Connection();
+	  	$con->Open('slave');
+		  	
+	  	$stmt = $con->connection->prepare("UPDATE data_objects SET hidden=? WHERE id=?");
+	    $stmt->bindParam(1, $hidden);
+	    $stmt->bindParam(2, $data_object_id);
+		$stmt->execute();		
+	    $con->Close();
+	}
+	
 	static function Hide_DataObject_If_no_adata_object($guid, $data_type_id)
 	{
 		 $con = new PDO_Connection();

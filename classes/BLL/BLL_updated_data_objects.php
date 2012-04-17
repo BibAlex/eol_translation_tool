@@ -115,6 +115,23 @@
 		    	return new DAL_updated_data_objects(); 
 		}
 		
+		static function Select_DataObject_ByID($id) 
+		{
+		 	 $con = new PDO_Connection();
+		  	 $con->Open('slave');
+			  	
+		  	 $stmt = $con->connection->prepare("SELECT * FROM updated_data_objects WHERE id=?;");
+		 	
+		    $stmt->bindParam(1, $id);
+			$stmt->execute();		
+			$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_updated_data_objects');		
+		    $con->Close();
+		    if(count($records) > 0)
+		    	return $records[0];
+		    else	   
+		    	return new DAL_updated_data_objects(); 
+		}
+		
 		static function Exist_Updated_DataObjects_ByID($ObjID) 
 	    {
 		 	$con = new PDO_Connection();

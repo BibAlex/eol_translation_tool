@@ -1515,6 +1515,16 @@ class BLL_taxon_concepts {
 		
 		return $result;	
 	}
+	
+	static function Update_reverse_taxon($taxon_id){
+		$con = new PDO_Connection();
+		$con->Open('slave');
+		$query = $con->connection->prepare('Update taxon_concepts 
+					SET taxon_status_id = 1,
+	                	taxon_update = 1
+	                WHERE id = ?;');
+		$query->bindParam(1, $taxon_id);
+		$query->execute();
+	}
 }
-
 ?>

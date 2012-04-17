@@ -84,6 +84,24 @@ class BLL_data_objects_taxon_concepts {
 		 $con->Close();    
 		 return  $records;	        
 	}		
+	static function Count_updated_objects_by_taxon_concept_id($taxon_concept_id, $harvest_batch, $harvest_type){
+		 $con = new PDO_Connection();
+	  	 $con->Open('slave');		  	
+	  	 $query = $con->connection->prepare("
+		  	SELECT COUNT(data_object_id) 
+			FROM data_objects_taxon_concepts 
+				INNER JOIN data_objects
+					ON (data_objects_taxon_concepts.data_object_id = data_objects.id)
+			WHERE data_objects_taxon_concepts.taxon_concept_id = ?
+				AND harvest_batch_id = ? AND harvest_batch_type = ?;");
+	  	 $query->bindParam(1, $taxon_concept_id);
+	  	 $query->bindParam(2, $harvest_batch);
+	  	 $query->bindParam(3, $harvest_type);	 	
+	     $query->execute();		
+		 $records = $query->fetchColumn();
+		 $con->Close();    
+		 return $records;
+	}
 }
 
 ?>
