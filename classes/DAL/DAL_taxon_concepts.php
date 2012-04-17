@@ -31,7 +31,7 @@
 		  public $total_ArabicObjects;
 		  public $selected_by;
 		  public $priority; /* Priorities -> label "virtual denormalized field "*/
-		  public $taxon_update; //added by Yosra 01-04-2012 for "updating scenario" 
+		  public $taxon_update; //added by Yosra 01-04-2012 for "updating scenario" 1=> Taxon has been reversed (to be displayed in task distribution page under "Updated Species" category) 
 		  
 		  public function Dates($date)
 		  {
