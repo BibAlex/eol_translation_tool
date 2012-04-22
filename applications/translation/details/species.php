@@ -97,16 +97,41 @@ include_once '../../../classes/SendMail.php';
 		if($_POST['actionType']=='1' || $_POST['actionType']=='0')//if finish or save
 		{
 			BLL_a_data_objects::SubmitAction($objectID,$userID,$process, @$_POST['actionType'], $_POST['SP_title'], $_POST['LOC_editor'],  $_POST['RS_editor'], $_POST['RH_editor'], $_POST['D_editor'],$taxonID);
-			
 		}			
-						
-		
 		else if($_POST['actionType']=='2')//if finish all
 		{
 			/*Save current Object*/
 			BLL_a_data_objects::SubmitAction($objectID,$userID,$process, 0/*action_type=0 to Only Save current*/, $_POST['SP_title'], $_POST['LOC_editor'],  $_POST['RS_editor'], $_POST['RH_editor'], $_POST['D_editor'],$taxonID);
-			/*Finish all objects*/ 
-			BLL_a_data_objects::FinishAll($taxonID,$process,$userID);
+			
+			//checkUpdates
+			if(BLL_data_objects::Exist_Updated_Object_Select_By_Taxon_id($taxonID)==0){//No updated object
+				/*Finish all objects*/
+				BLL_a_data_objects::FinishAll($taxonID,$process,$userID);
+			}
+			else{	//There exists an updated data_object with hidden field = 2 in the taxon
+				//Check updated and locked
+				$updated_objects = BLL_data_objects::Select_Updated_Data_Objects_By_Taxon_id();
+				$reverse = false;
+				foreach ($updated_objects as $updated_DO) {
+       				if($updated_DO->locked_update == 0){
+       					$reverse = true;
+       				}
+       				else{
+       					BLL_data_objects::Update_Locked_update_DataObject($updated_DO->id, 0);	
+       				}
+       				BLL_data_objects::Update_Hidden_DataObject($updated_DO->id, 0);
+       				//Select all updated objects, set there hidden to 0 and there old objects hidden to 1
+					$old_data_objects = BLL_data_objects::Select_DataObjects_ByGuid_NOT_Hidden($updated_data_object->guid, $updated_data_object->data_type_id);
+					if(COUNT($old_data_objects) > 0){
+						foreach ($old_data_objects as $old_data_object) {
+							BLL_data_objects::Update_Hidden_DataObject($old_data_object->id, 1);  				
+						}//end for each old_data Object	
+					}
+				}
+				if($reverse){
+					BLL_taxon_concepts::Update_reverse_taxon($taxonID);	//reverse taxon to updated taxon distribution
+				}
+			}
 		}			
 	}
 	

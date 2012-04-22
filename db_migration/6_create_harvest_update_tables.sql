@@ -93,6 +93,9 @@ INSERT INTO update_status (name) VALUES ('Automatically updated'),('Manually upd
 --Add column in table taxon_concepts
 ALTER TABLE `aeol_test`.`taxon_concepts` ADD COLUMN `taxon_update` TINYINT(1) UNSIGNED NOT NULL  AFTER `publish_date` ;
 
+--Add column in table data_objects
+ALTER TABLE `aeol_test`.`data_objects` ADD COLUMN `locked_update` TINYINT(1) UNSIGNED NULL DEFAULT '0'  AFTER `parent_data_object_id` ;
+
 
 
 
