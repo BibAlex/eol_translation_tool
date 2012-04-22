@@ -441,14 +441,62 @@ class BLL_data_objects {
 		 $con->Close();
 	}
 	
-	static function Hide_DataObject($data_object_id)
+	static function Update_Hidden_DataObject($data_object_id, $hidden)
 	{
 		 $con = new PDO_Connection();
 	  	 $con->Open('slave');	  	
-	  	 $stmt = $con->connection->prepare("UPDATE data_objects dos set hidden=1 WHERE id=?	;");	  	 									
-		 $stmt->bindParam(1,$data_object_id);
+	  	 $stmt = $con->connection->prepare("UPDATE data_objects set hidden=? WHERE id=?	;");	  	 									
+		 
+		 $stmt->bindParam(1,$hidden);
+		 $stmt->bindParam(2,$data_object_id);
 		 $stmt->execute();
 		 $con->Close();
+	}
+	
+	static function Update_Locked_update_DataObject($data_object_id, $locked_update)
+	{
+		 $con = new PDO_Connection();
+	  	 $con->Open('slave');	  	
+	  	 $stmt = $con->connection->prepare("UPDATE data_objects set locked_update=? WHERE id=?	;");	  	 									
+		 
+		 $stmt->bindParam(1,$locked_update);
+		 $stmt->bindParam(2,$data_object_id);
+		 $stmt->execute();
+		 $con->Close();
+	}
+	
+	//Function added on 19-4-2012 by Yosra to perform a check if there exist an updated object (hidden = 2) within the taxon on Finish All
+	static function Exist_Updated_Object_Select_By_Taxon_id($taxonID){
+		$con = new PDO_Connection();
+	  	$con->Open('slave');
+	  	$stmt = $con->connection->prepare("SELECT COUNT(id)
+											FROM data_objects
+											INNER JOIN data_objects_taxon_concepts
+												ON (data_objects.id = data_objects_taxon_concepts.data_object_id)
+											WHERE data_objects_taxon_concepts.taxon_concept_id =?
+												AND data_objects.hidden =2;");
+	    $stmt->bindParam(1, $taxonID);  
+		$stmt->execute();		
+		$result = $stmt->fetchColumn();			
+	    $con->Close();    
+	    return $result;    
+	}
+	
+	//Function added on 19-4-2012 by Yosra to perform a check to return all updated objects (hidden = 2) within the taxon on Finish All	
+	static function Select_Updated_Data_Objects_By_Taxon_id($taxonID){
+		$con = new PDO_Connection();
+	  	$con->Open('slave');
+	  	$stmt = $con->connection->prepare("SELECT data_objects.*
+											FROM data_objects
+											INNER JOIN data_objects_taxon_concepts
+												ON (data_objects.id = data_objects_taxon_concepts.data_object_id)
+											WHERE data_objects_taxon_concepts.taxon_concept_id =?
+												AND data_objects.hidden =2;");
+	    $stmt->bindParam(1, $taxonID);  
+		$stmt->execute();		
+		$result = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');
+	    $con->Close();    
+	    return $result;    
 	}
 }
 
