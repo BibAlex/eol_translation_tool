@@ -825,45 +825,74 @@ class BLL_taxon_concepts {
 		$con->Close();
 	}
 	
-	static function Insert_data_object_and_its_relations($data_object, $taxon_concept_id)
+	static function Insert_data_object_and_its_relations($dataobject, $taxon_concept_id)
 	{
 		//1. Fill data_object table
 		if(BLL_data_objects::Exist_DataObjects_ByID('slave',$dataobject->id)==0)
 		{
+			// Hide all old data objects if they have no translations yet and are not marked as hidden
+			BLL_data_objects::Hide_DataObject_If_no_adata_object($dataobject->guid, $dataobject->data_type_id);
+			// Create the new data object record
 			$dataobject->aeol_translation=0;//Original record from woods hole not translated
 			BLL_data_objects::Insert_DataObject('slave',$dataobject);
+			//get all old data objects with same guid and not hidden
+			$old_data_objects = BLL_data_objects::Select_DataObjects_ByGuid_NOT_Hidden($dataobject->guid, $dataobject->data_type_id);
+			//if data_object is totally a new one and there is no old one
+			if(COUNT($old_data_objects)==0)
+			{
+				echo "no old data_objects<br/>";				
+				echo "reverse_taxon_first_case<br/>";
+				reverse_taxons($dataobject, $old_data_objects);
+			}
+			
 		}
 		
-		//2. Fill data_object_taxon_concept table
-		if(BLL_data_objects_taxon_concepts::Exist_data_objects_taxon_concepts('slave',$dataobject->id,$taxon_concept_id) ==0)
-			BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave',$taxon_concept_id,$dataobject->id);
+		//2. Fill data_object_taxon_concept table //Insert Ignore
+		BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave',$taxon_concept_id,$dataobject->id);
 		
 		//Select the TOC of the current data_object from master
-		$dobj_tocs = BLL_data_objects_table_of_contents::Select_data_objects_table_of_contents_ByDataObjectId('master', $dataobject->id);
-		
+		$dobj_tocs = BLL_data_objects_table_of_contents::Select_data_objects_table_of_contents_ByDataObjectId('master', $dataobject->id);		
 		//3. Fill the data_objects_table_of_contents table
 		foreach ($dobj_tocs as $dobj_toc)
 		{
-			if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
-			{
-				BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);
-			}
+			BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);			
 		}
+		
 		//Select the InfoItem of the current data_object from master
 		$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
-
 		//4. Fill the data_objects_info_items table
 		foreach ($dobj_infos as $dobj_info)
 		{
-			if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
-			{
-				BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
-			}
+			BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);			
 		}
 	}
 	
-	static function assign_taxon($id, $translator_id, $linguistic_reviewer_id, $scientific_reviewer_id) {
-		
+	/* Sara Copied from yosra reverse_taxons function: merge_merge_updated_data_objects.php
+	 * Date 2012-04-23 
+	 */
+	function reverse_taxons($data_object, $old_data_objects){
+		//Get all taxon of the data_object to check their states
+		$taxons = BLL_data_objects_taxon_concepts::Select_taxon_concepts_By_DataObjectID($data_object->id);
+		$intermediate = false;	//a variable to determine if there is ONE OR MORE related taxon in intermediate phases (translation, linguistic, scientific review,...)		
+		foreach ($taxons as $taxon) {
+			if ($taxon->taxon_status_id != 1 && $taxon->taxon_status_id != 6){ //if ONE OR MORE are in intermediate states, set the new_DO->hidden=2			
+				$intermediate = true;
+				BLL_data_objects::Update_data_object_set_Hidden($data_object->id, 2);//hidden=0> visible, hidden=1>invisible, hidden=2>updated and pending to be visible				
+				break;
+			}
+		}
+		if(!$intermediate && COUNT($old_data_objects) != 0 )
+		{
+			foreach ($old_data_objects as $old_data_object) 
+			{
+				BLL_data_objects::Hide_DataObject($old_data_object->id);
+			}//end for each old_data Object
+			
+		}//end if not itermediate phase
+	}
+	
+	static function assign_taxon($id, $translator_id, $linguistic_reviewer_id, $scientific_reviewer_id) 
+	{		
 		$query_str = 'update taxon_concepts set taxon_status_id=2 , translator_id='.strval($translator_id);
 		if ($translator_id > 0)
 			$query_str .= ', translator_assigned=1 ';
