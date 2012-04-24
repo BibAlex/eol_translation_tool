@@ -89,39 +89,12 @@ for ($i=0; $i<$taxon_count; $i++) {
 	BLL_names::download_names($_POST['taxon_concept_id'.strval($i)]);
 							   
 	// get data objects						   
-	$dataobjects = BLL_data_objects::Select_DataObjects_ByTaxonConceptID('master',$_POST['taxon_concept_id'.strval($i)]);
+	$dataobjects = BLL_data_objects::Select_DataObjects_ByTaxonConceptID('master',$_POST['taxon_concept_id'.strval($i)]);	
 	  	
 	foreach ($dataobjects as $dataobject)	
   	{ 	
   		echo $dataobject->id."  --  ";
-  		//Fill data_object table
-  		if(BLL_data_objects::Exist_DataObjects_ByID('slave',$dataobject->id)==0)
-  		{		
-	  		$dataobject->aeol_translation=0;//Original record from woods hole not translated
-			BLL_data_objects::Insert_DataObject('slave',$dataobject);
-  		}
-		
-		//Fill data_object_taxon_concept table
-		if(BLL_data_objects_taxon_concepts::Exist_data_objects_taxon_concepts('slave',$dataobject->id,$_POST['taxon_concept_id'.strval($i)]) ==0)
-			BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave',$_POST['taxon_concept_id'.strval($i)],$dataobject->id);
-		
-		//Select the TOC of the current data_object from master
-		$dobj_tocs = BLL_data_objects_table_of_contents::Select_data_objects_table_of_contents_ByDataObjectId('master', $dataobject->id);
-		//Fill the data_objects_table_of_contents table 
-		foreach ($dobj_tocs as $dobj_toc)		
-		{		
-			if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
-				BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);
-		}		
-		
-		//Select the InfoItem of the current data_object from master
-		$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
-		//Fill the data_objects_info_items table 
-		foreach ($dobj_infos as $dobj_info)		
-		{		
-			if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
-				BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
-		}		
+  		BLL_taxon_concepts::Insert_data_object_and_its_relations($dataobject,$_POST['taxon_concept_id'.strval($i)]);  		
   	}
   	
 	// get Images						   
@@ -129,34 +102,7 @@ for ($i=0; $i<$taxon_count; $i++) {
 	//echo(count($image_dataobjects));  	
 	foreach ($image_dataobjects as $dataobject)	
   	{ 	  		
-  		//Fill data_object table
-  		if(BLL_data_objects::Exist_DataObjects_ByID('slave',$dataobject->id)==0)
-  		{		
-	  		$dataobject->aeol_translation=0;//Original record from woods hole not translated
-			BLL_data_objects::Insert_DataObject('slave',$dataobject);
-  		}
-		
-		//Fill data_object_taxon_concept table
-		if(BLL_data_objects_taxon_concepts::Exist_data_objects_taxon_concepts('slave',$dataobject->id,$_POST['taxon_concept_id'.strval($i)]) ==0)
-			BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave',$_POST['taxon_concept_id'.strval($i)],$dataobject->id);
-		
-		//Select the TOC of the current data_object from master
-		$dobj_tocs = BLL_data_objects_table_of_contents::Select_data_objects_table_of_contents_ByDataObjectId('master', $dataobject->id);
-		//Fill the data_objects_table_of_contents table 
-		foreach ($dobj_tocs as $dobj_toc)		
-		{		
-			if(BLL_data_objects_table_of_contents::Exist_data_objects_table_of_contents('slave',$dobj_toc->data_object_id,$dobj_toc->toc_id)==0)
-				BLL_data_objects_table_of_contents::Insert_data_objects_table_of_contents($dobj_toc->data_object_id,$dobj_toc->toc_id);
-		}		
-		
-		//Select the InfoItem of the current data_object from master
-		$dobj_infos = BLL_data_objects_info_items::Select_data_objects_info_items_ByDataObjectId('master', $dataobject->id);
-		//Fill the data_objects_info_items_contents table 
-		foreach ($dobj_infos as $dobj_info)		
-		{		
-			if(BLL_data_objects_info_items::Exist_data_objects_info_items('slave',$dobj_info->data_object_id,$dobj_info->info_item_id)==0)
-				BLL_data_objects_info_items::Insert_data_objects_info_items($dobj_info->data_object_id,$dobj_info->info_item_id);
-		}		
+  		BLL_taxon_concepts::Insert_data_object_and_its_relations($dataobject,$_POST['taxon_concept_id'.strval($i)]);  		
   	}
   	  	
 }
