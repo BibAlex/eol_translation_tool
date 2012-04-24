@@ -447,7 +447,7 @@ class BLL_data_objects {
 		 $con = new PDO_Connection();
 	  	 $con->Open('slave');	  	
 	  	 $stmt = $con->connection->prepare("UPDATE data_objects set hidden=? WHERE id=?	;");	  	 									
-		 
+	  	 echo("Update_Hidden_DataObject: data_object_id:" . $data_object_id . " And $hidden: " . $hidden . "</br>");	  	
 		 $stmt->bindParam(1,$hidden);
 		 $stmt->bindParam(2,$data_object_id);
 		 $stmt->execute();
@@ -457,7 +457,8 @@ class BLL_data_objects {
 	static function Update_Locked_update_DataObject($data_object_id, $locked_update)
 	{
 		 $con = new PDO_Connection();
-	  	 $con->Open('slave');	  	
+	  	 $con->Open('slave');
+	  	 echo("Update_Locked_update_DataObject: data_object_id:" . $data_object_id . " And locked_update: " . $locked_update . "</br>");	  	
 	  	 $stmt = $con->connection->prepare("UPDATE data_objects set locked_update=? WHERE id=?	;");	  	 									
 		 
 		 $stmt->bindParam(1,$locked_update);
