@@ -33,23 +33,23 @@ include_once '../../../classes/DAL/DAL_taxon_concepts.php';
 include_once '../../../classes/BLL/BLL_taxon_concepts.php';
 
 
-echo "Welcome in the merging process of the updated_data_objects into updated data objects Job<br/>";
+echo "Welcome in the merging process of the updated_data_objects into updated data objects Job\r\n";
 
 //create new batch update record by the current datetime
 $updated_data_objects = BLL_updated_data_objects::Select_all_updated_dataObjects();
 //$updated_data_objects = BLL_updated_data_objects::Select_DataObject_ByID(10669712);
-echo "Number of pending updated dataobjects= " . COUNT($updated_data_objects) . "<br/>";
+echo "Number of pending updated dataobjects= " . COUNT($updated_data_objects) . "\r\n";
 
 //loop on each updated data_object  
 $count = 0;
 foreach ($updated_data_objects as $updated_data_object){
 	echo "--------------------------";
-	echo "Object number" . $count ++ . "<br/>";
-	echo "updated_data_object_id" . $updated_data_object->id . "<br/>";
+	echo "Object number" . $count ++ . "\r\n";
+	echo "updated_data_object_id" . $updated_data_object->id . "\r\n";
 	//if this updated data_object has never been available in the data_objects table 
   	if(BLL_data_objects::Exist_DataObjects_ByID('slave',$updated_data_object->id)==0)//the normal case, no mistake
   	{  	
-  		echo "if normal case, no mistake<br/>";
+  		echo "if normal case, no mistake\r\n";
   		// Hide all old data objects if they have no translations yet and are not marked as hidden
   		BLL_data_objects::Hide_DataObject_If_no_adata_object($updated_data_object->guid, $updated_data_object->data_type_id);
   		// Create the new data object record
@@ -60,16 +60,16 @@ foreach ($updated_data_objects as $updated_data_object){
   		//if data_object is totally a new one and there is no old one
   		if(COUNT($old_data_objects)==0)
   		{
-  			echo "no old data_objects<br/>";
+  			echo "no old data_objects\r\n";
   			// Delete the current updated_data_object
 			BLL_updated_data_objects::Delete_updated_dataObjects_By_id($updated_data_object->id);
-			echo "reverse_taxon_first_case<br/>";
+			echo "reverse_taxon_first_case\r\n";
 	  		reverse_taxons($updated_data_object, $old_data_objects);	  				
   		}  		
   		//Cases edited by Yosra 8-4-2012 to adjust data_objects and taxons  		
   		else //There is a translation in old data objects
   		{
-  			echo "there are old data_objects for id<br/>";
+  			echo "there are old data_objects for id\r\n";
   			$parent_id = $old_data_objects[0]->id;//because first 1 is the most advanced one in the translation workflow (ORDER BY proess_id DESC;)
   			$are_exact = compare_data_objects($parent_id, $updated_data_object->id);
   			
@@ -78,7 +78,7 @@ foreach ($updated_data_objects as $updated_data_object){
 	  			
   			if($are_exact==true)
   			{
-  				echo "old and new data objects are the same for id<br/>";
+  				echo "old and new data objects are the same for id\r\n";
   				//create the new arabic data object
   				$old_a_data_object = BLL_a_data_objects::Select_a_data_objects_ByID($parent_id);
   				BLL_a_data_objects::Insert_a_data_objects( $updated_data_object->id
@@ -96,24 +96,24 @@ foreach ($updated_data_objects as $updated_data_object){
 	  			//Hide all old data objects
 	  			foreach ($old_data_objects as $old_data_object)
 	  			{
-	  				BLL_data_objects::Hide_DataObject($old_data_object->id);  				
+	  				BLL_data_objects::Update_Hidden_DataObject($old_data_object->id, 1);  				
 	  			}//end for each old_data Object
   			}//end if are exact
   			else{	//else not exact, data_object needs to be "RE-Translated"
-  				echo "old and new data objects are not the same<br/>";
-  				echo "reverse_method_second_case<br/>";
+  				echo "old and new data objects are not the same\r\n";
+  				echo "reverse_method_second_case\r\n";
   				reverse_taxons($updated_data_object, $old_data_objects);
   			}
   		}
   	}//end if normal case, no mistake
   	else
   	{
-  		echo "<br/>Mistake: Already exists!!!!!!!!!!!!!!!!!!!!!!!<br/>";
+  		echo "\r\nMistake: Already exists!!!!!!!!!!!!!!!!!!!!!!!\r\n";
   	}
   	//Get all related taxon concept ids
   	migrate_updated_data_objects_and_its_taxons_relations($updated_data_object->id);  	
 }
-echo "<br/>Done";
+echo "\r\nDone";
 
 
 
@@ -150,7 +150,7 @@ function compare_data_objects($old_id, $new_id)
 function clean_string($str)
 {
 	$clean_str = strtolower($str); //change to lower case 
-	$clean_str = str_replace('&nbsp;',' ',$str); //replace html spaces tags	
+	$clean_str = str_replace('&nbsp;',' ',$clean_str); //replace html spaces tags	//Yosra changes str_replace('&nbsp;',' ',$str) to str_replace('&nbsp;',' ',$clean_str)
 	$clean_str = strip_tags($clean_str,'<img>'); //remove html tags except images
 	$pattern= "/[^A-Za-z0-9 ]/";	
 	$clean_str = preg_replace($pattern, '', $clean_str);//Perform a regular expression search and remove all non alphabet and non numeric characters 
@@ -165,10 +165,10 @@ function reverse_taxons($data_object, $old_data_objects){
 	//Get all taxon of the data_object to check their states
 	$taxons = BLL_updated_data_objects_taxon_concepts::Select_taxon_concepts_status_By_DataObjectID($data_object->id);
 	$intermediate = false;	//a variable to determine if there is ONE OR MORE related taxon in intermediate phases (translation, linguistic, scientific review,...)
-	echo "Number of Taxons attached to data objects" . COUNT($taxons) . "<br/>";
+	echo "Number of Taxons attached to data objects" . COUNT($taxons) . "\r\n";
 	foreach ($taxons as $taxon) {
 		if ($taxon->taxon_status_id != 1 && $taxon->taxon_status_id != 6){ //if ONE OR MORE are in intermediate states, set the new_DO->hidden=2
-			echo "intermediate = true<br/>";
+			echo "intermediate = true\r\n";
 			//set the new_DO->hidden=2
 			BLL_data_objects::Update_data_object_set_Hidden($data_object->id, 2);//hidden=0> visible, hidden=1>invisible, hidden=2>updated and pending to be visible
 			$intermediate = true;
@@ -177,7 +177,7 @@ function reverse_taxons($data_object, $old_data_objects){
 	}
 	if(!$intermediate)
 	{//this means that all related taxons are before translation or published
-		echo "no intermediate case<br/>";
+		echo "no intermediate case\r\n";
 		$max_updatedObj = 0;	//a variable to determine which attached taxon has the most number of attached updated data_objects
 		$max_taxon_id = 0;
 		
@@ -187,11 +187,11 @@ function reverse_taxons($data_object, $old_data_objects){
 				//the count is done in two steps and from two tables
 					//the updated objects in table "updated" which returns the number of the updated objects that have not been processed yet
 					//and updated objects in table "data_objecys" which returns the number of the updated objects that have been process and thus have hidden = 2
-			echo "current taxon " . $taxon->id . "<br/>"; 
+			echo "current taxon " . $taxon->id . "\r\n"; 
 			$count = BLL_updated_data_objects_taxon_concepts::Count_updated_objects_by_taxon_concept_id($taxon->id);
-			echo "count in table updated" . $count . "<br/>";
+			echo "count in table updated" . $count . "\r\n";
 			$count += BLL_data_objects_taxon_concepts::Count_updated_objects_by_taxon_concept_id($taxon->id, $data_object->harvested_batch_id, $GLOBALS['harvest_batch_type_updates_batch']);
-			echo "count total" . $count . "<br/>";
+			echo "count total" . $count . "\r\n";
 			//count will be 1 min because the current taxon already exisist in teh updated table
 			if($max_updatedObj < $count){
 				$max_updatedObj = $count;
@@ -199,12 +199,12 @@ function reverse_taxons($data_object, $old_data_objects){
 			}
 		}
 		
-		echo "Max Taxon id " . $max_taxon_id . "<br/>";
+		echo "Max Taxon id " . $max_taxon_id . "\r\n";
 		BLL_taxon_concepts::Update_reverse_taxon($max_taxon_id);
 		if(COUNT($old_data_objects) != 0){
-			echo "Number of old objects " . COUNT($old_data_objects) . "<br/>";
+			echo "Number of old objects " . COUNT($old_data_objects) . "\r\n";
 			foreach ($old_data_objects as $old_data_object) {
-				BLL_data_objects::Hide_DataObject($old_data_object->id);  				
+				BLL_data_objects::Update_Hidden_DataObject($old_data_object->id, 1);  				
 			}//end for each old_data Object	
 		}
 	}//end if not itermediate phase

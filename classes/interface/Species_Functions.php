@@ -26,18 +26,6 @@
 			else //insert new
 				BLL_a_data_objects::Insert_a_data_objects($objectID, $userID, $process, $SP_title, $SP_location, $RS_editor, $RH_editor, $D_editor, $taxon_concept_id, $locked);
 			BLL_a_data_objects::Update_User_of_a_data_objects($objectID, $userID, $cur_process);
-
-			if($actionType==1)//if finish
-			{
-				echo("finish</br>");
-				echo("ObjectID = ". $objectID. "</br>");
-				//Update status of all taxon concetps related to that object
-				$updated_taxons = BLL_data_objects_taxon_concepts::Select_data_objects_taxon_concepts_By_DataObjectID('slave',$objectID);
-				echo("number of updated taxons: " . COUNT($updated_taxons) . "</br>");
-				if(BLL_taxon_concepts::Update_Status($updated_taxons,$process,$userID, $taxon_concept_id)){
-					Species_Functions::checkUpdate($taxon_concept_id, false);					
-				}
-			}
 		}
 		
 		static function FinishAll($tid, $process, $userID)
@@ -55,10 +43,45 @@
 			}
 			//Update status of all taxon concetps related to this taxon object
 			$updated_taxons = BLL_data_objects_taxon_concepts::Select_taxons_incommon_ByTaxon_ID('slave',$tid);
-			BLL_taxon_concepts::Update_Status($updated_taxons,$process+1,$userID);
+			Species_Functions::Update_Status($updated_taxons,$process+1,$userID);
 		}
 		
-		static function checkUpdate($taxonID, $finishAll){
+		static function Update_Status($updated_taxons,$process, $userID)
+		{
+			foreach ($updated_taxons as  $updated_taxon)
+			{
+				$curtax = BLL_taxon_concepts::Select_taxon_concept('slave', $updated_taxon->taxon_concept_id);
+				echo("updated_taxon->taxon_concept_id: " . $updated_taxon->taxon_concept_id . "</br>");
+				echo("curtax->taxon_status_id: " . $curtax->taxon_status_id . "</br>");
+				echo("process: " . $process . "</br>");
+				if($curtax!=null && $curtax->taxon_status_id==($process-1))
+				{
+					$number_of_en_objects = BLL_data_objects::Count_DataObjects_ByTaxonConceptID('slave',$curtax->id);
+					echo("number_of_en_objects: " . $number_of_en_objects . "</br>");
+					$number_of_ar_objects = BLL_a_data_objects::Count_a_dataObjects_ByTaxonConceptID($curtax->id,$process);
+					echo("number_of_ar_objects: " . $number_of_ar_objects . "</br>");
+					if($number_of_en_objects == $number_of_ar_objects)
+					{
+						//If this is taxon of hte current page
+						if($GLOBALS['taxonID']==$updated_taxon->taxon_concept_id){
+							$GLOBALS['UpdateTaxonStatus']=1;//update the global variable defined
+							if(!Species_Functions::checkUpdate($updated_taxon->taxon_concept_id)){
+								BLL_taxon_concepts::Update_taxon_concepts_Status($curtax->id,$process,$userID);
+								//Send email for the next step assigned person
+								BLL_taxon_concepts::SendMailNotification($curtax,$process,$userID);
+							}
+						}
+						else{
+							BLL_taxon_concepts::Update_taxon_concepts_Status($curtax->id,$process,$userID);
+							//Send email for the next step assigned person
+							BLL_taxon_concepts::SendMailNotification($curtax,$process,$userID);							
+						}				
+					}
+				}
+			}
+		}
+		
+		static function checkUpdate($taxonID){
 			//checkUpdates
 			echo("check updates</br>");
 			if(BLL_data_objects::Exist_Updated_Object_Select_By_Taxon_id($taxonID) > 0){//ther are updated object(s)
@@ -88,15 +111,10 @@
 				if($reverse){
 					echo("reverse" . $reverse . "</br>");
 					BLL_taxon_concepts::Update_reverse_taxon($taxonID);	//reverse taxon to updated taxon distribution
+					return true;
 				}
-				return false;
 			}
-			else if($finishAll){
-				return true;
-			}
-			else{
-				return false;
-			}
+			return false;
 		}
 	}
 ?>

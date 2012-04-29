@@ -98,16 +98,23 @@ include_once '../../../classes/interface/Species_Functions.php';
 		if($_POST['actionType']=='1' || $_POST['actionType']=='0')//if finish or save
 		{
 			Species_Functions::SubmitAction($objectID,$userID,$process, @$_POST['actionType'], $_POST['SP_title'], $_POST['LOC_editor'],  $_POST['RS_editor'], $_POST['RH_editor'], $_POST['D_editor'],$taxonID);
+			if($_POST['actionType']=='1')//if finish
+			{
+				echo("finish</br>");
+				echo("ObjectID = ". $objectID. "</br>");
+				//Update status of all taxon concetps related to that object
+				$updated_taxons = BLL_data_objects_taxon_concepts::Select_data_objects_taxon_concepts_By_DataObjectID('slave',$objectID);
+				echo("number of updated taxons: " . COUNT($updated_taxons) . "</br>");
+				Species_Functions::Update_Status($updated_taxons,$process,$userID);
+			}
 		}			
 		else if($_POST['actionType']=='2')//if finish all
 		{
 			/*Save current Object*/
 			Species_Functions::SubmitAction($objectID,$userID,$process, 0/*action_type=0 to Only Save current*/, $_POST['SP_title'], $_POST['LOC_editor'],  $_POST['RS_editor'], $_POST['RH_editor'], $_POST['D_editor'],$taxonID);
-			$finish = Species_Functions::checkUpdate($taxonID, true);
-			if (! $finish){
-				/*Finish all objects*/
-				Species_Functions::FinishAll($taxonID,$process,$userID);
-			}
+			
+			/*Finish all objects*/
+			Species_Functions::FinishAll($taxonID,$process,$userID);
 		}			
 	}
 	
