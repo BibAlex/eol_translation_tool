@@ -934,35 +934,6 @@ class BLL_taxon_concepts {
 		
 		return $records;
 	}
-		
-	static function Update_Status($updated_taxons,$process, $userID)
-	{
-		foreach ($updated_taxons as  $updated_taxon)
-		{
-			$curtax = BLL_taxon_concepts::Select_taxon_concept('slave', $updated_taxon->taxon_concept_id);
-			echo("updated_taxon->taxon_concept_id: " . $updated_taxon->taxon_concept_id . "</br>");
-			echo("curtax->taxon_status_id: " . $curtax->taxon_status_id . "</br>");
-			echo("process: " . $process . "</br>");
-			if($curtax!=null && $curtax->taxon_status_id==($process-1))
-			{
-				$number_of_en_objects = BLL_data_objects::Count_DataObjects_ByTaxonConceptID('slave',$curtax->id);
-				echo("number_of_en_objects: " . $number_of_en_objects . "</br>");
-				$number_of_ar_objects = BLL_a_data_objects::Count_a_dataObjects_ByTaxonConceptID($curtax->id,$process);
-				echo("number_of_ar_objects: " . $number_of_ar_objects . "</br>");
-				if($number_of_en_objects == $number_of_ar_objects)
-				{
-					BLL_taxon_concepts::Update_taxon_concepts_Status($curtax->id,$process,$userID);
-					//Send email for the next step assigned person
-					BLL_taxon_concepts::SendMailNotification($curtax,$process,$userID);
-					//If this is taxon of hte current page
-					if($GLOBALS['taxonID']==$updated_taxon->taxon_concept_id)				
-					 	$GLOBALS['UpdateTaxonStatus']=1;//update the global variable defined
-					return true;	 	
-				}
-			}
-			return false;
-		}
-	}
 	
 	static function SendMailNotification($taxon,$process,$userID)
 	{
