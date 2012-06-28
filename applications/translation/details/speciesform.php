@@ -41,7 +41,7 @@
 ?>
     <!-- -------------------------Begin of Data Object Form -------------------- -->
 	
-	<script type="text/javascript">   
+	<script type="text/javascript">
 		function showObj(type, text) {
 			if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
 		  		xmlhttp=new XMLHttpRequest();
@@ -136,38 +136,38 @@
 	<style>
  		.Old_New_Compare a:hover {
 			text-decoration:underline;
-			cursor: hand; 
+			cursor: pointer; 
 		}
 		.Old_New_Compare td {
 			padding:2px;
 		}
 	</style>
-    <form name="frm" id="frm"  method="post" action="species.php?tid=<?=$taxonID?>&oid=<?=$objectID?><?=$otherparam?>" >
-        <div class="form">
-          <h2>
-          	<span style="float:left">
-          		Species Form   <span style="font-color:#666666;font-size:12px;font-weight: none;"> &nbsp;&nbsp;&nbsp;&nbsp;(<?php echo 'Form ID='.$EnObj->id?>)</span>
-          	</span>	
-          	<span style="float:right">
-          		<a href="../list/mylist.php?<?=$otherparam?>"><< Back to Species List</a>
-          	</span>
-          	<br/>          	
-          	<?			    
-          		if($ArObj!=null){
-          	?>
-          		<span style="font-size:10px; font-color:#666666; font-family: Arial,Helvetica,sans-serif; font-weight: none; text-transform:none;">
-          		<b>Last modified by</b>: <i><?echo BLL_users::get_user_name($ArObj->user_id)?></i>, <b>on </b><?echo $ArObj->modified_at?><i> (
-          			<?
-          				if($ArObj->locked==0)//Problem
-          					echo BLL_status::Select_Status_ByID($ArObj->process_id-1).' Finished, '. 'Pending '.BLL_status::Select_Status_ByID($ArObj->process_id);
-          				else
-          					echo 'Pending '.BLL_status::Select_Status_ByID($ArObj->process_id);
-          			?>
-          		)</i>
-          	<? }?>
-          	
-          	</span>
-          </h2>      
+	<form name="frm" id="frm"  method="post" action="species.php?tid=<?=$taxonID?>&oid=<?=$objectID?><?=$otherparam?>" >
+		<div class="form">
+			<h2>
+	          	<span style="float:left">
+	          		Species Form   <span style="font-color:#666666;font-size:12px;font-weight: none;"> &nbsp;&nbsp;&nbsp;&nbsp;(<?php echo 'Form ID='.$EnObj->id?>)</span>
+	          	</span>	
+	          	<span style="float:right">
+	          		<a href="../list/mylist.php?<?=$otherparam?>"><< Back to Species List</a>
+	          	</span>
+	          	<br/>          	
+	          	<?			    
+	          		if($ArObj!=null){
+	          	?>
+	          		<span style="font-size:10px; font-color:#666666; font-family: Arial,Helvetica,sans-serif; font-weight: none; text-transform:none;">
+	          		<b>Last modified by</b>: <i><?echo BLL_users::get_user_name($ArObj->user_id)?></i>, <b>on </b><?echo $ArObj->modified_at?><i> (
+	          			<?
+	          				if($ArObj->locked==0)//Problem
+	          					echo BLL_status::Select_Status_ByID($ArObj->process_id-1).' Finished, '. 'Pending '.BLL_status::Select_Status_ByID($ArObj->process_id);
+	          				else
+	          					echo 'Pending '.BLL_status::Select_Status_ByID($ArObj->process_id);
+	          			?>
+	          		)</i>
+	          	<? }?>
+	          	
+	          	</span>
+			</h2>      
          
            <div style="border:1px solid #C6C6C6; border-top:none;">
             <table  border="0" cellpadding="10" cellspacing="0" width="100%">
@@ -180,9 +180,9 @@
 			<?php if(TRIM($EnObj->object_title)=='') $display="none"; else $display="block"; ?>
 				<tr style="display:<?=$display?>">
                 	<?php
-						if($ArObj==null && $EnObj->parent_data_object_id != null){
+						if($ArObj==null && $EnObj->parent_data_object_id != null && Simple_Diff::hasDiff($oldEnObj->object_title, $EnObj->object_title)){
 					?>
-							<td width="108" class="odd_left">
+							<td width="122px" class="odd_left">
 		                		<table>
 		                			<tr>
 		                				<td class="odd_left" colspan="3">
@@ -191,33 +191,33 @@
 		                			</tr>
 		                			<tr style="font-weight:normal;" class="Old_New_Compare">
 		                				<td >
-		                					<a id="oldTitle" onclick="showObj('Title', 'oldTitle');">Old</a>
+		                					<a id="oldTitle" onclick="showObj('Title', 'oldTitle');" title="old version">Old</a>
 		                				</td>
 		                				<td>
-		                					<a id="newTitle" onclick="showObj('Title', 'newTitle');">New</a>
+		                					<a id="newTitle" onclick="showObj('Title', 'newTitle');" title="newly updated version">New</a>
 		                				</td>
 		                				<td>
-		                					<a id="compareTitle" style="color:#d26800" onclick="showObj('Title', 'compareTitle');">Compare</a>
+		                					<a id="compareTitle" style="color:#d26800" onclick="showObj('Title', 'compareTitle');" title="text difference between versions">Compare</a>
 		                				</td>
 		                			</tr>
 		                		</table>
 		                	</td>
-		                	<td class="odd" style="width:531px">
+		                	<td class="odd" style="width:516px">
 		                		<span id="Title"><?=Simple_Diff::htmlDiff($oldEnObj->object_title, $EnObj->object_title)?></span>
 		                	</td>
                 	<?php
 						}
 						else{
                 	?>
-                			<td class="odd_left" width="108">Title (En):</td>
-                			<td class="odd" style="width:531px"><?=$EnObj->object_title?></td>
+                			<td class="odd_left" width="122px">Title (En):</td>
+                			<td class="odd" width="516px"><?=$EnObj->object_title?></td>
                 	<?php
                 		}
                 	?>
               	</tr>
               	<tr style="display:<?=$display?>">
-                	<td class="even_left" width="108">Title (Ar):</td>
-                	<td class="even_border" style=" text-align:right; width:531px">
+                	<td class="even_left" width="122px">Title (Ar):</td>
+                	<td class="even_border" style=" text-align:right; width:516px">
                 	<?php 
 			          //If only view so do not display buttons
           				if($onlyView==1)
@@ -225,7 +225,7 @@
           					echo $object_title.'&nbsp;';
           				}else{
           				?>
-                		<input id="TXT_title" type="text" name="SP_title"  style="width:525px; direction: rtl"  value="<?=$object_title?>"  />
+                		<input id="TXT_title" type="text" name="SP_title"  style="width:511px; direction: rtl"  value="<?=$object_title?>"  />
                 		<span id="t_error" class="error">Please fill in the Arabic title</span>
                 	<?php }?>
                 		
@@ -247,9 +247,9 @@
              	
               <tr style="display:<?=$display?>">
                 <?php
-					if($ArObj==null && $EnObj->parent_data_object_id != null){
+					if($ArObj==null && $EnObj->parent_data_object_id != null && Simple_Diff::hasDiff($oldEnObj->location, $EnObj->location)){
 				?>
-						<td width="108" class="odd_left">
+						<td width="122px" class="odd_left">
 	                		<table>
 	                			<tr>
 	                				<td colspan="3">
@@ -258,33 +258,33 @@
 	                			</tr>
 	                			<tr style="font-weight:normal;" class="Old_New_Compare">
 	                				<td>
-	                					<a id="oldLocation" onclick="showObj('Location', 'oldLocation');">Old</a>
+	                					<a id="oldLocation" onclick="showObj('Location', 'oldLocation');" title="old version">Old</a>
 	                				</td>
 	                				<td>
-	                					<a id="newLocation" onclick="showObj('Location', 'newLocation');">New</a>
+	                					<a id="newLocation" onclick="showObj('Location', 'newLocation');" title="newly updated version">New</a>
 	                				</td>
 	                				<td>
-	                					<a id="compareLocation" style="color:#d26800" onclick="showObj('Location', 'compareLocation');">Compare</a>
+	                					<a id="compareLocation" style="color:#d26800" onclick="showObj('Location', 'compareLocation');" title="text difference between versions">Compare</a>
 	                				</td>
 	                			</tr>
 	                		</table>
 	                	</td>
-	                	<td class="odd" style="width:531px">
+	                	<td class="odd" style="width:516px">
 	                		<span id="Location"><?=Simple_Diff::htmlDiff($oldEnObj->location, $EnObj->location)?></span>
 	                	</td>
             	<?php
 					}
 					else{
             	?>
-            			<td class="odd_left" width="108">Location (En):</td>
-            			<td class="odd" style="width:531px"><?=$EnObj->location?></td>
+            			<td class="odd_left" width="122px">Location (En):</td>
+            			<td class="odd" style="width:516px"><?=$EnObj->location?></td>
             	<?php
             		}
             	?>
               </tr>
               <tr style="display:<?=$display?>">
-                <td class="even_left"  width="108">Location (Ar):</td>
-                <td class="even_border" style=" text-align:right; width:531px">                   
+                <td class="even_left"  width="122px">Location (Ar):</td>
+                <td class="even_border" style=" text-align:right; width:516px">                   
                    <?php
 						//If only view so do not display buttons
           				if($onlyView==1)
@@ -326,12 +326,12 @@
               	if($template != null){
               	?>
               		<tr style="display:<?=$display?>">
-		                <td class="odd_left"  width="108">Rights Stat. (En):</td>
-		                <td class="odd"  style="width:531px"><?=$EnObj->rights_statement?></td>
+		                <td class="odd_left"  width="122px">Rights Stat. (En):</td>
+		                <td class="odd"  style="width:516px"><?=$EnObj->rights_statement?></td>
 		              </tr>
 		              <tr style="display:<?=$display?>">
-		                <td class="even_left"  width="108">Rights Stat. (Ar):<br/><span style="font-size:9px; font-weight:normal;">(Automatically translated)</span></td>
-		                <td class="even_border" style="text-align:right; width:531px">                   
+		                <td class="even_left"  width="122px">Rights Stat. (Ar):<br/><span style="font-size:9px; font-weight:normal;">(Automatically translated)</span></td>
+		                <td class="even_border" style="text-align:right; width:516px">                   
 		                   <?php
 		          				echo $rights_statement.'&nbsp;';
 							?>
@@ -364,9 +364,9 @@
               	?>
               		<tr style="display:<?=$display?>">
 		                <?php
-							if($ArObj==null && $EnObj->parent_data_object_id != null){
+							if($ArObj==null && $EnObj->parent_data_object_id != null && Simple_Diff::hasDiff($oldEnObj->rights_statement, $EnObj->rights_statement)){
 						?>
-								<td width="108" class="odd_left">
+								<td width="122px" class="odd_left">
 			                		<table>
 			                			<tr>
 			                				<td colspan="3">
@@ -375,33 +375,33 @@
 			                			</tr>
 			                			<tr style="font-weight:normal;" class="Old_New_Compare">
 			                				<td>
-			                					<a id="oldRights_statement" onclick="showObj('Rights_statement', 'oldRights_statement');">Old</a>
+			                					<a id="oldRights_statement" onclick="showObj('Rights_statement', 'oldRights_statement');" title="old version">Old</a>
 			                				</td>
 			                				<td>
-			                					<a id="newRights_statement" onclick="showObj('Rights_statement', 'newRights_statement');">New</a>
+			                					<a id="newRights_statement" onclick="showObj('Rights_statement', 'newRights_statement');" title="newly updated version">New</a>
 			                				</td>
 			                				<td>
-			                					<a id="compareRights_statement" style="color:#d26800" onclick="showObj('Rights_statement', 'compareRights_statement');">Compare</a>
+			                					<a id="compareRights_statement" style="color:#d26800" onclick="showObj('Rights_statement', 'compareRights_statement');" title="text difference between versions">Compare</a>
 			                				</td>
 			                			</tr>
 			                		</table>
 			                	</td>
-			                	<td class="odd" style="width:531px">
+			                	<td class="odd" style="width:516px">
 			                		<span id="Rights_statement"><?=Simple_Diff::htmlDiff($oldEnObj->rights_statement, $EnObj->rights_statement)?></span>
 			                	</td>
 	                	<?php
 							}
 							else{
 	                	?>
-	                			<td class="odd_left" width="108">Rights Stat. (En):</td>
-	                			<td class="odd" style="width:531px"><?=$EnObj->rights_statement?></td>
+	                			<td class="odd_left" width="122px">Rights Stat. (En):</td>
+	                			<td class="odd" style="width:516px"><?=$EnObj->rights_statement?></td>
 	                	<?php
                 		}
                 		?>
 		              </tr>
 		              <tr style="display:<?=$display?>">
-		                <td class="even_left"  width="108">Rights Stat. (Ar):</td>
-		                <td class="even_border" style=" text-align:right; width:531px">                   
+		                <td class="even_left"  width="122px">Rights Stat. (Ar):</td>
+		                <td class="even_border" style=" text-align:right; width:516px">                   
 		                   <?php
 								//If only view so do not display buttons
 		          				if($onlyView==1)
@@ -416,7 +416,7 @@
 										 array('Source','-','NewPage'),					   
 									     array('Link','Unlink'),
 									);
-									$config['width'] = 530;
+									$config['width'] = 516;
 									$config['height'] = 30;
 				 					$config['toolbarCanCollapse'] = false;
 									// Create second instance.
@@ -445,12 +445,12 @@
 				if($template != null){
 				?>
 					<tr style="display:<?=$display?>">
-		                <td class="odd_left" width="108">Rights Holder (En):</td>
-		                <td class="odd" style="width:531px"><?=$EnObj->rights_holder?></td>                				   
+		                <td class="odd_left" width="122px">Rights Holder (En):</td>
+		                <td class="odd" style="width:516px"><?=$EnObj->rights_holder?></td>                				   
 		              </tr>
 		              <tr style="display:<?=$display?>">
-		                <td class="even_left"  width="108">Rights Holder (Ar):<br/><span style="font-size:9px; font-weight:normal;">(Automatically translated)</span></td>
-		                <td class="even_border" style=" text-align:right; width:531px">
+		                <td class="even_left"  width="122px">Rights Holder (Ar):<br/><span style="font-size:9px; font-weight:normal;">(Automatically translated)</span></td>
+		                <td class="even_border" style=" text-align:right; width:516px">
 		                    <?php
 		                    	echo $rights_holder.'&nbsp;';
 							?>
@@ -474,9 +474,9 @@
 				?>
 						<tr style="display:<?=$display?>">
 							<?php
-								if($ArObj==null && $EnObj->parent_data_object_id != null){
+								if($ArObj==null && $EnObj->parent_data_object_id != null && Simple_Diff::hasDiff($oldEnObj->rights_holder, $EnObj->rights_holder)){
 							?>
-									<td width="108">
+									<td width="122px">
 				                		<table>
 				                			<tr class="odd_left">
 				                				<td colspan="3">
@@ -485,33 +485,33 @@
 				                			</tr>
 				                			<tr style="font-weight:normal;" class="Old_New_Compare">
 				                				<td>
-				                					<a id="oldRights_holder" onclick="showObj('Rights_holder', 'oldRights_holder');">Old</a>
+				                					<a id="oldRights_holder" onclick="showObj('Rights_holder', 'oldRights_holder');" title="old version">Old</a>
 				                				</td>
 				                				<td>
-				                					<a id="newRights_holder" onclick="showObj('Rights_holder', 'newRights_holder');">New</a>
+				                					<a id="newRights_holder" onclick="showObj('Rights_holder', 'newRights_holder');" title="newly updated version">New</a>
 				                				</td>
 				                				<td>
-				                					<a id="compareRights_holder" style="color:#d26800" onclick="showObj('Rights_holder', 'compareRights_holder');">Compare</a>
+				                					<a id="compareRights_holder" style="color:#d26800" onclick="showObj('Rights_holder', 'compareRights_holder');" title="text difference between versions">Compare</a>
 				                				</td>
 				                			</tr>
 				                		</table>
 				                	</td>
-				                	<td class="odd" style="width:531px">
+				                	<td class="odd" style="width:516px">
 				                		<span id="Rights_holder"><?=Simple_Diff::htmlDiff($oldEnObj->rights_holder, $EnObj->rights_holder)?></span>
 				                	</td>
 		                	<?php
 								}
 								else{
 		                	?>
-		                			<td class="odd_left" width="108">Rights Holder (En):</td>
-		                			<td class="odd" style="width:531px"><?=$EnObj->rights_holder?></td>
+		                			<td class="odd_left" width="122px">Rights Holder (En):</td>
+		                			<td class="odd" style="width:516px"><?=$EnObj->rights_holder?></td>
 		                	<?php
 	                		}
 	                		?>            				   
 			              </tr>
 			              <tr style="display:<?=$display?>">
-			                <td class="even_left"  width="108">Rights Holder (Ar):</td>
-			                <td class="even_border" style=" text-align:right; width:531px">
+			                <td class="even_left"  width="122px">Rights Holder (Ar):</td>
+			                <td class="even_border" style=" text-align:right; width:516px">
 			                    <?php                    
 									if($onlyView == 1)
 			          				{		
@@ -534,9 +534,9 @@
              
               <tr style="display:<?=$display?>">
                 <?php
-					if($ArObj==null && $EnObj->parent_data_object_id != null){
+					if($ArObj==null && $EnObj->parent_data_object_id != null && Simple_Diff::hasDiff($oldEnObj->description, $EnObj->description)){
 				?>
-						<td width="108" class="odd_left">
+						<td width="122px" class="odd_left">
 	                		<table>
 	                			<tr>
 	                				<td colspan="3">
@@ -545,19 +545,19 @@
 	                			</tr>
 	                			<tr style="font-weight:normal;" class="Old_New_Compare">
 	                				<td>
-	                					<a id="oldDescription" onclick="showObj('Description', 'oldDescription');">Old</a>
+	                					<a id="oldDescription" onclick="showObj('Description', 'oldDescription');" title="old version">Old</a>
 	                				</td>
 	                				<td>
-	                					<a id="newDescription" onclick="showObj('Description', 'newDescription');">New</a>
+	                					<a id="newDescription" onclick="showObj('Description', 'newDescription');" title="newly updated version">New</a>
 	                				</td>
 	                				<td>
-	                					<a id="compareDescription" style="color:#d26800" onclick="showObj('Description', 'compareDescription');">Compare</a>
+	                					<a id="compareDescription" style="color:#d26800" onclick="showObj('Description', 'compareDescription');" title="text difference between versions">Compare</a>
 	                				</td>
 	                			</tr>
 	                		</table>
 	                	</td>
-	                	<td class="odd" style="width:531px">
-	                		<div style="overflow: auto; max-height: 200px; width:531px">
+	                	<td class="odd" style="width:516px">
+	                		<div style="overflow: auto; max-height: 200px; width:516px">
 		                		<span id="Description"><?=Simple_Diff::htmlDiff($oldEnObj->description, $EnObj->description)?></span>
 		                	</div>
 	                	</td>
@@ -565,9 +565,9 @@
 					}
 					else{
             	?>
-            			<td class="odd_left" width="108">Details (En):</td>
+            			<td class="odd_left" width="122px">Details (En):</td>
 		                <td class="odd">
-		                	<div style="overflow: auto; max-height: 200px; width:531px">
+		                	<div style="overflow: auto; max-height: 200px; width:516px">
 		                		<?=$EnObj->description?> 
 		                	</div>
 		                </td>
@@ -576,13 +576,13 @@
         		?>            	
               </tr>
               <tr style="display:<?=$display?>">
-                <td class="even_left"  width="108">Details (Ar):</td>
-                <td class="even_border" style="text-align:right; width:531px; direction:rtl;">
+                <td class="even_left"  width="122px">Details (Ar):</td>
+                <td class="even_border" style="text-align:right; width:516px; direction:rtl;">
         	        <?php
 						if($onlyView==1)
           				{	
           				?>
-          				<div style="overflow: auto; max-height: 200px; width:531px"">
+          				<div style="overflow: auto; max-height: 200px; width:516px"">
           				<?php echo  $description.'&nbsp;';?>
           				</div>
           			<?php 		          				
@@ -602,7 +602,7 @@
 							     array('JustifyLeft','JustifyCenter','JustifyRight','-','BidiLtr', 'BidiRtl'),
 							     array('FontSize','TextColor','BGColor')
 							);
-							$config['width'] = 530;
+							$config['width'] = 516;
 							$config['height'] = 200;
 		 					$config['toolbarCanCollapse'] = false;
 							// Create second instance.
@@ -662,7 +662,6 @@
           </div>
         </div>
     </form>
-    
     <script>
     	function isConfirmed() {
         	if(document.getElementById("actionType").value=="2")//finish all

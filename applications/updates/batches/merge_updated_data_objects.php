@@ -41,10 +41,8 @@ $updated_data_objects = BLL_updated_data_objects::Select_all_updated_dataObjects
 echo "Number of pending updated dataobjects= " . COUNT($updated_data_objects) . "\r\n";
 
 //loop on each updated data_object  
-$count = 0;
 foreach ($updated_data_objects as $updated_data_object){
-	echo "--------------------------";
-	echo "Object number" . $count ++ . "\r\n";
+	echo "--------------------------\r\n";
 	echo "updated_data_object_id" . $updated_data_object->id . "\r\n";
 	//if this updated data_object has never been available in the data_objects table 
   	if(BLL_data_objects::Exist_DataObjects_ByID('slave',$updated_data_object->id)==0)//the normal case, no mistake
@@ -81,7 +79,7 @@ foreach ($updated_data_objects as $updated_data_object){
   				echo "old and new data objects are the same for id\r\n";
   				//create the new arabic data object
   				$old_a_data_object = BLL_a_data_objects::Select_a_data_objects_ByID($parent_id);
-  				BLL_a_data_objects::Insert_a_data_objects( $updated_data_object->id
+  				BLL_a_data_objects::Insert_updated_a_data_objects($updated_data_object->id
   						, $old_a_data_object->user_id
   						, $old_a_data_object->process_id
   						, $old_a_data_object->object_title
@@ -91,6 +89,10 @@ foreach ($updated_data_objects as $updated_data_object){
   						, $old_a_data_object->description
   						, $old_a_data_object->taxon_concept_id
   						, $old_a_data_object->locked
+  						, $old_a_data_object->translator_id
+  						, $old_a_data_object->linguistic_reviewer_id
+  						, $old_a_data_object->scientific_reviewer_id
+  						, $old_a_data_object->final_editor_id
   						, 1/*Automatically upadted*/
   				);  	
 	  			//Hide all old data objects
@@ -151,7 +153,7 @@ function clean_string($str)
 {
 	$clean_str = strtolower($str); //change to lower case 
 	$clean_str = str_replace('&nbsp;',' ',$clean_str); //replace html spaces tags	//Yosra changes str_replace('&nbsp;',' ',$str) to str_replace('&nbsp;',' ',$clean_str)
-	$clean_str = strip_tags($clean_str,'<img>'); //remove html tags except images
+	$clean_str = strip_tags($clean_str,'<img><a>'); //remove html tags except images and links <a> According to http://php.net/manual/en/function.strip-tags.php manual
 	$pattern= "/[^A-Za-z0-9 ]/";	
 	$clean_str = preg_replace($pattern, '', $clean_str);//Perform a regular expression search and remove all non alphabet and non numeric characters 
 	$clean_str = str_replace(' ','',$clean_str);//remove all spaces

@@ -1,7 +1,5 @@
 <?php
 
-
-
 class BLL_taxon_concepts {
 
 	static function Count_Pending_Assigned($process)
@@ -779,7 +777,6 @@ class BLL_taxon_concepts {
 	}
 	
 	static function reassign_updated_taxon($id, $translator_id, $old_translator_id, $linguistic_reviewer_id, $old_linguistic_reviewer_id, $scientific_reviewer_id, $old_scientific_reviewer_id) {
-		
 		$query_str = 'update taxon_concepts set translator_id='.strval($translator_id);
 		if ($translator_id > 0)
 		$query_str .= ', translator_assigned=1 ';
@@ -792,7 +789,13 @@ class BLL_taxon_concepts {
 		$query_str .= ' , linguistic_assigned=0 ';
 		$query_str .= ', scientific_reviewer_id='.strval($scientific_reviewer_id);
 		
-		$query_str .= ', taxon_update=0';
+		$query_str .= ', translation_date=NULL';
+		$query_str .= ', linguisticreview_date=NULL';
+		$query_str .= ', scientificreview_date=NULL';
+		$query_str .= ', finalediting_date=NULL';
+		$query_str .= ', publish_date=NULL';
+		$query_str .= ', taxon_update=2';
+		$query_str .= ', taxon_status_id=2';
 		$query_str .= ' where id='.strval($id).';';		
 
 		//echo($query_str.'<br>');
@@ -825,6 +828,7 @@ class BLL_taxon_concepts {
 		$con->Close();
 	}
 	
+	//Function edited by Yosra on 29-4-2012 to process new data objects upon selection
 	static function Insert_data_object_and_its_relations($dataobject, $taxon_concept_id)
 	{
 		//1. Fill data_object table
@@ -837,14 +841,75 @@ class BLL_taxon_concepts {
 			BLL_data_objects::Insert_DataObject('slave',$dataobject);
 			//get all old data objects with same guid and not hidden
 			$old_data_objects = BLL_data_objects::Select_DataObjects_ByGuid_NOT_Hidden($dataobject->guid, $dataobject->data_type_id);
-			//if data_object is totally a new one and there is no old one
-			if(COUNT($old_data_objects)==0)
-			{
-				echo "no old data_objects<br/>";				
-				echo "reverse_taxon_first_case<br/>";
-				reverse_taxons($dataobject, $old_data_objects);
+			//if data_object is totally a not a totally one
+			if(COUNT($old_data_objects) > 0) {
+				$parent_id = $old_data_objects[0]->id;//because first 1 is the most advanced one in the translation workflow (ORDER BY proess_id DESC;)
+  				$are_exact = BLL_taxon_concepts::compare_data_objects($parent_id, $dataobject->id);
+  			
+  				//set the new_DO->parent_do_id=do_old[0]->id
+	  			BLL_data_objects::Update_data_object_set_Parent($dataobject->id,$parent_id);
+	  			
+	  			if($are_exact == true){
+	  				//create the new arabic data object
+	  				$old_a_data_object = BLL_a_data_objects::Select_a_data_objects_ByID($parent_id);
+	  				BLL_a_data_objects::Insert_updated_a_data_objects( $dataobject->id
+	  					, $old_a_data_object->user_id
+  						, $old_a_data_object->process_id
+  						, $old_a_data_object->object_title
+  						, $old_a_data_object->location
+  						, $old_a_data_object->rights_statement
+  						, $old_a_data_object->rights_holder
+  						, $old_a_data_object->description
+  						, $old_a_data_object->taxon_concept_id
+  						, $old_a_data_object->locked
+  						, $old_a_data_object->translator_id
+  						, $old_a_data_object->linguistic_reviewer_id
+  						, $old_a_data_object->scientific_reviewer_id
+  						, $old_a_data_object->final_editor_id
+  						, 1/*Automatically upadted*/
+	  				);  	
+		  			//Hide all old data objects
+		  			foreach ($old_data_objects as $old_data_object)
+		  			{
+		  				BLL_data_objects::Update_Hidden_DataObject($old_data_object->id, 1);  				
+		  			}//end for each old_data Object
+	  			}//end if are exact
+	  			else{ //old and new objects are not exact
+//	  				$intermediate = false;
+//	  				foreach ($old_data_objects as $old_data_object) {
+//						$related_taxons = BLL_data_objects_taxon_concepts::Select_taxon_concepts_By_DataObjectID('slave', $old_data_object->id);
+//						if (COUNT($related_taxons) > 0) {
+//							foreach ($related_taxons as $related_taxon) {
+//								if($related_taxon->taxon_status_id != 1 && $related_taxon->taxon_status_id != 6){
+//									$intermediate = true;
+//									break;
+//								}
+//							}
+//							if($intermediate){
+//								break;
+//							}		
+//						}
+//					}
+//					if($intermediate){	//wait till save and finish
+//						BLL_data_objects::Update_Hidden_DataObject($data_object->id, 2);
+//						BLL_data_objects::Update_Locked_update_DataObject($data_object->id, 1);
+//					}
+//					else{
+						//Hide all old data objects
+			  			foreach ($old_data_objects as $old_data_object)
+			  			{
+			  				BLL_data_objects::Update_Hidden_DataObject($old_data_object->id, 1);  				
+			  			}//end for each old_data Object
+//					}
+	  			}
 			}
 			
+			// data_object_taxon_concepts with all taxons related to one of the old data objects
+			$related_taxons = BLL_data_objects_taxon_concepts::Select_taxons_of_data_object_guids('slave', $dataobject->guid);
+			//connect with new data_object
+			foreach ($related_taxons as $related_taxon) {
+				BLL_data_objects_taxon_concepts::Insert_data_objects_taxon_concepts('slave', $related_taxon->taxon_concept_id, $dataobject->id);       
+			}
 		}
 		
 		//2. Fill data_object_taxon_concept table //Insert Ignore
@@ -867,29 +932,37 @@ class BLL_taxon_concepts {
 		}
 	}
 	
+	function compare_data_objects($old_id, $new_id)
+	{
+		$old_do = BLL_data_objects::Select_DataObjects_ByID('slave', $old_id);
+		$new_do = BLL_data_objects::Select_DataObjects_ByID('slave', $new_id);
+		if(    strcmp(BLL_taxon_concepts::clean_string($old_do->object_title)		, BLL_taxon_concepts::clean_string($new_do->object_title)) ==0 
+			&& strcmp(BLL_taxon_concepts::clean_string($old_do->description)		, BLL_taxon_concepts::clean_string($new_do->description)) ==0
+			&& strcmp(BLL_taxon_concepts::clean_string($old_do->rights_statement)	, BLL_taxon_concepts::clean_string($new_do->rights_statement)) ==0
+			&& strcmp(BLL_taxon_concepts::clean_string($old_do->rights_holder)		, BLL_taxon_concepts::clean_string($new_do->rights_holder)) ==0
+			&& strcmp(BLL_taxon_concepts::clean_string($old_do->location)			, BLL_taxon_concepts::clean_string($new_do->location)) ==0
+			) 	
+			return true;
+		else
+			return false;	  
+	}
+	
+	function clean_string($str)
+	{
+		$clean_str = strtolower($str); //change to lower case 
+		$clean_str = str_replace('&nbsp;',' ',$clean_str); //replace html spaces tags	//Yosra changes str_replace('&nbsp;',' ',$str) to str_replace('&nbsp;',' ',$clean_str)
+		$clean_str = strip_tags($clean_str,'<img><a>'); //remove html tags except images
+		$pattern= "/[^A-Za-z0-9 ]/";	
+		$clean_str = preg_replace($pattern, '', $clean_str);//Perform a regular expression search and remove all non alphabet and non numeric characters 
+		$clean_str = str_replace(' ','',$clean_str);//remove all spaces
+		$clean_str = str_replace('\r\n','',$clean_str);//remove new lines
+		$clean_str = str_replace('\n','',$clean_str);//remove new lines
+		return $clean_str;	
+	}
+
 	/* Sara Copied from yosra reverse_taxons function: merge_merge_updated_data_objects.php
 	 * Date 2012-04-23 
 	 */
-	function reverse_taxons($data_object, $old_data_objects){
-		//Get all taxon of the data_object to check their states
-		$taxons = BLL_data_objects_taxon_concepts::Select_taxon_concepts_By_DataObjectID($data_object->id);
-		$intermediate = false;	//a variable to determine if there is ONE OR MORE related taxon in intermediate phases (translation, linguistic, scientific review,...)		
-		foreach ($taxons as $taxon) {
-			if ($taxon->taxon_status_id != 1 && $taxon->taxon_status_id != 6){ //if ONE OR MORE are in intermediate states, set the new_DO->hidden=2			
-				$intermediate = true;
-				BLL_data_objects::Update_data_object_set_Hidden($data_object->id, 2);//hidden=0> visible, hidden=1>invisible, hidden=2>updated and pending to be visible				
-				break;
-			}
-		}
-		if(!$intermediate && COUNT($old_data_objects) != 0 )
-		{
-			foreach ($old_data_objects as $old_data_object) 
-			{
-				BLL_data_objects::Hide_DataObject($old_data_object->id);
-			}//end for each old_data Object
-			
-		}//end if not itermediate phase
-	}
 	
 	static function assign_taxon($id, $translator_id, $linguistic_reviewer_id, $scientific_reviewer_id) 
 	{		
@@ -917,16 +990,34 @@ class BLL_taxon_concepts {
 		$dataobjects = BLL_data_objects::Select_DataObjects_ByTaxonConceptID('master',$id);		
 		foreach ($dataobjects as $dataobject)	
 	  	{ 	  		
-	  		Insert_data_object_and_its_relations($dataobject,$id);
+	  		BLL_taxon_concepts::Insert_data_object_and_its_relations($dataobject,$id);
 	  	}
 	  	
 		// get Images						   
 		$image_dataobjects = BLL_data_objects::Select_Images_ByTaxonConceptID('master',$id);
 		foreach ($image_dataobjects as $dataobject)	
 	  	{ 	  		
-	  		Insert_data_object_and_its_relations($dataobject,$id);
+	  		BLL_taxon_concepts::Insert_data_object_and_its_relations($dataobject,$id);
 	  	}
-		
+	  	
+		//Check if taxon is attached to data objects of process id > 2, move taxon to next phase (scientific review)
+		$number_of_en_objects = BLL_data_objects::Count_DataObjects_ByTaxonConceptID('slave',$id);
+		$number_of_ar_objects = BLL_a_data_objects::Count_a_dataObjects_ByTaxonConceptID($id,3);
+		if($number_of_en_objects == $number_of_ar_objects)
+		{
+			$arabic_objects = BLL_a_data_objects::Select_a_dataObjects_ByTaxonConceptID_And_Not_Hidden($id, 3);
+			if($arabic_objects != null && COUNT($arabic_objects) > 0){
+				$minProcess = 6;
+				foreach ($arabic_objects as $arabic_object) {
+	       			if($arabic_object->process_id < $minProcess){
+	       				$minProcess = $arabic_object->process_id;
+	       			}
+				}
+			}
+			
+			BLL_taxon_concepts::Update_taxon_concepts_Status($id,$minProcess,$_SESSION['user_id']);
+			BLL_taxon_concepts::SendMailNotification($id,$minProcess,$_SESSION['user_id']);		
+		}
 	}
 	
 	static function get_finished_taxons() {
@@ -1343,7 +1434,7 @@ class BLL_taxon_concepts {
               inner join selection_batches on selection_batches.id=taxon_concepts.selection_id
               inner join users on users.id=selection_batches.user_id
               inner join priorities on priorities.id=priority_id
-              where taxon_status_id<=1 ";
+              where taxon_status_id<=1 and taxon_update = 0";
 			
 		$con = new PDO_Connection();
 		$con->Open('slave');
@@ -1396,7 +1487,7 @@ class BLL_taxon_concepts {
 							inner join selection_batches on selection_batches.id=taxon_concepts.selection_id
 							inner join users on users.id=selection_batches.user_id
 							inner join priorities on priorities.id=priority_id
-							where taxon_status_id<=1 ";		
+							where taxon_status_id<=1 and taxon_update = 0";		
 		
 		if ($sort_by == 'id')
 			$query_str .= ' order by taxon_concepts.id ';
