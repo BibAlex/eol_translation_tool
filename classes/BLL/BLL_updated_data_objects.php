@@ -90,7 +90,7 @@
 		{
 		 	$con = new PDO_Connection();
 		  	$con->Open('slave');			  	
-		  	$stmt = $con->connection->prepare("SELECT * FROM updated_data_objects limit 1,200;");
+		  	$stmt = $con->connection->prepare("SELECT * FROM updated_data_objects limit 7000,1000000;");
 		  	$stmt->execute();		
 			$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_updated_data_objects');		
 		    $con->Close();    
@@ -118,18 +118,13 @@
 		static function Select_DataObject_ByID($id) 
 		{
 		 	 $con = new PDO_Connection();
-		  	 $con->Open('slave');
-			  	
-		  	 $stmt = $con->connection->prepare("SELECT * FROM updated_data_objects WHERE id=?;");
-		 	
+		  	 $con->Open('slave');			  	
+		  	 $stmt = $con->connection->prepare("SELECT * FROM updated_data_objects WHERE id=?;");		 	
 		    $stmt->bindParam(1, $id);
 			$stmt->execute();		
 			$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_updated_data_objects');		
 		    $con->Close();
-		    if(count($records) > 0)
-		    	return $records[0];
-		    else	   
-		    	return new DAL_updated_data_objects(); 
+		    return $records[0];		     
 		}
 		
 		static function Exist_Updated_DataObjects_ByID($ObjID) 

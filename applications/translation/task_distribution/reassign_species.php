@@ -229,7 +229,7 @@ $users = new BLL_users();
 				<td class="odd" width="150"><b>Linguistic Reviewer:</b> </td>
 				<td class="even">					
 					<?if ($taxon_concept->taxon_status_id >=5) {?>
-						<?=BLL_users::get_user_name($taxon_concept->scientific_reviewer_id)?>
+						<?=BLL_users::get_user_name($taxon_concept->linguistic_reviewer_id)?>
 						<input type="hidden" name="linguistic_reviewer" value="<?=$taxon_concept->linguistic_reviewer_id?>" />
 					<?}else{?>	
 						<select name="linguistic_reviewer" id="linguistic_reviewer">
@@ -238,11 +238,17 @@ $users = new BLL_users();
 					<?}?>
 				</td>
 			</tr>
-			<tr>
-				<td colspan="2" class="table_head">
-					<input type="submit" value="Submit" class="btn" />
-				</td>
-			</tr>
+			<?php
+				if($taxon_concept->taxon_status_id <5){
+					?>
+					<tr>
+						<td colspan="2" class="table_head">
+							<input type="submit" value="Submit" class="btn" />
+						</td>
+					</tr>
+					<?php
+				}
+			?>
 		</table>
 	</div>
 	</form>

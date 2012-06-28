@@ -41,11 +41,15 @@ include_once '../../../classes/interface/Species_Functions.php';
 	$trstatus='0';
 	$page=0;
 	$UpdateTaxonStatus=0;//This is used to check if display form or to confirm that species has been finished
-
+	$updatedTaxon=false;	//This is used to check if the taxon has been reversed
 	//Get the current Process
 	if(isset($_GET['process'])) 	$process = $_GET['process'];
 	else if(isset($_POST['process'])) $process = $_POST['process'];
 	else header('location:../users/login.php');
+	
+	if(isset($_GET['update'])) 	$updatedTaxon = $_GET['update'];
+	else if(isset($_POST['update'])) $updatedTaxon = $_POST['update'];
+	
 		
 	//Get the Taxon
 	if(isset($_GET['tid'])) $taxonID = $_GET['tid'];
@@ -83,6 +87,8 @@ include_once '../../../classes/interface/Species_Functions.php';
     	$otherparam .= '&trstatus='.$trstatus;
     if(trim($process)!='')
     	$otherparam .= '&process='.$process;
+    if(trim($updatedTaxon)!='')
+    	$otherparam .= '&update='.$updatedTaxon;
     if($page!=0)
     	$otherparam .= '&page='.$page;	
 
@@ -100,12 +106,9 @@ include_once '../../../classes/interface/Species_Functions.php';
 			Species_Functions::SubmitAction($objectID,$userID,$process, @$_POST['actionType'], $_POST['SP_title'], $_POST['LOC_editor'],  $_POST['RS_editor'], $_POST['RH_editor'], $_POST['D_editor'],$taxonID);
 			if($_POST['actionType']=='1')//if finish
 			{
-				echo("finish</br>");
-				echo("ObjectID = ". $objectID. "</br>");
 				//Update status of all taxon concetps related to that object
 				$updated_taxons = BLL_data_objects_taxon_concepts::Select_data_objects_taxon_concepts_By_DataObjectID('slave',$objectID);
-				echo("number of updated taxons: " . COUNT($updated_taxons) . "</br>");
-				Species_Functions::Update_Status($updated_taxons,$process,$userID);
+				$updatedTaxon = Species_Functions::Update_Status($updated_taxons,$process+1,$userID);
 			}
 		}			
 		else if($_POST['actionType']=='2')//if finish all
@@ -114,7 +117,7 @@ include_once '../../../classes/interface/Species_Functions.php';
 			Species_Functions::SubmitAction($objectID,$userID,$process, 0/*action_type=0 to Only Save current*/, $_POST['SP_title'], $_POST['LOC_editor'],  $_POST['RS_editor'], $_POST['RH_editor'], $_POST['D_editor'],$taxonID);
 			
 			/*Finish all objects*/
-			Species_Functions::FinishAll($taxonID,$process,$userID);
+			$updatedTaxon = Species_Functions::FinishAll($taxonID,$process,$userID);
 		}			
 	}
 	
@@ -138,89 +141,92 @@ include_once '../../../classes/interface/Species_Functions.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
+	<head>
 		<title><? echo $taxon->scientificName; ?></title> 	
-		 <? include ('../master/header.php');?>
-		 		 	
-  </head>
-  <body>
+		<? include ('../master/header.php');?>
+  	</head>
+  	<body>
 		<? include ('../master/top.php');?>
-		  		  
-			<div class="title">
-        <p> <img id='thumb' src=""/>
-       
-        	<h1><em> <a target="_blank" href="<?=$eol_site_url?>/pages/<?=$taxon->id?>"><?=$taxon->scientificName?></a></em></h1>
-	        <br />
-	        <br />
-	         <br />
-	        <div class="Translated_Reviewed" >
-	        <span style="font-weight:bold">Species ID: </span><?=$taxon->id?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	        </div>
-	       
-	        <div class="Translated_Reviewed" >
-	        <span style="font-weight:bold">Species Status:</span>
-	         <span>
-	         <?php switch ($taxon->taxon_status_id) {
-	         	case 3:	echo 'Translation done, Scientific review in progress';break;	         	
-	         	case 4:	echo 'Scientific review done, Lingusitic review in progress';break;
-	         	case 5:	echo 'Lingusitic review done, Final Editing in progress';break;
-	         	case 6:	echo 'Final Edition done, Waiting to be published';break;
-	         	case 7:	echo 'Published';break;	         	
-	         	default:echo 'Translation in progress';break;/*case 2*/	         		
-	         }?></span></div>
-	        <br />
-	        <?php if($process>=2){?>
-	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Translator: </span> <span><?php echo $translatedBy?></span></div>
-	        <?php } if($process>=3){?>
-	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Scientific Reviewer: </span><span><?php echo $ScienRevBy?></span></div>
-	        <?php } if($process>=4){?>
-	        	<div class="Translated_Reviewed"><span style="font-weight:bold">Lingusitic Reviewer: </span><span><?php echo $lingRevBy?></span></div><br/>
-	        <?php }?>
-	      <br/> 
-        </p>
-        
-      </div>
-     
-     <div style="clear:both"/>
-      <div class="form_table">
-      
-     
-        <?php
-        	if($objectID==0)
-        		include ('commonname.php');
-        	else if($UpdateTaxonStatus==1)
-        		include ('finishedtaxon.php');
-        	else
-        		include ('speciesform.php')	 
+		<div class="title">
+			<p> <img id='thumb' src=""/>
+				<h1><em> <a target="_blank" href="<?=$eol_site_url?>/pages/<?=$taxon->id?>"><?=$taxon->scientificName?></a></em></h1>
+				<br /><br /><br />
+				<div class="Translated_Reviewed" >
+					<span style="font-weight:bold">Species ID: </span><?=$taxon->id?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</div>
+				<div class="Translated_Reviewed" >
+					<span style="font-weight:bold">Species Status:</span>
+					<span>
+						<?php switch ($taxon->taxon_status_id) {
+			         		case 3:	echo 'Translation done, Scientific review in progress';break;	         	
+			         		case 4:	echo 'Scientific review done, Lingusitic review in progress';break;
+			         		case 5:	echo 'Lingusitic review done, Final Editing in progress';break;
+			         		case 6:	echo 'Final Edition done, Waiting to be published';break;
+			         		case 7:	echo 'Published';break;	         	
+			         		default:echo 'Translation in progress';break;/*case 2*/	         		
+			         	}?>
+					</span>
+				</div>
+				<br />
+					<?php if($process>=2){?>
+			        	<div class="Translated_Reviewed"><span style="font-weight:bold">Translator: </span> <span><?php echo $translatedBy?></span></div>
+			        <?php } if($process>=3){?>
+			        	<div class="Translated_Reviewed"><span style="font-weight:bold">Scientific Reviewer: </span><span><?php echo $ScienRevBy?></span></div>
+			        <?php } if($process>=4){?>
+			        	<div class="Translated_Reviewed"><span style="font-weight:bold">Lingusitic Reviewer: </span><span><?php echo $lingRevBy?></span></div><br/>
+			        <?php }?>
+				<br/> 
+			</p>
+		</div>
+		<?php
+        	if($objectID > 0 && $UpdateTaxonStatus!=1){
         ?>
-        
-         <!-- -------------------------Begin of Left Menu-------------------- -->
-        <div class="table_of_content">
+        	<div style="float:right; margin-left:14px">
+				<a href="javascript:show_popup('animalia_popup')"><img title="Animalia Glossary" src='../images/Glossary_Animalia.png' border='0'/></a>
+				<a href="javascript:show_popup('plantae_popup')"><img title="Planae Glossary" src='../images/Glossary_Plantae.png' border='0'/></a>
+			</div>
+        <?php
+        	}
+        ?>
+     	<div style="clear:both"/>
+      	<div class="form_table">
+	        <?php
+	        	if($objectID==0)
+	        		include ('commonname.php');
+	        	else if($UpdateTaxonStatus==1)
+	        		include ('finishedtaxon.php');
+	        	else
+	        		include ('speciesform.php')	 
+	        ?>
+        	<?php
+        		if ($UpdateTaxonStatus != 1){        		
+        		?>
+        		<!-- -------------------------Begin of Left Menu-------------------- -->
+        	<div class="table_of_content">
+			<h2 style="height:15px">
+	          	<span style="float:left;">
+	          		<a href='species.php?tid=<?=$taxonID?><?=$otherparam?>'>Common Names</a>
+	          	</span>          
+          	</h2>
+          	<br/>
+          	<?php
+	          	$object_cache_url ='';//The main image url 
+	          	$types = array(1 => 'Table of Contents', 2 => 'Images', 3 => 'Video/Audio');
+	          	
+	          	foreach ($types as $type){
+	          		$Objs = BLL_data_objects::Select_Light_DataObjects_ByTaxonConceptID_ByType('slave',$taxonID,$type);
+			  ?>
           
-           <h2 style="height:15px">
-          	<span style="float:left;">
-          		<a href='species.php?tid=<?=$taxonID?><?=$otherparam?>'>Common Names</a>
-          	</span>          
-          </h2>
-          <br/>
-          <?php
-          	$object_cache_url ='';//The main image url 
-          	$types = array(1 => 'Table of Contents', 2 => 'Images', 3 => 'Video/Audio');
-          	
-          	foreach ($types as $type){
-          		$Objs = BLL_data_objects::Select_Light_DataObjects_ByTaxonConceptID_ByType('slave',$taxonID,$type);
-		  ?>
-          
-          <h2 style="height:15px">
-          	<span style="float:left;">
-          		<?php echo $type ?> (<?php echo count($Objs)?>)
-          	</span>
-          	<?php if(count($Objs)>0){?>
-          	<img  src="../images/up.png" class="float_right" onclick='adjustMenu(this,"<?=$type?>");'/>
-          	<?php }?>
-          </h2>
-          <div id='<?=$type?>'  style="display:block">
-            <ul>
+          	<h2 style="height:15px">
+          		<span style="float:left;">
+          			<?php echo $type ?> (<?php echo count($Objs)?>)
+          		</span>
+          		<?php if(count($Objs)>0){?>
+          			<img  src="../images/up.png" class="float_right" onclick='adjustMenu(this,"<?=$type?>");'/>
+          		<?php }?>
+			</h2>
+			<div id='<?=$type?>'  style="display:block">
+				<ul>
               <?
 		        foreach ($Objs as $Obj){
 		        	$class = '';
@@ -258,24 +264,44 @@ include_once '../../../classes/interface/Species_Functions.php';
               	</li>
               <?}//end of foreach objs?>
              
-            </ul>
-          </div>    
+				</ul>
+			</div>    
    
         	<? }//end of foreach type?> 
           
-        </div>
+		</div>
         
         <script type="text/javascript">
 			document.getElementById('thumb').src ='<? echo $eol_site_content.substr($object_cache_url,0,4).'/'.substr($object_cache_url,4,2).'/'.substr($object_cache_url,6,2).'/'.substr($object_cache_url,8,2).'/'.substr($object_cache_url,10).'_small.jpg'?>';
 			if(document.getElementById('thumb').src.indexOf('/////')>0) document.getElementById('thumb').style.display='none';  
 				 
-		 </script>  
+		</script>  
         <!-- -------------------------End of Left Menu-------------------- -->
+        	<?php
+        	}
+        	?>	
        	
        
-      </div>
-		  	<? include ('../master/footer.php');?>   
-     	<script type="text/javascript">
+		</div>
+		<? include ('../master/footer.php');?>   
+		<script type="text/javascript">
+			function show_popup(id) {
+			    if (document.getElementById){ 
+			        obj = document.getElementById(id); 
+			        if (obj.style.display == "none") { 
+			            obj.style.display = ""; 
+			        } 
+			    } 
+			}
+			function hide_popup(id){ 
+			    if (document.getElementById){ 
+			        obj = document.getElementById(id); 
+			        if (obj.style.display == ""){ 
+			            obj.style.display = "none"; 
+			        } 
+			    } 
+			}
+			
      	 	<?php switch ($process) {
      	 		case 2:	echo "ActiveLink('trans');";break;
      	 		case 3:	echo "ActiveLink('scien');";break;
@@ -296,8 +322,23 @@ include_once '../../../classes/interface/Species_Functions.php';
      	 			Img.src = '../images/up.png';
          	 	}
      	 	}
-		 </script>  
-  </body>
-  
+		</script>
+		<div id="plantae_popup" style="display:none;border:1px dotted gray;padding:.3em;background-color:white;position:absolute;left:200px;top:200px">
+		    <div align="right">
+		        <a href="javascript:hide_popup('plantae_popup')">X</a>
+		    </div>
+		    <h3 style="padding: 0px;">Plantae Glossary</h3>
+			<iframe frameborder="1" scrolling="No" width="650px" height="500px" src="../glossary/plantae.php"></iframe>
+		</div>
+		<div id="animalia_popup" style="display:none;border:1px dotted gray;padding:.3em;background-color:white;position:absolute;left:200px;top:200px">			
+		    <div align="right">
+		        <a href="javascript:hide_popup('animalia_popup')">X</a>
+		    </div>
+		    <h3 style="padding: 0px;">Animalia Glossary</h3>
+		    <iframe scrolling="No" width="650px" height="500px" src="../glossary/animalia.php"></iframe>
+		</div>  
+	</body>
 </html> 
+ 
+
  
