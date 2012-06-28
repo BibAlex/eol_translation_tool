@@ -80,7 +80,6 @@ class BLL_updated_data_objects_taxon_concepts {
 	//Added by Yosra 10-4-2012 to select all taxon_concepts of a dataobject in order to find states of each
 	static function Select_taxon_concepts_status_By_DataObjectID($reverse_id)
 	{
-		echo "Select_taxon_concepts_status_By_DataObjectID " . $reverse_id. "<br/>";
 		 $con = new PDO_Connection();
 	  	 $con->Open('slave');	  
 	  	 $query = $con->connection->prepare("SELECT taxon_concepts.*

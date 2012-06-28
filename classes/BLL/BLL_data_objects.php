@@ -361,6 +361,25 @@ class BLL_data_objects {
 	    return $records;    
 	}
 	
+	static function Select_DataObjects_ByGuid($guid, $data_type_id) 
+	{
+	 	$con = new PDO_Connection();
+	  	$con->Open('slave');
+		  	
+	  	$stmt = $con->connection->prepare("SELECT dos.* 
+	  										FROM data_objects dos
+	  										 	INNER JOIN  a_data_objects ado  ON (ado.id=dos.id)
+	  										WHERE guid = ? 
+	  											AND data_type_id=? 
+	  										ORDER BY ado.process_id DESC;");
+	    $stmt->bindParam(1, $guid);	   
+	    $stmt->bindParam(2, $data_type_id);	   
+		$stmt->execute();		
+		$records = $stmt->fetchAll(PDO::FETCH_CLASS, 'DAL_data_objects');		
+	    $con->Close();    
+	    return $records;    
+	}
+	
 	static function Select_DataObjects_ByGuid_NOT_Hidden($guid, $data_type_id) 
 	{
 	 	$con = new PDO_Connection();
@@ -442,12 +461,26 @@ class BLL_data_objects {
 		 $con->Close();
 	}
 	
+	static function Show_DataObject_If_no_adata_object($guid, $data_type_id)
+	{
+		 $con = new PDO_Connection();
+	  	 $con->Open('slave');	  	
+	  	 $stmt = $con->connection->prepare("UPDATE data_objects dos set hidden=0 
+	  	 									WHERE dos.guid=? 
+	  	 										AND dos.data_type_id=? 
+	  	 										AND hidden=1 
+	  	 										AND id NOT IN (SELECT ado.id FROM a_data_objects ado WHERE ado.id=dos.id);");	  	 									
+		 $stmt->bindParam(1,$guid);	
+		 $stmt->bindParam(2,$data_type_id);	 	
+		 $stmt->execute();
+		 $con->Close();
+	}
+	
 	static function Update_Hidden_DataObject($data_object_id, $hidden)
 	{
 		 $con = new PDO_Connection();
 	  	 $con->Open('slave');	  	
-	  	 $stmt = $con->connection->prepare("UPDATE data_objects set hidden=? WHERE id=?	;");	  	 									
-	  	 echo("Update_Hidden_DataObject: data_object_id:" . $data_object_id . " And $hidden: " . $hidden . "</br>");	  	
+	  	 $stmt = $con->connection->prepare("UPDATE data_objects set hidden=? WHERE id=?	;");	  	 					  	
 		 $stmt->bindParam(1,$hidden);
 		 $stmt->bindParam(2,$data_object_id);
 		 $stmt->execute();
@@ -457,8 +490,7 @@ class BLL_data_objects {
 	static function Update_Locked_update_DataObject($data_object_id, $locked_update)
 	{
 		 $con = new PDO_Connection();
-	  	 $con->Open('slave');
-	  	 echo("Update_Locked_update_DataObject: data_object_id:" . $data_object_id . " And locked_update: " . $locked_update . "</br>");	  	
+	  	 $con->Open('slave');	  	
 	  	 $stmt = $con->connection->prepare("UPDATE data_objects set locked_update=? WHERE id=?	;");	  	 									
 		 
 		 $stmt->bindParam(1,$locked_update);

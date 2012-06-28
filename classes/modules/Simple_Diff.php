@@ -40,17 +40,71 @@
 				Simple_Diff::diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen)));
 		}
 		
-		static function htmlDiff($old, $new){
-			$ret = '';
+		static function hasDiff($old, $new){
 			$diff = Simple_Diff::diff(explode(' ', $old), explode(' ', $new));
 			foreach($diff as $k){
-				if(is_array($k))
-					$ret .= (!empty($k['d'])?"<font color='red'><del>".implode(' ',$k['d'])."</del></font> ":'').
-						(!empty($k['i'])?"<font color='green'>".implode(' ',$k['i'])."</font> ":'');
-				else $ret .= $k . ' ';
+				if(is_array($k)){
+					if(!empty($k['d']) || !empty($k['i'])){
+						return true;
+					}
+				}
 			}
+			return false;
+		}
+		static function htmlDiff($old, $new){
+			$ret = '';
+			$old = str_replace("<br/>", " <br/> ", $old);
+			$old = str_replace("<br>", " <br/> ", $old);
+			$old = preg_replace("/<p[^>]*?>/", " <br/> ", $old);
+			$old = str_replace("</p>", " <br/> ", $old);
+			
+			$new = str_replace("<br/>", " <br/> ", $new);
+			$new = str_replace("<br>", " <br/> ", $new);
+			$new = preg_replace("/<p[^>]*?>/", " <br/> ", $new);
+			$new = str_replace("</p>", " <br/> ", $new);
+			
+			$diff = Simple_Diff::diff(explode(' ', $old), explode(' ', $new));
+			foreach($diff as $k){
+				if(is_array($k)){
+					if(!empty($k['d'])){
+						foreach($k['d'] as $item){
+							if(trim($item) != '<br/>' && trim($item) != '<br>')
+								$ret .= "<div style='color:red; text-decoration:line-through;display:inline-block'>"." ".$item."</div> ";
+							else {
+								$ret .= $item;								
+							}
+						}
+						//$ret .= "<div style='color:red; text-decoration:line-through;display:inline-block'>".implode(' ',$k['d'])."</div> ";
+					}
+					else{
+						$ret .='';
+					}
+						
+					if(!empty($k['i'])){						
+						foreach($k['i'] as $item){
+							if(trim($item) != '<br/>' && trim($item) != '<br>')
+								$ret .="<div style='color:green;display:inline-block'>"." ".$item."</div> ";
+							else {
+								$ret .= $item;
+							}
+						}
+						//$ret .="<div style='color:green;display:inline-block'>".implode(' ',$k['i'])."</div> ";
+					}	
+					else{
+						$ret .='';						
+					}
+				}			
+				else{
+					$ret .= $k . ' ';
+				}
+			}
+//				if(is_array($k))
+//					$ret .= (!empty($k['d'])?"<div style='color:red; text-decoration:line-through;display:inline-block'>".implode(' ',$k['d'])."</div> ":'').
+//						(!empty($k['i'])?"<div style='color:green;display:inline-block'>".implode(' ',$k['i'])."</div> ":'');
+//				else $ret .= $k . ' ';
+//			}
+			
 			return $ret;
 		}
 	}
-
 ?>

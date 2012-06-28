@@ -82,79 +82,39 @@ $old_linguistic_reviewer_id = $taxon_concept->linguistic_reviewer_id;
 <?
 if (isset($_POST["id"])) {
 	
-	if ($taxon_concept->taxon_status_id <3) {
-		if ($taxon_concept->translator_id != intval($_POST["translator"])) {
-			$taxon_concept->translator_id = $_POST["translator"];
-			if (intval($_POST["translator"]) == 0) {
-				$users = BLL_users::load_all();
-				foreach ($users as $user) {
-					if ($user->active == 1 && $user->translator==1 && $user->email != '') {
-						$message = 'New species ready for translation <br><br>'.$taxon_concept->scientificName;
-						SendMail::send_email($user->email, 'AEOL: New species ready for translation', 'New species ready for translation<br><br>'.$taxon_concept->scientificName);
-					}		
-				}		
-			} else {
-				$user = BLL_users::load_by_id(intval($_POST["translator"]));
-				if ($user[0]->active == 1 && $user[0]->email != '') {
-					$message = 'New species ready for translation <br><br>'.$taxon_concept->scientificName;
-					SendMail::send_email($user[0]->email, 'AEOL: New species have been assigned', 'New species have been assigned<br><br>'.$taxon_concept->scientificName);
-				}
-			}
-			
-			BLL_taxon_concepts::taxon_concept_assign_log($id, 
-														 intval($_POST["translator"]), 
-														 2, 
-														 $_SESSION['user_id']);
-				
+	if (intval($_POST["translator"]) == 0) {
+		$users = BLL_users::load_all();
+		foreach ($users as $user) {
+			if ($user->active == 1 && $user->translator==1 && $user->email != '') {
+				$message = 'New or updated data objects have been added to this species. They are now ready for translation <br><br>'.$taxon_concept->scientificName;
+				SendMail::send_email($user->email, 'AEOL: Updated species ready for translation', 'Updated species ready for translation<br><br>'.$taxon_concept->scientificName);
+			}		
+		}		
+	} else {
+		$user = BLL_users::load_by_id(intval($_POST["translator"]));
+		if ($user[0]->active == 1 && $user[0]->email != '') {
+			$message = 'New or updated data objects have been added to this species. They are now ready for translation <br><br>'.$taxon_concept->scientificName;
+			SendMail::send_email($user[0]->email, 'AEOL: Updated species have been assigned', 'Updated species have been assigned<br><br>'.$taxon_concept->scientificName);
 		}
-		
 	}
+	$taxon_concept->translator_id = intval($_POST["translator"]);
+	$taxon_concept->scientific_reviewer_id = intval($_POST["scientific_reviwer"]);
+	$taxon_concept->linguistic_reviewer_id = intval($_POST["linguistic_reviewer"]);
 	
-	if ($taxon_concept->taxon_status_id <4) {
-		if ($taxon_concept->scientific_reviewer_id != intval($_POST["scientific_reviwer"])) {
-			$taxon_concept->scientific_reviewer_id = $_POST["scientific_reviwer"];
-			if ($taxon_concept->taxon_status_id == 3) {
-				// Pending scientific Reviewer
-				// Notify new user				
-				$user = BLL_users::load_by_id(intval($_POST["scientific_reviwer"]));
-				if ($user[0]->active == 1 && $user[0]->email != '') {
-					$message = 'New species ready for revision <br><br>'.$taxon_concept->scientificName;
-					SendMail::send_email($user[0]->email, 'AEOL: New species have been assigned for revision', 'New species have been assigned for revision<br><br>'.$taxon_concept->scientificName);
-				}
-				
-			}	
-			BLL_taxon_concepts::taxon_concept_assign_log($id, 
-														 intval($_POST["scientific_reviwer"]), 
-														 3, 
-														 $_SESSION['user_id']);	
-		}
+	BLL_taxon_concepts::taxon_concept_assign_log($id, 
+												 intval($_POST["translator"]), 
+												 2, 
+												 $_SESSION['user_id']);
+	BLL_taxon_concepts::taxon_concept_assign_log($id, 
+												 intval($_POST["scientific_reviwer"]), 
+												 3, 
+												 $_SESSION['user_id']);
+	BLL_taxon_concepts::taxon_concept_assign_log($id, 
+												 intval($_POST["linguistic_reviewer"]), 
+												 4, 
+												 $_SESSION['user_id']);
+	
 		
-	}
-	
-	if ($taxon_concept->taxon_status_id <5) {
-		if ($taxon_concept->linguistic_reviewer_id != intval($_POST["linguistic_reviewer"])) {
-			$taxon_concept->linguistic_reviewer_id = $_POST["linguistic_reviewer"];
-			if ($taxon_concept->taxon_status_id == 4) {
-				// Pending Linguistic Reviewer
-				// Notify new user				
-				$user = BLL_users::load_by_id($taxon_concept->linguistic_reviewer_id);
-				if ($user[0]->active == 1 && $user[0]->email != '') {
-					
-					$message = 'New species ready for revision <br><br>'.$taxon_concept->scientificName;
-					SendMail::send_email($user[0]->email, 'AEOL: New species have been assigned for revision', 'New species have been assigned for revision<br><br>'.$taxon_concept->scientificName);
-				}
-				
-			}
-			BLL_taxon_concepts::taxon_concept_assign_log($id, 
-														 intval($_POST["linguistic_reviewer"]), 
-														 4, 
-														 $_SESSION['user_id']);	
-		}
-		
-	}
-	
-	
-	
 	BLL_taxon_concepts::reassign_updated_taxon($taxon_concept->id, 
 							   $taxon_concept->translator_id,
 							   $old_translator_id, 	
@@ -202,40 +162,25 @@ $users = new BLL_users();
 			<tr>
 				<td class="odd" width="150"><b>Translator:</b> </td>
 				<td class="even">					
-					<?if ($taxon_concept->taxon_status_id >=3) {?>
-						<?=BLL_users::get_user_name($taxon_concept->translator_id)?>
-						<input type="hidden" name="translator" value="<?=$taxon_concept->translator_id?>" />
-					<?}else{?>						
-						<select name="translator" id="translator">
-							<?=$users->get_translators_options($taxon_concept->translator_id)?>
-						</select>
-					<?}?>
+					<select name="translator" id="translator">
+						<?=$users->get_translators_options($taxon_concept->translator_id)?>
+					</select>
 				</td>
 			</tr>
 			<tr>
 				<td class="odd" width="150"><b>Scientific Reviewer:</b> </td>
 				<td class="even">					
-					<?if ($taxon_concept->taxon_status_id >=4) {?>
-						<?=BLL_users::get_user_name($taxon_concept->scientific_reviewer_id)?>
-						<input type="hidden" name="scientific_reviwer" value="<?=$taxon_concept->scientific_reviewer_id?>" />
-					<?}else{?>	
-						<select name="scientific_reviwer" id="scientific_reviwer">
-							<?=$users->get_scientific_reviewers_options($taxon_concept->scientific_reviewer_id)?>
-						</select>
-					<?}?>
+					<select name="scientific_reviwer" id="scientific_reviwer">
+						<?=$users->get_scientific_reviewers_options($taxon_concept->scientific_reviewer_id)?>
+					</select>
 				</td>
 			</tr>
 			<tr>
 				<td class="odd" width="150"><b>Linguistic Reviewer:</b> </td>
 				<td class="even">					
-					<?if ($taxon_concept->taxon_status_id >=5) {?>
-						<?=BLL_users::get_user_name($taxon_concept->scientific_reviewer_id)?>
-						<input type="hidden" name="linguistic_reviewer" value="<?=$taxon_concept->linguistic_reviewer_id?>" />
-					<?}else{?>	
-						<select name="linguistic_reviewer" id="linguistic_reviewer">
-							<?=$users->get_linguistic_reviewers_options($taxon_concept->linguistic_reviewer_id)?>
-						</select>
-					<?}?>
+					<select name="linguistic_reviewer" id="linguistic_reviewer">
+						<?=$users->get_linguistic_reviewers_options($taxon_concept->linguistic_reviewer_id)?>
+					</select>
 				</td>
 			</tr>
 			<tr>

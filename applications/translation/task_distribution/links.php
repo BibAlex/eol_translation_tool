@@ -14,9 +14,9 @@ if (basename($_SERVER['PHP_SELF']) == 'show_finished_species.php') {
 if (basename($_SERVER['PHP_SELF']) == 'updated_taxons.php') {
 ?>
 <li class="toc"><a style="background: url(../images/toc_hover.gif) scroll transparent no-repeat 25px 3px;background-color:#E8E8E8;"
-					 href="updated_taxons.php">Updated Species</a></li>
+					 href="updated_taxons.php">Updated species</a></li>
 <?} else {?>
-<li class="toc"><a href="updated_taxons.php">Updated Species</a></li>
+<li class="toc"><a href="updated_taxons.php">Updated species</a></li>
 <?}
 if (basename($_SERVER['PHP_SELF']) == 'show_selections.php') {
 ?>

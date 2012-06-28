@@ -1,0 +1,8 @@
+CREATE  TABLE `glossary` (
+
+  `letter` VARCHAR(1) NOT NULL ,
+
+  `text` TEXT NULL ,
+
+  PRIMARY KEY (`letter`) );
+  

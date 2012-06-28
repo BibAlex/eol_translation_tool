@@ -170,13 +170,14 @@ include_once '../../../classes/Pagination.php';
 		              foreach ($taxons as $taxon){
 		              		$CText = BLL_taxon_concepts::Count_DataObjects_ByTaxonID_ByType($taxon->id,'text'); 
 		                  	$CMedia = BLL_taxon_concepts::Count_DataObjects_ByTaxonID_ByType($taxon->id,'media');
-		              		$status = '<img src="../images/pending.png"/>';
+		              		$status = '<img src="../images/pending.png" title="pending species"/>';
+		              		$update = '<img src="../images/update.png" title="updated species"/>';
 		              		if($process==2) $action = 'Translate';
 		              		else $action = 'Review';	
 		              		$assigned = 'Assigned';	              		
 		              		if($taxon->taxon_status_id>$process)
 		              		{
-		              			$status = '<img src="../images/finished.png"/>';
+		              			$status = '<img src="../images/finished.png" title="finished species"/>';
 		              			$action = 'View';
 		              		}
 		              		if($process==2 && $taxon->translator_assigned==0)
@@ -185,7 +186,14 @@ include_once '../../../classes/Pagination.php';
 		              <tr>
 		                <td class="evenc"><?=$taxon->id?></td>
 		                <td class="even" >
-		                	<?=$status?>
+		                	<?
+		                		if ($taxon->taxon_update == 2){
+		                			echo $update;
+		                		}
+		                		else{
+		                			echo $status;
+		                		}
+		                	?>
 		                	<a target="_blank" href="<?=$eol_site_url?>/pages/<?=$taxon->id?>">		                		
 		                		<?=$taxon->scientificName?>
 		                	</a>

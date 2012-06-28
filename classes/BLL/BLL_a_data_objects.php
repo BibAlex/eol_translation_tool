@@ -133,6 +133,55 @@
 			BLL_archived_a_data_objects::Insert_archived_a_data_objects_ByID($id, $user_id, $process_id, $object_title, $location, $rights_statement, $rights_holder, $description, $locked, $taxon_concept_id);
 		}
 		
+		static function Insert_updated_a_data_objects(
+						$id,
+						$user_id,
+						$process_id,
+						$object_title,
+						$location,
+						$rights_statement,
+						$rights_holder,
+						$description,
+						$taxon_concept_id,
+						$locked,
+						$translator_id,
+  						$linguistic_reviewer_id,
+  						$scientific_reviewer_id,
+  						$final_editor_id,
+						$update_status_id=null					
+						) 
+		{	
+			//echo $location;
+			$con = new PDO_Connection();
+		  	$con->Open('slave');
+		  	$query = $con->connection->prepare("INSERT INTO a_data_objects (id, user_id, process_id, object_title
+		  																	, rights_statement, rights_holder, description
+		  																	, modified_at, locked, taxon_concept_id, location
+		  																	, translator_id, linguistic_reviewer_id
+		  																	, scientific_reviewer_id, final_editor_id
+		  																	, update_status_id) 
+		  										VALUES(?,?,?,?,?,?,?,Now(),?,?,?,?,?,?,?,?);");
+		  	$query->bindParam(1, $id);		
+		  	$query->bindParam(2, $user_id);
+		  	$query->bindParam(3, $process_id);	
+		  	$query->bindParam(4, $object_title);
+		  	$query->bindParam(5, $rights_statement);
+		  	$query->bindParam(6, $rights_holder);
+		  	$query->bindParam(7, $description);		  		  	
+		  	$query->bindParam(8, $locked);
+		  	$query->bindParam(9, $taxon_concept_id);
+			$query->bindParam(10, $location);
+			$query->bindParam(11, $translator_id);
+			$query->bindParam(12, $linguistic_reviewer_id);
+			$query->bindParam(13, $scientific_reviewer_id);
+			$query->bindParam(14, $final_editor_id);
+			$query->bindParam(15, $update_status_id);
+					  	
+		    $query->execute();
+			$con->Close();
+			BLL_archived_a_data_objects::Insert_archived_a_data_objects_ByID($id, $user_id, $process_id, $object_title, $location, $rights_statement, $rights_holder, $description, $locked, $taxon_concept_id);
+		}
+		
 		
 		static function Update_a_data_objects(
 						$id,
@@ -206,6 +255,29 @@
 			$records = $stmt->fetchColumn();		
 		    $con->Close();    
 		    return $records;    
+		}
+		
+		static function Select_a_dataObjects_ByTaxonConceptID_And_Not_Hidden($taxon_concept_id, $process_id) 
+		{
+		 	 $con = new PDO_Connection();
+		  	 $con->Open('slave');
+			  	
+		  	 $query = $con->connection->prepare("SELECT *
+		  	 						FROM a_data_objects INNER JOIN data_objects ON (a_data_objects.id=data_objects.id)
+		                           INNER JOIN  data_objects_taxon_concepts
+		                                ON (data_objects.id=data_objects_taxon_concepts.data_object_id)	                        
+		                           WHERE  data_objects_taxon_concepts.taxon_concept_id=?  AND 
+		                           (	process_id>=?  ) AND data_objects.hidden=0;");
+		 	
+		    $query->bindParam(1, $taxon_concept_id);
+		    $query->bindParam(2, $process_id);
+			$query->execute();
+		    $records = $query->fetchAll(PDO::FETCH_CLASS, 'DAL_a_data_objects');
+			$con->Close();
+			if(COUNT($records)==0)
+				return null;
+			else
+				return $records; 
 		}
 		
 		static function Update_User_of_a_data_objects($objectID, $userID, $process)

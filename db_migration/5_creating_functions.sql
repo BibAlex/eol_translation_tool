@@ -56,23 +56,23 @@ BEGIN
     INNER JOIN data_objects_taxon_concepts
  
     ON (a_data_objects.id = data_objects_taxon_concepts.data_object_id)
+    
+    INNER JOIN data_objects
+    
+    ON(a_data_objects.id = data_objects.id)
  
     INNER JOIN taxon_concepts
  
     ON (taxon_concepts.id = data_objects_taxon_concepts.taxon_concept_id)
  
- 
- 
   WHERE  taxon_concepts.id=_taxon_concept_id
  
-     AND a_data_objects.process_id=_taxon_status_id+1;
- 
- 
+     AND (a_data_objects.process_id=_taxon_status_id+1
+     OR a_data_objects.process_id = 6)
+     AND data_objects.hidden = 0;
  
   RETURN cnt;
- 
- 
- 
+
 END$$
  
 -- --------------------------------------------------------------------------------
@@ -82,27 +82,20 @@ END$$
  
 CREATE FUNCTION `FUN_CountEnglishObjects`(_taxon_concept_id Integer) RETURNS int(11)
 BEGIN
- 
- 
- 
+
   DECLARE cnt INT;
- 
- 
- 
+
   SELECT COUNT(data_objects.id) into cnt
  
   FROM data_objects  inner join data_objects_taxon_concepts
  
     on (data_objects.id = data_objects_taxon_concepts.data_object_id)
  
-  WHERE data_objects_taxon_concepts.taxon_concept_id=_taxon_concept_id;
- 
- 
- 
+  WHERE data_objects_taxon_concepts.taxon_concept_id=_taxon_concept_id
+  AND data_objects.hidden = 0;
+
   RETURN cnt;
- 
- 
- 
+
 END$$
  
  

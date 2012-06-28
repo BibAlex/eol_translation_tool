@@ -17,7 +17,7 @@
 	
 	$newEnObj = BLL_data_objects::Select_DataObjects_ByID('slave',$r);
 	$oldEnObj = BLL_data_objects::Select_DataObjects_ByID('slave',$newEnObj->parent_data_object_id);
-		
+	$response = '';	
 //	$array = array (
 //		'oldTitle' => $oldEnObj->object_title,
 //		'oldLocation' => $oldEnObj->location,
@@ -44,7 +44,7 @@
 			$response = $oldEnObj->object_title;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}	
 	else if ($q == 'oldLocation'){
@@ -52,7 +52,7 @@
 			$response = $oldEnObj->location;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}
 	else if ($q == 'oldRights_statement'){
@@ -60,7 +60,7 @@
 			$response = $oldEnObj->rights_statement;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}	
 	else if ($q == 'oldRights_holder'){
@@ -68,7 +68,7 @@
 			$response = $oldEnObj->rights_holder;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}
 	else if ($q == 'oldDescription'){
@@ -76,7 +76,7 @@
 			$response = $oldEnObj->description;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}	
 	else if ($q == 'newTitle'){
@@ -84,7 +84,7 @@
 			$response = $newEnObj->object_title;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}	
 	else if ($q == 'newLocation'){
@@ -92,7 +92,7 @@
 			$response = $newEnObj->location;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}
 	else if ($q == 'newRights_statement'){
@@ -100,7 +100,7 @@
 			$response = $newEnObj->rights_statement;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}	
 	else if ($q == 'newRights_holder'){
@@ -108,7 +108,7 @@
 			$response = $newEnObj->rights_holder;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}
 	else if ($q == 'newDescription'){
@@ -116,7 +116,7 @@
 			$response = $newEnObj->description;	
 		}
 		else{
-			$response = "Not specified";	
+			$response = "[--EMPTY--]";	
 		}
 	}
 	else if ($q == 'compareTitle'){
