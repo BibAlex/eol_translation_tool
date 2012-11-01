@@ -9,4 +9,5 @@ production:
   master_password: 
   master_database: eol_data_production
   master_encoding: utf8
+  master_port:     3443
   
