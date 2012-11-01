@@ -15,6 +15,7 @@ class PDO_Connection {
     private  $MASTER_MYSQL_USER;
     private  $MASTER_MYSQL_PASSWORD;
     private  $MASTER_MYSQL_DATABASE;
+    private  $MASTER_MYSQL_PORT;
     
     public $connection; 
      
@@ -31,6 +32,7 @@ class PDO_Connection {
         $this->MASTER_MYSQL_USER      = @$environments[$environment]['master_username'];
         $this->MASTER_MYSQL_PASSWORD  = @$environments[$environment]['master_password'];
         $this->MASTER_MYSQL_DATABASE  = @$environments[$environment]['master_database'];
+        $this->MASTER_MYSQL_PORT      = @$environments[$environment]['master_port'];
     }
 
     
@@ -39,7 +41,7 @@ class PDO_Connection {
      {     	
      	if($type == 'master')
      	{
-     		$con = 'mysql:host='.$this->MASTER_MYSQL_SERVER.';dbname='.$this->MASTER_MYSQL_DATABASE.';charset=UTF8';
+     		$con = 'mysql:host='.$this->MASTER_MYSQL_SERVER.'; port='.$this->MASTER_MYSQL_PORT.';dbname='.$this->MASTER_MYSQL_DATABASE.';charset=UTF8';
      		$this->connection = new PDO($con, $this->MASTER_MYSQL_USER, $this->MASTER_MYSQL_PASSWORD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
      	}
      	else if($type == 'slave')
